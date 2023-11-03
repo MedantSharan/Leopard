@@ -40,3 +40,10 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
+
+class Task(models.Model):
+    """Tasks to be set to users"""
+
+    title = models.CharField(max_length = 100)
+    description = models.CharField(max_length = 500)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
