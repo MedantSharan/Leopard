@@ -40,3 +40,22 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
+    
+
+class Team(models.Model):
+    team_id = models.BigAutoField(primary_key=True)
+    team_leader = models.ForeignKey(User, on_delete=models.CASCADE)
+    team_name = models.CharField(max_length=30, blank=False)
+    team_description =  models.CharField(
+        unique=False,
+        blank=True,
+        max_length=200,
+    )   
+
+class Team_Members(models.Model):
+    team_id = models.ForeignKey(Team, on_delete=models.CASCADE)
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Invites(models.Model):
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    team_id = models.ForeignKey(Team, on_delete=models.CASCADE)
