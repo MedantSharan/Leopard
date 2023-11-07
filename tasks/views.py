@@ -4,11 +4,12 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm
+from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm
 from tasks.helpers import login_prohibited
 
 
@@ -18,6 +19,35 @@ def dashboard(request):
 
     current_user = request.user
     return render(request, 'dashboard.html', {'user': current_user})
+# @login_required
+# def add_members(request):
+#     if request.method == 'POST':
+#         form = MemberForm(request.POST, request.FILES) 
+#         if form.is_valid():
+#             member = form.save(commit=False)
+#             member.team_id = 2 #placeholder until i clock how to do team just entered
+#             member.save()
+#             return redirect('dashboard'); 
+#     else:
+#         member_form = MemberForm()
+        
+#     return render(request, "team_creation.html", {'form': form})
+
+@login_required
+def team_creation(request):
+    if request.method == 'POST':
+        form = TeamCreationForm(request.POST, request.FILES) 
+        if form.is_valid():
+            team = form.save(commit=False)
+            team.team_leader = request.user
+            team.save()
+            return redirect('dashboard'); 
+    else:
+        form = TeamCreationForm()
+        
+    return render(request, "team_creation.html", {'form': form})
+
+
 
 
 @login_prohibited
@@ -151,3 +181,4 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+    
