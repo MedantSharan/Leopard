@@ -153,6 +153,12 @@ class SignUpView(LoginProhibitedMixin, FormView):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 def create_task(request):
-    form = TaskForm()
+    form = TaskForm(request.POST, request.FILES)
+    if form.is_valid():
+        task = form.save(commit = False)
+        task.created_by = request.user
+        task.save()
+    else:
+        form = TaskForm()
     return render(request, 'task.html', {'form' : form})
 
