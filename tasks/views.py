@@ -19,19 +19,19 @@ def dashboard(request):
 
     current_user = request.user
     return render(request, 'dashboard.html', {'user': current_user})
-# @login_required
-# def add_members(request):
-#     if request.method == 'POST':
-#         form = MemberForm(request.POST, request.FILES) 
-#         if form.is_valid():
-#             member = form.save(commit=False)
-#             member.team_id = 2 #placeholder until i clock how to do team just entered
-#             member.save()
-#             return redirect('dashboard'); 
-#     else:
-#         member_form = MemberForm()
+
+@login_required
+def add_members(request):
+    if request.method == 'POST':
+        form = MemberForm(request.POST, request.FILES) 
+        if form.is_valid():
+            #member = form.save(commit=False)
+            form.save()
+            return redirect('dashboard'); 
+    else:
+        form = MemberForm()
         
-#     return render(request, "team_creation.html", {'form': form})
+    return render(request, "add_members.html", {'form': form})
 
 @login_required
 def team_creation(request):
@@ -41,7 +41,7 @@ def team_creation(request):
             team = form.save(commit=False)
             team.team_leader = request.user
             team.save()
-            return redirect('dashboard'); 
+            return redirect('add_members'); 
     else:
         form = TeamCreationForm()
         
