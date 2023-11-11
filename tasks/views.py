@@ -11,7 +11,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm
 from tasks.helpers import login_prohibited
-from .models import Team
+from .models import Team_Members
 
 
 
@@ -44,6 +44,10 @@ def team_creation(request):
             team.team_leader = request.user
             team.save()
             request.session['team'] = team.team_id
+            Team_Members.objects.create(
+                username=request.user,
+                team_id = request.session.get('team'),
+            )
             return redirect('add_members'); 
     else:
         form = TeamCreationForm()
