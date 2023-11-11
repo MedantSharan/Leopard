@@ -53,9 +53,15 @@ class Team(models.Model):
     )   
 
 class Team_Members(models.Model):
-    team_id = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team_id = models.IntegerField()
     username = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Invites(models.Model):
+    INVITE_STATUS = {
+        ("S", "Sent"),
+        ("R", "Rejected"),
+        ("A", "Accepted"),
+    }
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    team_id = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team_id = models.IntegerField()
+    invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
