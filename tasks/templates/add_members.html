@@ -7,7 +7,7 @@
       <form action="{% url 'add_members' %}" method="post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
-        <input type="submit" value="Create Team" class="btn btn-primary">
+        <input type="submit" value="Add members" class="btn btn-primary">
       </form>
     </div>
   </div>

@@ -9,8 +9,10 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm
+from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm
 from tasks.helpers import login_prohibited
+from .models import Team
+
 
 
 @login_required
@@ -23,14 +25,14 @@ def dashboard(request):
 @login_required
 def add_members(request):
     if request.method == 'POST':
-        form = MemberForm(request.POST, request.FILES) 
+        form = InviteForm(request.POST) 
         if form.is_valid():
-            #member = form.save(commit=False)
-            form.save()
+            team_id = request.session.get('team')
+            form.save_invites(team_id=team_id)
+            del request.session['team']
             return redirect('dashboard'); 
     else:
-        form = MemberForm()
-        
+        form = InviteForm()
     return render(request, "add_members.html", {'form': form})
 
 @login_required
@@ -41,10 +43,10 @@ def team_creation(request):
             team = form.save(commit=False)
             team.team_leader = request.user
             team.save()
+            request.session['team'] = team.team_id
             return redirect('add_members'); 
     else:
         form = TeamCreationForm()
-        
     return render(request, "team_creation.html", {'form': form})
 
 

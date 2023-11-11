@@ -55,6 +55,10 @@ class Team(models.Model):
 class Team_Members(models.Model):
     team_id = models.IntegerField()
     username = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    class Meta:
+            unique_together = ('team_id', 'username')
+
 
 class Invites(models.Model):
     INVITE_STATUS = {
@@ -65,3 +69,6 @@ class Invites(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     team_id = models.IntegerField()
     invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
+
+    class Meta:
+        unique_together = ('team_id', 'username')
