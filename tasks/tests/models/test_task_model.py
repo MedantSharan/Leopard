@@ -5,14 +5,13 @@ from tasks.models import Task, User
 class TaskTest(TestCase):
     """Unit tests for the Task model."""
     
+    fixtures = [
+        'tasks/tests/fixtures/default_user.json'
+    ]
+
     def setUp(self):
         super(TestCase, self).setUp()
-        self.user = User.objects.create_user(
-            '@johndoe',
-            first_name='John',
-            last_name='Doe',
-            email='johndoe@example.org',
-        )
+        self.user = User.objects.get(username='@johndoe')
         self.task = Task(
             title = "Task title",
             description = "Description of the task",
@@ -28,6 +27,11 @@ class TaskTest(TestCase):
 
     def test_must_be_created_by_a_user(self):
         self.task.created_by = None
+        with self.assertRaises(ValidationError):
+            self.task.full_clean()
+
+    def test_must_be_assigned_to_a_user(self):
+        self.task.assigned_to = None
         with self.assertRaises(ValidationError):
             self.task.full_clean()
 
