@@ -157,6 +157,8 @@ def create_task(request):
     if form.is_valid():
         task = form.save(commit = False)
         task.created_by = request.user
+        assigned_to_user = form.cleaned_data.get('assign_to_user')
+        task.assigned_to = assigned_to_user
         task.save()
     else:
         form = TaskForm()

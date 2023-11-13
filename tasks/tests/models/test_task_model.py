@@ -17,6 +17,7 @@ class TaskTest(TestCase):
             title = "Task title",
             description = "Description of the task",
             created_by = self.user,
+            assigned_to = self.user,
         )
 
     def test_valid_task(self):

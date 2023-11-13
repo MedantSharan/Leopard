@@ -111,6 +111,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
 
 class TaskForm(forms.ModelForm):
     """Form to create tasks"""
+    assign_to_user = forms.ModelChoiceField(queryset=User.objects.all(), required=True, label='Assign to user', widget=forms.Select)
     class Meta:
         model = Task
         fields = ['title', 'description']
