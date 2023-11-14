@@ -15,6 +15,12 @@ from .models import Team_Members,Invites,Team
 from django.template.defaulttags import register
 
 
+def decline_team(request, team_id):
+    invite = Invites.objects.filter(team_id = team_id ,username = request.user)
+    if invite:
+        invite.delete()
+    return redirect(reverse('dashboard'))
+
 
 def join_team(request, team_id):
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
