@@ -14,7 +14,6 @@ from tasks.helpers import login_prohibited
 from .models import Team_Members
 
 
-
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
@@ -62,8 +61,16 @@ def home(request):
 
     return render(request, 'home.html')
 
+def requests_table(request):
+    invites = get_invites()
+    return render(request, 'dashboard_html', {'invites': invites})
 
-class LoginProhibitedMixin:
+# def fake_dashboard(request):
+#     fake_invite = Invite(sender='TestSender', message='TestMessage')
+#     invites = [fake_invite]
+#     return render(request, 'dashboard.html', {'invites': invites})
+
+class LoginProhibitedMixin: 
     """Mixin that redirects when a user is logged in."""
 
     redirect_when_logged_in_url = None

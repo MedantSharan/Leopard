@@ -1,10 +1,68 @@
 {% extends 'base_content.html' %}
+{% load static %}
+
 {% block content %}
+<style>
+  body {
+    background-image: url('{% static "images/dashboard background.jpeg" %}');
+    background-size: cover;
+    margin: 0;
+  }
+
+  .container {
+    padding-top: 50px;
+  }
+</style>>
+
 <div class="container">
   <div class="row">
     <div class="col-12">
       <h1>Welcome to your dashboard {{ user.username }}</h1>
       <a href='{% url 'team_creation' %}'>CREATE TEAM</a>
+      <div class="card cover-card offset-sm-2 offset-md-4 offset-lg-7">
+        <h1 class="cover-heading">Teams</h1>
+        <p class="cover-text">View all your teams below:</p>
+        <table>
+          <tr>
+            <th> Team Name </th>
+          </tr>
+          <tr>
+            <td> Sample Team Name 1 </td>
+          </tr>
+          <tr>
+            <td> Sample Team Name 2 </td>
+          </tr>
+        </table>
+      </div>
+      <h2>Requests</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Message</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for invite in invites %}
+          <tr>
+            <td>{{ invite.sender }}</td>
+            <td>{{ invite.message }}</td>
+            <td>
+              <form method="post" action="{% url 'accept_invite' invite.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Accept</button>
+              </form>
+              <form method="post" action="{% url 'reject_invite' invite.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Reject</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        </table>
     </div>
   </div>
 </div>

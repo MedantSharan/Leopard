@@ -6,7 +6,6 @@
   border-radius: 0px;
 }
 
-
 /*
  * Cover page
  */
@@ -28,27 +27,26 @@
 /*
  * Cover page
  */
-h1.cover-heading {
-  font-size: 4rem;
-}
+h1.cover-heading{
+  font-size: 3rem;
+} 
 
 p.cover-text {
   font-size: 1.7rem;
 }
 
 .cover-card {
-  background-color: rgba(245, 245, 245, 0.6);
+  background-color: rgba(159, 200, 105, 0.6);
   max-width: 30rem;
   padding-top: 30px;
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 15%;
+  border-radius: 40px;
 }
 .cover-card-block {
   opacity: 1
 }
-
 
 /*
  * forms
