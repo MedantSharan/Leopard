@@ -13,6 +13,7 @@ from tasks.helpers import login_prohibited
 # from tasks.models import Invite
 
 
+
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
@@ -27,9 +28,9 @@ def home(request):
 
     return render(request, 'home.html')
 
-# def requests_table(request):
-#     invites = get_invites()
-#     return render(request, 'dashboard_html', {'invites': invites})
+def requests_table(request):
+     invites = get_invites()
+     return render(request, 'dashboard_html', {'invites': invites})
 
 # def fake_dashboard(request):
 #     fake_invite = Invite(sender='TestSender', message='TestMessage')
