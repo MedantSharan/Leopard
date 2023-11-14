@@ -5,6 +5,17 @@
     <div class="col-12">
       <h1>Welcome to your dashboard {{ user.username }}</h1>
       <a href='{% url 'team_creation' %}'>CREATE TEAM</a>
+      <ul>
+        {% for invite in invites %}
+          {% if invite.invite_status == "S"%}
+            <li>{{team_invites|get_item:invite.team_id}} Has invited you</li>
+            <form method="post" action="{% url 'join_team' team_id=invite.team_id%}">
+              {%csrf_token%}
+              <input type="submit" value="Accept" class="btn btn-primary">
+            </form>
+          {% endif %}
+        {% endfor %}
+      </ul>
     </div>
   </div>
 </div>
