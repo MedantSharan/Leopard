@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tasks import views
+from tasks.views import requests_table, accept_invite, reject_invite
+from tasks.views import fake_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +29,8 @@ urlpatterns = [
     path('password/', views.PasswordView.as_view(), name='password'),
     path('profile/', views.ProfileUpdateView.as_view(), name='profile'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
+     path('requests/', requests_table, name='requests_table'),
+    path('accept/<int:invite_id>/', accept_invite, name='accept_invite'),
+    path('reject/<int:invite_id>/', reject_invite, name='reject_invite'),
+    path('fake_dashboard/', fake_dashboard, name='fake_dashboard'),
 ]

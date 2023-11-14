@@ -1,5 +1,19 @@
 {% extends 'base_content.html' %}
+{% load static %}
+
 {% block content %}
+<style>
+  body {
+    background-image: url('{% static "images/dashboard background.jpeg" %}');
+    background-size: cover;
+    margin: 0;
+  }
+
+  .container {
+    padding-top: 50px;
+  }
+</style>>
+
 <div class="container">
   <div class="row">
     <div class="col-12">
@@ -19,21 +33,47 @@
           </tr>
         </table>
       </div>
-      <div class="card cover-card offset-sm-2 offset-md-4 offset-lg-7">
-        <h1 class="cover-heading">Tasks</h1>
-        <p class="cover-text">View all your tasks below:</p>
+      <!-- <div class="card cover-card offset-sm-2 offset-md-4 offset-lg-7">
+        <h1 class="cover-heading">Requests</h1>
+        <p class="cover-text">Any requests will be displayed here: </p>
         <table>
           <tr>
-            <th> Task </th>
+            <td> Sample Request </td>
           </tr>
           <tr>
-            <td> Sample task </td>
-          </tr>
-          <tr>
-            <td> Sample task </td>
+            <td> Sample Request </td>
           </tr>
         </table>
-      </div>
+      </div> -->
+      <h2>Requests</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Message</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for invite in invites %}
+          <tr>
+            <td>{{ invite.sender }}</td>
+            <td>{{ invite.message }}</td>
+            <td>
+              <form method="post" action="{% url 'accept_invite' invite.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Accept</button>
+              </form>
+              <form method="post" action="{% url 'reject_invite' invite.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Reject</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        </table>
     </div>
   </div>
 </div>

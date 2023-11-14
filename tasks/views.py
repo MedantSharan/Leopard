@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm
 from tasks.helpers import login_prohibited
-from .models import Invite
+# from tasks.models import Invite
 
 
 @login_required
@@ -28,13 +28,13 @@ def home(request):
     return render(request, 'home.html')
 
 # def requests_table(request):
-    # invites = get_invites()
-    # return render(request, 'dashboard_html', {'invites': invites})
+#     invites = get_invites()
+#     return render(request, 'dashboard_html', {'invites': invites})
 
-def fake_dashboard(request):
-    fake_invite = Invite(sender='TestSender', message='TestMessage')
-    invites = [fake_invite]
-    return render(request, 'dashboard.html', {'invites': invites})
+# def fake_dashboard(request):
+#     fake_invite = Invite(sender='TestSender', message='TestMessage')
+#     invites = [fake_invite]
+#     return render(request, 'dashboard.html', {'invites': invites})
 
 class LoginProhibitedMixin: 
     """Mixin that redirects when a user is logged in."""
