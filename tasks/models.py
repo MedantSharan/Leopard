@@ -48,3 +48,35 @@ class Task(models.Model):
     description = models.CharField(max_length = 500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, null = True)
+    
+
+class Team(models.Model):
+    team_id = models.BigAutoField(primary_key=True)
+    team_leader = models.ForeignKey(User, on_delete=models.CASCADE)
+    team_name = models.CharField(max_length=30, blank=False)
+    team_description =  models.CharField(
+        unique=False,
+        blank=True,
+        max_length=200,
+    )   
+
+class Team_Members(models.Model):
+    team_id = models.IntegerField()
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    class Meta:
+            unique_together = ('team_id', 'username')
+
+
+class Invites(models.Model):
+    INVITE_STATUS = {
+        ("S", "Sent"),
+        ("R", "Rejected"),
+        ("A", "Accepted"),
+    }
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    team_id = models.IntegerField()
+    invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
+
+    class Meta:
+        unique_together = ('team_id', 'username')

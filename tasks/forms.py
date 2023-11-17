@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from .models import User, Task
+from .models import User,Team,Team_Members,Invites, Task
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -116,3 +116,57 @@ class TaskForm(forms.ModelForm):
         model = Task
         fields = ['title', 'description']
         widgets = {'description' : forms.Textarea()}
+    
+
+
+class TeamCreationForm(forms.ModelForm):
+     class Meta:
+        """Form options."""
+
+        model = Team
+        fields = ['team_name', 'team_description']
+
+class InviteForm(forms.Form):
+    """Form enabling registered users to log in."""
+    usernames = forms.CharField(
+        label="Enter usernames (comma-separated)",
+        max_length=100
+    )
+
+    def getUsernames(self):
+        usernames = self.cleaned_data['usernames'].split(',')
+        return [username.strip() for username in usernames]
+
+    def save_invites(self, team_id):
+        usernames = self.getUsernames()
+        for username in usernames:
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                continue
+
+            Invites.objects.create(
+                username = user,
+                team_id = team_id,
+                invite_status="S"
+            )
+
+
+
+class MemberForm(forms.ModelForm):
+     class Meta:
+        """Form options."""
+
+        model = Team_Members
+        fields = ['username',]
+
+    #  def save(self):
+    #     super().save(commit=False)
+    #     team = Team.objects.create(
+    #         team_id = self.cleaned_data.get('team_id'),
+    #         team_leader = self.cleaned_data.get('team_leader'),
+    #         team_name =self.cleaned_data.get('team_name'),
+    #         team_description = self.cleaned_data.get('team_description'),
+    #     )
+
+    #     return team
