@@ -4,20 +4,90 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm
+from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm
 from tasks.helpers import login_prohibited
+from .models import Team_Members,Invites,Team
+from django.template.defaulttags import register
 
 
+def decline_team(request, team_id):
+    invite = Invites.objects.filter(team_id = team_id ,username = request.user)
+    if invite:
+        invite.delete()
+    return redirect(reverse('dashboard'))
+
+
+def join_team(request, team_id):
+    invite = Invites.objects.filter(team_id = team_id ,username = request.user)
+    if invite:
+        invite.delete()
+        Team_Members.objects.create(
+            username = request.user,
+            team_id = team_id,
+        )
+    return redirect(reverse('team_page'))
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+
+def team_page(request):
+    return render(request, 'team_page.html')
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
 
     current_user = request.user
-    return render(request, 'dashboard.html', {'user': current_user})
+    invite_list = []
+    team_names = {}
+
+    for invite in Invites.objects.filter(username=current_user):
+        invite_list.append(invite)
+
+    for invite in invite_list:
+        team_names[invite.team_id] = (Team.objects.get(team_id = invite.team_id)).team_name
+
+    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list})
+@login_required
+def add_members(request):
+    if request.method == 'POST':
+        form = InviteForm(request.POST) 
+        if form.is_valid():
+            team_id = request.session.get('team')
+            form.save_invites(team_id=team_id)
+            del request.session['team']
+            return redirect('dashboard'); 
+    else:
+        form = InviteForm()
+    return render(request, "add_members.html", {'form': form})
+@login_required
+
+@login_required
+def team_creation(request):
+    if request.method == 'POST':
+        form = TeamCreationForm(request.POST, request.FILES) 
+        if form.is_valid():
+            team = form.save(commit=False)
+            team.team_leader = request.user
+            team.save()
+            request.session['team'] = team.team_id
+            Team_Members.objects.create(
+                username=request.user,
+
+                team_id = request.session.get('team'),
+            )
+            return redirect('add_members'); 
+    else:
+        form = TeamCreationForm()
+    return render(request, "team_creation.html", {'form': form})
+
+
 
 
 @login_prohibited
@@ -151,3 +221,4 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+    
