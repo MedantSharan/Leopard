@@ -111,3 +111,24 @@ h3.profile-title {
   text-decoration: underline;
   color: #0d6efd;
 }
+
+/*
+ * Dashboard
+ */
+ .teams-card {
+  background-color: rgba(181, 186, 176, 0.535);
+  max-width: 30rem;
+  padding-top: 30px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 30px;
+  border-radius: 40px;
+ }
+
+ .teams-heading {
+  font-size: 3rem;
+ }
+
+ .teams-text {
+  font-size: 1.7rem;
+ }
