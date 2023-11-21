@@ -4,7 +4,7 @@
   <div class="row">
     <div class="col-12">
       <h1>Welcome to your dashboard {{ user.username }}</h1>
-      <a href='{% url 'team_creation' %}'>CREATE TEAM</a>
+      <a href="{% url 'team_creation' %}">CREATE TEAM</a>
       <ul>
         {% for invite in invites %}
           {% if invite.invite_status == "S"%}
@@ -20,6 +20,13 @@
           {% endif %}
         {% endfor %}
       </ul>
+      {% if teams %}
+        {% for team in teams %}
+        <a href="{% url 'team_page' team_id=team.team_id %}">
+          <button> {{ team.team_name }}</button>
+        </a>
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>

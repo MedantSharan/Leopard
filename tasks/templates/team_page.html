@@ -4,9 +4,11 @@
   <div class="row">
     <div class="col-12">
       <h1>TEAM TEAM TEAM</h1>
+      <form action="{% url 'create_task' %}" method="post">
+        {% csrf_token %}
+        {% include 'partials/bootstrap_form.html' with form=form %}
+        <input type="submit" value="Create task" class="btn btn-primary">
     </div>
   </div>
-  {% comment %} abu {% endcomment %}
-  
 </div>
 {% endblock %}

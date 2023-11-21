@@ -30,22 +30,28 @@ def join_team(request, team_id):
             username = request.user,
             team_id = team_id,
         )
-    return redirect(reverse('team_page'))
+    return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
 
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
 
 
-def team_page(request):
-    return render(request, 'team_page.html')
+def team_page(request, team_id):
+    teams = Team.objects.filter(team_id=team_id)
+    request.session['team'] = team_id
+    return render(request, 'team_page.html', {'teams' : teams})
+
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
-
+    if request.session.get('team'):
+        del request.session['team']
     current_user = request.user
     invite_list = []
     team_names = {}
+    user_teams = Team_Members.objects.filter(username=current_user)
+    teams = Team.objects.filter(team_id__in=user_teams.values('team_id'))
 
     for invite in Invites.objects.filter(username=current_user):
         invite_list.append(invite)
@@ -53,7 +59,8 @@ def dashboard(request):
     for invite in invite_list:
         team_names[invite.team_id] = (Team.objects.get(team_id = invite.team_id)).team_name
 
-    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list})
+    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams})
+
 @login_required
 def add_members(request):
     if request.method == 'POST':
@@ -223,15 +230,17 @@ class SignUpView(LoginProhibitedMixin, FormView):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 def create_task(request):
-    form = TaskForm(request.POST, request.FILES)
+    team_id = request.session.get('team')
+    form = TaskForm(team_id, request.POST, request.FILES)
     if form.is_valid():
         task = form.save(commit = False)
         task.created_by = request.user
         assigned_to_user = form.cleaned_data.get('assign_to_user')
         task.assigned_to = assigned_to_user
         task.save()
+        return redirect('team_page', team_id = team_id)
     else:
-        form = TaskForm()
+        form = TaskForm(team_id)
     return render(request, 'task.html', {'form' : form})
 
     
