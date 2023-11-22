@@ -50,11 +50,13 @@ class Team(models.Model):
         unique=False,
         blank=True,
         max_length=200,
-    )   
+    ) 
+
 
 class Team_Members(models.Model):
     team_id = models.IntegerField()
     username = models.ForeignKey(User, on_delete=models.CASCADE)
+    member_of_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
     
     class Meta:
             unique_together = ('team_id', 'username')

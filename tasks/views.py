@@ -29,6 +29,7 @@ def join_team(request, team_id):
         Team_Members.objects.create(
             username = request.user,
             team_id = team_id,
+            member_of_team = Team.objects.get(team_id = team_id)
         )
     return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
 
@@ -88,7 +89,10 @@ def team_creation(request):
                 username=request.user,
 
                 team_id = request.session.get('team'),
+
+                member_of_team = team
             )
+
             return redirect('add_members'); 
     else:
         form = TeamCreationForm()
