@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from tasks.models import Task, User
+from tasks.models import Task, User, Team_Members
 
 class TaskTest(TestCase):
     """Unit tests for the Task model."""
@@ -10,13 +10,13 @@ class TaskTest(TestCase):
     ]
 
     def setUp(self):
-        super(TestCase, self).setUp()
         self.user = User.objects.get(username='@johndoe')
+        self.team_member = Team_Members.objects.create(team_id = 1, username = self.user)
         self.task = Task(
             title = "Task title",
             description = "Description of the task",
             created_by = self.user,
-            assigned_to = self.user,
+            assigned_to = self.team_member,
         )
 
     def test_valid_task(self):

@@ -13,10 +13,11 @@ class TaskFormTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+        self.team_member = Team_Members.objects.create(team_id = 1, username = self.user)
         self.form_input = {
             'title' : 'Test task',
             'description' : 'This is a test task',
-            'assign_to_user' : self.user,
+            'assign_to_user' : self.team_member,
         }
 
         self.team = Team(team_id = 1, 
@@ -24,7 +25,6 @@ class TaskFormTestCase(TestCase):
             team_name ='Test team', 
             team_description = 'This is a test team'
         )
-        self.team_member = Team_Members(team_id = 1, username = self.user)
 
     def test_form_has_necessary_fields(self):
         form = TaskForm(team_id=1)
@@ -36,9 +36,9 @@ class TaskFormTestCase(TestCase):
         assigned_to_field = form.fields['assign_to_user']
         self.assertTrue(isinstance(assigned_to_field, forms.ChoiceField))
 
-    # def test_valid_task_form(self):
-    #     form = TaskForm(team_id = 1, data=self.form_input)
-    #     self.assertTrue(form.is_valid())
+    def test_valid_task_form(self):
+        form = TaskForm(team_id = 1, data=self.form_input)
+        self.assertTrue(form.is_valid())
 
     def test_invalid_task_form(self):
         input = {'title': 'x'*101 }
@@ -46,19 +46,19 @@ class TaskFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
 
-    # def test_form_must_save_correctly(self):
-    #     task = Task.objects.create(
-    #         title = "Task title",
-    #         description = "Description of the task",
-    #         created_by = self.user,
-    #         assigned_to = self.user,
-    #     )
-    #     form = TaskForm(team_id = 1, instance=task, data=self.form_input)
-    #     before_count = Task.objects.count()
-    #     form.save()
-    #     after_count = Task.objects.count()
-    #     self.assertEqual(after_count, before_count)
-    #     self.assertEqual(task.title, 'Test task')
-    #     self.assertEqual(task.description, 'This is a test task')
-    #     self.assertEqual(task.created_by, self.user)
-    #     self.assertEqual(task.assigned_to, self.user)
+    def test_form_must_save_correctly(self):
+        task = Task.objects.create(
+            title = "Task title",
+            description = "Description of the task",
+            created_by = self.user,
+            assigned_to = self.team_member,
+        )
+        form = TaskForm(team_id = 1, instance=task, data=self.form_input)
+        before_count = Task.objects.count()
+        form.save()
+        after_count = Task.objects.count()
+        self.assertEqual(after_count, before_count)
+        self.assertEqual(task.title, 'Test task')
+        self.assertEqual(task.description, 'This is a test task')
+        self.assertEqual(task.created_by, self.user)
+        self.assertEqual(task.assigned_to, self.team_member)

@@ -40,14 +40,6 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         
         return self.gravatar(size=60)
-
-class Task(models.Model):
-    """Tasks to be set to users"""
-
-    title = models.CharField(max_length = 100)
-    description = models.CharField(max_length = 500)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
-    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, null = True)
     
 
 class Team(models.Model):
@@ -67,6 +59,9 @@ class Team_Members(models.Model):
     class Meta:
             unique_together = ('team_id', 'username')
 
+    def __str__(self):
+        return self.username.username
+
 
 class Invites(models.Model):
     INVITE_STATUS = {
@@ -80,3 +75,11 @@ class Invites(models.Model):
 
     class Meta:
         unique_together = ('team_id', 'username')
+
+class Task(models.Model):
+    """Tasks to be set to users"""
+
+    title = models.CharField(max_length = 100)
+    description = models.CharField(max_length = 500)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
+    assigned_to = models.ForeignKey(Team_Members, on_delete=models.CASCADE, null = True)
