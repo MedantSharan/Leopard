@@ -20,7 +20,7 @@ class TaskFormTestCase(TestCase):
             'assign_to_user' : self.team_member,
         }
 
-        self.team = Team(team_id = 1, 
+        self.team = Team.objects.create(team_id = 1, 
             team_leader = self.user, 
             team_name ='Test team', 
             team_description = 'This is a test team'
@@ -52,6 +52,7 @@ class TaskFormTestCase(TestCase):
             description = "Description of the task",
             created_by = self.user,
             assigned_to = self.team_member,
+            related_to_team = self.team
         )
         form = TaskForm(team_id = 1, instance=task, data=self.form_input)
         before_count = Task.objects.count()

@@ -8,6 +8,12 @@
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
         <input type="submit" value="Create task" class="btn btn-primary">
+        {% if tasks %}
+          {% for task in tasks %}
+            <p> {{ task.title }}<p>
+          </a>
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>

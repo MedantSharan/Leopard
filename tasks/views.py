@@ -11,7 +11,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Team_Members,Invites,Team
+from .models import Team_Members,Invites,Team, Task
 from django.template.defaulttags import register
 
 
@@ -40,8 +40,9 @@ def get_item(dictionary, key):
 
 def team_page(request, team_id):
     teams = Team.objects.filter(team_id=team_id)
+    tasks_from_team = Task.objects.filter(related_to_team__team_id=team_id)
     request.session['team'] = team_id
-    return render(request, 'team_page.html', {'teams' : teams})
+    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team})
 
 @login_required
 def dashboard(request):
@@ -241,6 +242,7 @@ def create_task(request):
         task.created_by = request.user
         assigned_to_user = form.cleaned_data.get('assign_to_user')
         task.assigned_to = assigned_to_user
+        task.related_to_team = Team.objects.get(team_id = team_id)
         task.save()
         return redirect('team_page', team_id = team_id)
     else:

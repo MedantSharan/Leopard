@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from tasks.models import Task, User, Team_Members
+from tasks.models import Task, User, Team_Members, Team
 
 class TaskTest(TestCase):
     """Unit tests for the Task model."""
@@ -11,12 +11,19 @@ class TaskTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+        
+        self.team = Team.objects.create(team_id = 1, 
+            team_leader = self.user, 
+            team_name ='Test team', 
+            team_description = 'This is a test team'
+        )
         self.team_member = Team_Members.objects.create(team_id = 1, username = self.user)
         self.task = Task(
             title = "Task title",
             description = "Description of the task",
             created_by = self.user,
             assigned_to = self.team_member,
+            related_to_team = self.team
         )
 
     def test_valid_task(self):
@@ -52,5 +59,10 @@ class TaskTest(TestCase):
 
     def test_description_must_not_be_longet_than_500_characters(self):
         self.task.description = 'x' * 501
+        with self.assertRaises(ValidationError):
+            self.task.full_clean()
+
+    def test_must_be_related_to_a_team(self):
+        self.task.related_to_team = None
         with self.assertRaises(ValidationError):
             self.task.full_clean()

@@ -85,3 +85,4 @@ class Task(models.Model):
     description = models.CharField(max_length = 500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
     assigned_to = models.ForeignKey(Team_Members, on_delete=models.CASCADE, null = True)
+    related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
