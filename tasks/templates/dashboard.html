@@ -2,10 +2,13 @@
 {% load static %}
 
 {% block content %}
+
 <style>
   body {
-    background-image: url('{% static "images/dashboard background.jpeg" %}');
+    background-image: url('{% static "images/background.jpeg" %}');
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     margin: 0;
   }
 
@@ -61,7 +64,7 @@
           </tr>
           {% endfor %}
         </tbody>
-        </table>
+      </table>
     </div>
   </div>
 </div>

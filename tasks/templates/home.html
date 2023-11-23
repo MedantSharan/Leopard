@@ -2,6 +2,19 @@
 {% load static %}
 {% block body %}
 
+{% block content %}
+<style>
+  body {
+    background-image: url('{% static "images/background.jpeg" %}');
+    background-size: contain;
+    margin: 0;
+  }
+
+  .container {
+    padding-top: 50px;
+  }
+</style>>
+
   <div class="container vh-100">
     <div class="row h-100">
       <div class="col-12 my-auto">
