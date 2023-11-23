@@ -122,13 +122,13 @@ h3.profile-title {
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 40px;
+  border-radius: 30px;
  }
 
- .teams-heading {
-  font-size: 3rem;
+ h1.teams-heading {
+  font-size: 2.5rem;
  }
 
- .teams-text {
-  font-size: 1.7rem;
+ p.teams-text {
+  font-size: 1rem;
  }

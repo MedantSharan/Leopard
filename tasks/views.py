@@ -53,8 +53,9 @@ def team_creation(request):
         form = TeamCreationForm()
     return render(request, "team_creation.html", {'form': form})
 
-
-
+def team_list(request):
+    teams = Team_Members.objects.all()
+    return render(request, 'dashboard.html', {'teams': teams})
 
 @login_prohibited
 def home(request):
