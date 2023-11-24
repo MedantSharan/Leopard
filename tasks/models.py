@@ -84,6 +84,11 @@ class Task(models.Model):
     title = models.CharField(max_length = 100)
     description = models.CharField(max_length = 500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
-    assigned_to = models.ForeignKey(Team_Members, on_delete=models.CASCADE, null = True)
+    assigned_to = models.ManyToManyField(Team_Members, related_name = 'assigned_tasks')
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
     due_date = models.DateField(null = True, blank = True)
+
+    def clean(self):
+        super().clean()
+        if self.id and not self.assigned_to.exists():
+            raise Exception({'assigned_to': 'This task must be assigned to a user'})

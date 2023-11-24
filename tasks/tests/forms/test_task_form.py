@@ -17,7 +17,7 @@ class TaskFormTestCase(TestCase):
         self.form_input = {
             'title' : 'Test task',
             'description' : 'This is a test task',
-            'assign_to_user' : self.team_member,
+            'assign_to_user' : [self.team_member.username.id],
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -51,9 +51,10 @@ class TaskFormTestCase(TestCase):
             title = "Task title",
             description = "Description of the task",
             created_by = self.user,
-            assigned_to = self.team_member,
             related_to_team = self.team
         )
+        task.assigned_to.set([self.team_member])
+
         form = TaskForm(team_id = 1, instance=task, data=self.form_input)
         before_count = Task.objects.count()
         form.save()
@@ -62,4 +63,4 @@ class TaskFormTestCase(TestCase):
         self.assertEqual(task.title, 'Test task')
         self.assertEqual(task.description, 'This is a test task')
         self.assertEqual(task.created_by, self.user)
-        self.assertEqual(task.assigned_to, self.team_member)
+        self.assertQuerysetEqual(task.assigned_to.all(), [repr(self.team_member)], transform=repr)

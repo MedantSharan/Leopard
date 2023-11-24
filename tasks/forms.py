@@ -112,7 +112,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
 class TaskForm(forms.ModelForm):
     """Form to create tasks"""
 
-    assign_to_user = forms.ModelChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.Select)
+    assign_to_user = forms.ModelMultipleChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
 
     def __init__(self, team_id, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)

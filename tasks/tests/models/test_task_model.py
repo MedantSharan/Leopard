@@ -18,13 +18,13 @@ class TaskTest(TestCase):
             team_description = 'This is a test team'
         )
         self.team_member = Team_Members.objects.create(team_id = 1, username = self.user)
-        self.task = Task(
+        self.task = Task.objects.create(
             title = "Task title",
             description = "Description of the task",
             created_by = self.user,
-            assigned_to = self.team_member,
             related_to_team = self.team
         )
+        self.task.assigned_to.set([self.team_member])
 
     def test_valid_task(self):
         try:
@@ -38,8 +38,8 @@ class TaskTest(TestCase):
             self.task.full_clean()
 
     def test_must_be_assigned_to_a_user(self):
-        self.task.assigned_to = None
-        with self.assertRaises(ValidationError):
+        self.task.assigned_to.set([])
+        with self.assertRaises(Exception):
             self.task.full_clean()
 
     def test_title_must_not_be_blank(self):

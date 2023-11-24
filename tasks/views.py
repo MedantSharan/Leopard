@@ -241,7 +241,8 @@ def create_task(request):
         task = form.save(commit = False)
         task.created_by = request.user
         assigned_to_user = form.cleaned_data.get('assign_to_user')
-        task.assigned_to = assigned_to_user
+        task.save()
+        task.assigned_to.set(assigned_to_user)
         task.related_to_team = Team.objects.get(team_id = team_id)
         task.save()
         return redirect('team_page', team_id = team_id)
