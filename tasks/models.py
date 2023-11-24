@@ -86,3 +86,4 @@ class Task(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
     assigned_to = models.ForeignKey(Team_Members, on_delete=models.CASCADE, null = True)
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
+    due_date = models.DateField(null = True, blank = True)
