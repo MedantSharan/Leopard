@@ -54,6 +54,7 @@ def dashboard(request):
     team_names = {}
     user_teams = Team_Members.objects.filter(username=current_user)
     teams = Team.objects.filter(team_id__in=user_teams.values('team_id'))
+    tasks = Task.objects.filter(assigned_to__in=user_teams.values('id'))
 
     for invite in Invites.objects.filter(username=current_user):
         invite_list.append(invite)
@@ -61,7 +62,7 @@ def dashboard(request):
     for invite in invite_list:
         team_names[invite.team_id] = (Team.objects.get(team_id = invite.team_id)).team_name
 
-    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams})
+    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams, 'tasks' : tasks})
 
 @login_required
 def add_members(request):
