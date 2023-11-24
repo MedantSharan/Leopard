@@ -112,19 +112,18 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
 class TaskForm(forms.ModelForm):
     """Form to create tasks"""
 
-    assign_to_user = forms.ModelMultipleChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
-
+    assigned_to = forms.ModelMultipleChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
+    
     def __init__(self, team_id, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
         team_members = Team_Members.objects.filter(team_id=team_id)
-        self.fields['assign_to_user'].queryset = team_members
+        self.fields['assigned_to'].queryset = team_members
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date']
+        fields = ['title', 'description', 'due_date', 'assigned_to']
         widgets = {'description' : forms.Textarea(), 
         'due_date' : forms.DateInput(attrs={'type': 'date'})}
-    
 
 
 class TeamCreationForm(forms.ModelForm):

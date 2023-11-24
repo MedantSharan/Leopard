@@ -39,8 +39,8 @@ def get_item(dictionary, key):
 
 
 def team_page(request, team_id):
-    teams = Team.objects.filter(team_id=team_id)
-    tasks_from_team = Task.objects.filter(related_to_team__team_id=team_id)
+    teams = Team.objects.get(team_id=team_id)
+    tasks_from_team = Task.objects.filter(related_to_team = teams)
     request.session['team'] = team_id
     return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team})
 
@@ -241,7 +241,7 @@ def create_task(request):
     if form.is_valid():
         task = form.save(commit = False)
         task.created_by = request.user
-        assigned_to_user = form.cleaned_data.get('assign_to_user')
+        assigned_to_user = form.cleaned_data.get('assigned_to')
         task.save()
         task.assigned_to.set(assigned_to_user)
         task.related_to_team = Team.objects.get(team_id = team_id)
@@ -251,4 +251,14 @@ def create_task(request):
         form = TaskForm(team_id)
     return render(request, 'task.html', {'form' : form})
 
+def edit_task(request, task_id):
+    team_id = request.session.get('team')
+    task = Task.objects.get(pk = task_id)
+    form = TaskForm(team_id, request.POST, request.FILES, instance = task)
+    if form.is_valid():
+        form.save()
+        return redirect('team_page', team_id = team_id)
+    else:
+        form = TaskForm(team_id, instance=task)
+    return render(request, 'edit_task.html', {'form' : form})
     
