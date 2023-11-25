@@ -43,6 +43,7 @@ class User(AbstractUser):
     
 
 class Team(models.Model):
+    """ Model used to represent a team with fields like id, leader, name etc."""
     team_id = models.BigAutoField(primary_key=True)
     team_leader = models.ForeignKey(User, on_delete=models.CASCADE)
     team_name = models.CharField(max_length=30, blank=False)
@@ -53,6 +54,7 @@ class Team(models.Model):
     )   
 
 class Team_Members(models.Model):
+    """Model used to represent the members of a team"""
     team_id = models.IntegerField()
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     
@@ -61,6 +63,9 @@ class Team_Members(models.Model):
 
 
 class Invites(models.Model):
+    """Model used to represent invites"""
+
+    """Three different states any invite can be in are sent, rejected and accepted"""
     INVITE_STATUS = {
         ("S", "Sent"),
         ("R", "Rejected"),
@@ -70,5 +75,6 @@ class Invites(models.Model):
     team_id = models.IntegerField()
     invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
 
+    """Unique constraint"""
     class Meta:
         unique_together = ('team_id', 'username')
