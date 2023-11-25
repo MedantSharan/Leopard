@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from .models import User,Team,Team_Members,Invites
+from .models import User,Team,Team_Members,Invites, Task
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -108,7 +108,22 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
         return user
+
+class TaskForm(forms.ModelForm):
+    """Form to create tasks"""
+
+    assigned_to = forms.ModelMultipleChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
     
+    def __init__(self, team_id, *args, **kwargs):
+        super(TaskForm, self).__init__(*args, **kwargs)
+        team_members = Team_Members.objects.filter(team_id=team_id)
+        self.fields['assigned_to'].queryset = team_members
+
+    class Meta:
+        model = Task
+        fields = ['title', 'description', 'due_date', 'assigned_to']
+        widgets = {'description' : forms.Textarea(), 
+        'due_date' : forms.DateInput(attrs={'type': 'date'})}
 
 
 class TeamCreationForm(forms.ModelForm):
