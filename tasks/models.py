@@ -75,6 +75,6 @@ class Invites(models.Model):
     team_id = models.IntegerField()
     invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
 
-    """Unique constraint"""
+    """Unique Constraint"""
     class Meta:
         unique_together = ('team_id', 'username')
