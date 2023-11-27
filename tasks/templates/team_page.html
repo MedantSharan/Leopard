@@ -3,7 +3,17 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <h1>TEAM TEAM TEAM</h1>
+      <h1>{{teams.team_name}}</h1>
+      <h2>Team Leader: {{teams.team_leader}}</h2>
+      <h2>Description: {{teams.team_description}}</h2>
+      <div>
+        <h3> Current Team Members </h3>
+        <ul>
+        {% for member in teams_members %}
+        <li><p>{{member.username}}</p></li>
+        {%endfor%}
+        <ul>
+      </div>
       <form action="{% url 'create_task' %}" method="post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
@@ -16,7 +26,16 @@
               {% endif %}
         {% endfor %}
       {% endif %}
+      </form>
     </div>
+  </div>
+  <div>
+    {%if user == teams.team_leader %}
+    <form method="post" action="{% url 'delete_team' team_id=teams.team_id %}">
+      {%csrf_token%}
+      <input type="submit" value="Delete Team" class="btn btn-primary">
+    </form>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
