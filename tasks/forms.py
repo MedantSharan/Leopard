@@ -2,6 +2,8 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+import datetime
+from django.core.validators import MinValueValidator
 from .models import User,Team,Team_Members,Invites, Task
 
 class LogInForm(forms.Form):
@@ -109,10 +111,14 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         )
         return user
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class TaskForm(forms.ModelForm):
     """Form to create tasks"""
 
     assigned_to = forms.ModelMultipleChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
+    due_date = forms.DateField(widget = DateInput, validators=[MinValueValidator(datetime.date.today)], required = False)
     
     def __init__(self, team_id, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
@@ -122,8 +128,7 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['title', 'description', 'due_date', 'assigned_to']
-        widgets = {'description' : forms.Textarea(), 
-        'due_date' : forms.DateInput(attrs={'type': 'date'})}
+        widgets = {'description' : forms.Textarea()} 
 
 
 class TeamCreationForm(forms.ModelForm):

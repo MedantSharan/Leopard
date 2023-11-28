@@ -8,11 +8,12 @@
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
         <input type="submit" value="Create task" class="btn btn-primary">
+      </form>
         {% if tasks %}
           {% for task in tasks %}
             <p>{{ task.title }}</p>
               {% if task.created_by == request.user %}
-                <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit</a>
+                <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
               {% endif %}
         {% endfor %}
       {% endif %}
