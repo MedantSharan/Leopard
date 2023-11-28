@@ -11,22 +11,24 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Invites,Team, Task
+from .models import Invites,Team, Task, User
 from django.template.defaulttags import register
 
 
 def remove_member(request, team_id, username):
     """Allows Team Members to leave current team"""
-    team_member = Team_Members.objects.filter(username = User.objects.get(username=username), team_id = team_id)
+    user = User.objects.get(username = username)
+    team = Team.objects.get(team_id = team_id)
+    team_member = Team.objects.filter(team_members=user)
     if team_member:
-        team_member.delete()
+        team.team_members.remove(user)
     return redirect('dashboard')
 
 def leave_team(request, team_id):
     """Allows Team Members to leave current team"""
-    team_member = Team_Members.objects.filter(username = request.user, team_id = team_id)
-    if team_member:
-        team_member.delete()
+    team = Team.objects.get(team_id = team_id)
+    if team:
+        team.team_members.remove(request.user)
     return redirect('dashboard')
 
 def delete_team(request, team_id):
@@ -64,7 +66,7 @@ def team_page(request, team_id):
     request.session['team'] = team_id
     user = request.user
     teams_members = []
-    for member in Team_Members.objects.filter(team_id=team_id):
+    for member in teams.team_members.all():
         teams_members.append(member)
     return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members,})
 
