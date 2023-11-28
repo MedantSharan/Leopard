@@ -4,19 +4,12 @@
   <div class="row">
     <div class="col-12">
       <h1>TEAM TEAM TEAM</h1>
-      <form action="{% url 'create_task' %}" method="post">
-        {% csrf_token %}
-        {% include 'partials/bootstrap_form.html' with form=form %}
-        <input type="submit" value="Create task" class="btn btn-primary">
-      </form>
+      <a href="{% url 'create_task' %}" class="btn btn-primary">Create task</a>
         {% if tasks %}
           {% for task in tasks %}
             <p>{{ task.title }}</p>
               {% if task.created_by == request.user %}
-              <form action="{% url 'edit_task' task.id %}" method="post">
-                {% csrf_token %}
-                <input type="submit" value="Edit task" class="btn btn-secondary">
-              </form>
+                <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
               {% endif %}
         {% endfor %}
       {% endif %}
