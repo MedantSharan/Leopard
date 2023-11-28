@@ -52,7 +52,9 @@
             {% if teams %}
               {% for team in teams %}
                 <tr>
-                  <td>{{ team.team_name }}</td>
+                  <td><a href="{% url 'team_page' team_id=team.team_id %}">
+                    <button> {{ team.team_name }}</button>
+                  </a></td>
                   <td>{{ team.team_description }}</td>
                 </tr>
               {% endfor %}
