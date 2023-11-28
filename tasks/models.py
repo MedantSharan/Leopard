@@ -44,6 +44,7 @@ class User(AbstractUser):
 
 class Team(models.Model):
     """ Model used to represent a team with fields like id, leader, name etc."""
+    """ Model used to represent a team with fields like id, leader, name etc."""
     team_id = models.BigAutoField(primary_key=True)
     team_leader = models.ForeignKey(User, on_delete=models.CASCADE)
     team_name = models.CharField(max_length=30, blank=False)
@@ -52,22 +53,13 @@ class Team(models.Model):
         blank=True,
         max_length=200,
     ) 
-
-
-class Team_Members(models.Model):
-    """Model used to represent the members of a team"""
-    team_id = models.IntegerField()
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
-    member_of_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
-    
-    class Meta:
-            unique_together = ('team_id', 'username')
-
-    def __str__(self):
-        return self.username.username
+    team_members = models.ManyToManyField(User, related_name = 'member_of_team')
 
 
 class Invites(models.Model):
+    """Model used to represent invites"""
+
+    """Three different states any invite can be in are sent, rejected and accepted"""
     """Model used to represent invites"""
 
     """Three different states any invite can be in are sent, rejected and accepted"""
@@ -90,7 +82,7 @@ class Task(models.Model):
     title = models.CharField(max_length = 100)
     description = models.CharField(max_length = 500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
-    assigned_to = models.ManyToManyField(Team_Members, related_name = 'assigned_tasks')
+    assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
     due_date = models.DateField(null = True, blank = True)
 

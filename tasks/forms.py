@@ -2,7 +2,9 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from .models import User,Team,Team_Members,Invites, Task
+import datetime
+from django.core.validators import MinValueValidator
+from .models import User,Team,Invites, Task
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -109,21 +111,25 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         )
         return user
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class TaskForm(forms.ModelForm):
     """Form to create tasks"""
 
-    assigned_to = forms.ModelMultipleChoiceField(queryset=Team_Members.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
+    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
+    due_date = forms.DateField(widget = DateInput, validators=[MinValueValidator(datetime.date.today)], required = False)
     
     def __init__(self, team_id, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
-        team_members = Team_Members.objects.filter(team_id=team_id)
+        team = Team.objects.filter(team_id=team_id)
+        team_members = User.objects.filter(member_of_team__team_id=team_id)
         self.fields['assigned_to'].queryset = team_members
 
     class Meta:
         model = Task
         fields = ['title', 'description', 'due_date', 'assigned_to']
-        widgets = {'description' : forms.Textarea(), 
-        'due_date' : forms.DateInput(attrs={'type': 'date'})}
+        widgets = {'description' : forms.Textarea()} 
 
 
 class TeamCreationForm(forms.ModelForm):
@@ -160,20 +166,3 @@ class InviteForm(forms.Form):
 
 
 
-class MemberForm(forms.ModelForm):
-     class Meta:
-        """Form options."""
-
-        model = Team_Members
-        fields = ['username',]
-
-    #  def save(self):
-    #     super().save(commit=False)
-    #     team = Team.objects.create(
-    #         team_id = self.cleaned_data.get('team_id'),
-    #         team_leader = self.cleaned_data.get('team_leader'),
-    #         team_name =self.cleaned_data.get('team_name'),
-    #         team_description = self.cleaned_data.get('team_description'),
-    #     )
-
-    #     return team
