@@ -11,9 +11,16 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Team_Members,Invites,Team, Task
+from .models import Team_Members,Invites,Team, Task,User
 from django.template.defaulttags import register
 
+
+def remove_member(request, team_id, username):
+    """Allows Team Members to leave current team"""
+    team_member = Team_Members.objects.filter(username = User.objects.get(username=username), team_id = team_id)
+    if team_member:
+        team_member.delete()
+    return redirect('dashboard')
 
 def leave_team(request, team_id):
     """Allows Team Members to leave current team"""
