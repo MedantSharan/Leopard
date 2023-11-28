@@ -37,7 +37,7 @@ class TaskFormTestCase(TestCase):
         self.assertTrue(isinstance(description_field.widget, forms.Textarea))
         self.assertIn('assigned_to', form.fields)
         assigned_to_field = form.fields['assigned_to']
-        self.assertTrue(isinstance(assigned_to_field, forms.ChoiceField))
+        self.assertTrue(isinstance(assigned_to_field, forms.ModelMultipleChoiceField))
         self.assertIn('due_date', form.fields)
         due_date_field = form.fields['due_date']
         self.assertTrue(isinstance(due_date_field.widget, forms.DateInput))
@@ -78,6 +78,11 @@ class TaskFormTestCase(TestCase):
         self.form_input['due_date'] =  (datetime.now().date() - timedelta(days=1))
         form = TaskForm(team_id = 1, data=self.form_input)
         self.assertFalse(form.is_valid())
+
+    def test_due_date_can_be_blank(self):
+        self.form_input['due_date'] = ''
+        form = TaskForm(team_id = 1, data=self.form_input)
+        self.assertTrue(form.is_valid())
 
     def test_must_be_assigned_to_a_user(self):
         self.form_input['assigned_to'] = []

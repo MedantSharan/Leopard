@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from datetime import datetime, timedelta
 from django.test import TestCase
 from tasks.models import Task, User, Team_Members, Team
 
@@ -22,7 +23,8 @@ class TaskTest(TestCase):
             title = "Task title",
             description = "Description of the task",
             created_by = self.user,
-            related_to_team = self.team
+            related_to_team = self.team,
+            due_date = (datetime.now().date() + timedelta(days=1)),
         )
         self.task.assigned_to.set([self.team_member])
 
@@ -66,3 +68,12 @@ class TaskTest(TestCase):
         self.task.related_to_team = None
         with self.assertRaises(ValidationError):
             self.task.full_clean()
+
+    def test_due_date_can_be_null(self):
+        self.task.due_date = None
+        try:
+            self.task.full_clean()
+        except ValidationError:
+            self.fail("Due date should be valid")
+
+    
