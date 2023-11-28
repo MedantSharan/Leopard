@@ -3,7 +3,7 @@ from django import forms
 from datetime import datetime, timedelta
 from django.test import TestCase
 from tasks.forms import TaskForm
-from tasks.models import Task, User, Team, Team_Members
+from tasks.models import Task, User, Team
 
 class TaskFormTestCase(TestCase):
     """Unit tests of the task form."""
@@ -15,19 +15,19 @@ class TaskFormTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
-        self.team_member = Team_Members.objects.create(team_id = 1, username = self.user)
         self.form_input = {
             'title' : 'Test task',
             'description' : 'This is a test task',
-            'assigned_to' : [self.team_member.username.id],
+            'assigned_to' : [self.user],
             'due_date' : (datetime.now().date() + timedelta(days=1)),
         }
 
         self.team = Team.objects.create(team_id = 1, 
             team_leader = self.user, 
             team_name ='Test team', 
-            team_description = 'This is a test team'
+            team_description = 'This is a test team',
         )
+        self.team.team_members.set([self.user])
 
     def test_form_has_necessary_fields(self):
         form = TaskForm(team_id=1)
@@ -60,7 +60,7 @@ class TaskFormTestCase(TestCase):
             related_to_team = self.team,
             due_date = (datetime.now().date() + timedelta(days=2))
         )
-        task.assigned_to.set([self.team_member])
+        task.assigned_to.set([self.user])
 
         form = TaskForm(team_id = 1, instance=task, data=self.form_input)
         before_count = Task.objects.count()
@@ -70,7 +70,7 @@ class TaskFormTestCase(TestCase):
         self.assertEqual(task.title, 'Test task')
         self.assertEqual(task.description, 'This is a test task')
         self.assertEqual(task.created_by, testUser)
-        self.assertQuerysetEqual(task.assigned_to.all(), [repr(self.team_member)], transform=repr)
+        self.assertQuerysetEqual(task.assigned_to.all(), [repr(self.user)], transform=repr)
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.due_date, (datetime.now().date() + timedelta(days=1)))
 

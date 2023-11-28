@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 from django.test import TestCase
-from tasks.models import Task, User, Team_Members, Team
+from tasks.models import Task, User, Team
 
 class TaskTest(TestCase):
     """Unit tests for the Task model."""
@@ -18,7 +18,8 @@ class TaskTest(TestCase):
             team_name ='Test team', 
             team_description = 'This is a test team'
         )
-        self.team_member = Team_Members.objects.create(team_id = 1, username = self.user)
+        self.team.team_members.set([self.user])
+        
         self.task = Task.objects.create(
             title = "Task title",
             description = "Description of the task",
@@ -26,7 +27,7 @@ class TaskTest(TestCase):
             related_to_team = self.team,
             due_date = (datetime.now().date() + timedelta(days=1)),
         )
-        self.task.assigned_to.set([self.team_member])
+        self.task.assigned_to.set([self.user])
 
     def test_valid_task(self):
         try:
