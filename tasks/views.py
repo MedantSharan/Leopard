@@ -47,14 +47,10 @@ def delete_team(request, team_id):
     """Allow Team Leader to delete current team"""
     team = Team.objects.filter(team_id = team_id ,team_leader = request.user)
     team_task = Team.objects.get(team_id = team_id)
-    tasks = Task.objects.filter(related_to_team = team_task)
     for invite in Invites.objects.filter(team_id=team_id):
         invite.delete()
     if team:
         team.delete()
-    if tasks:
-        for task in tasks:
-            task.delete()
     return redirect('dashboard')
 
 def decline_team(request, team_id):

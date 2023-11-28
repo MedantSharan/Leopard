@@ -11,7 +11,7 @@
         {% if tasks %}
           {% for task in tasks %}
             <p>{{ task.title }}</p>
-              {% if task.created_by == request.user %}
+              {% if task.created_by == request.user or request.user in task.assigned_to.all %}
                 <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
               {% endif %}
         {% endfor %}
