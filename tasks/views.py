@@ -20,24 +20,41 @@ def remove_member(request, team_id, username):
     user = User.objects.get(username = username)
     team = Team.objects.get(team_id = team_id)
     team_member = Team.objects.filter(team_members=user)
+    tasks = Task.objects.filter(related_to_team = team, assigned_to = user)
     if team_member:
         team.team_members.remove(user)
+    if tasks:
+        for task in tasks:
+            task.assigned_to.remove(user)
+            if task.assigned_to.count() == 0:
+                task.delete()
     return redirect('dashboard')
 
 def leave_team(request, team_id):
     """Allows Team Members to leave current team"""
     team = Team.objects.get(team_id = team_id)
+    tasks = Task.objects.filter(related_to_team = team, assigned_to = request.user)
     if team:
         team.team_members.remove(request.user)
+    if tasks:
+        for task in tasks:
+            task.assigned_to.remove(request.user)
+            if task.assigned_to.count() == 0:
+                task.delete()
     return redirect('dashboard')
 
 def delete_team(request, team_id):
     """Allow Team Leader to delete current team"""
     team = Team.objects.filter(team_id = team_id ,team_leader = request.user)
+    team_task = Team.objects.get(team_id = team_id)
+    tasks = Task.objects.filter(related_to_team = team_task)
     for invite in Invites.objects.filter(team_id=team_id):
         invite.delete()
     if team:
         team.delete()
+    if tasks:
+        for task in tasks:
+            task.delete()
     return redirect('dashboard')
 
 def decline_team(request, team_id):
