@@ -15,6 +15,29 @@ from .models import Invites,Team, Task
 from django.template.defaulttags import register
 
 
+def remove_member(request, team_id, username):
+    """Allows Team Members to leave current team"""
+    team_member = Team_Members.objects.filter(username = User.objects.get(username=username), team_id = team_id)
+    if team_member:
+        team_member.delete()
+    return redirect('dashboard')
+
+def leave_team(request, team_id):
+    """Allows Team Members to leave current team"""
+    team_member = Team_Members.objects.filter(username = request.user, team_id = team_id)
+    if team_member:
+        team_member.delete()
+    return redirect('dashboard')
+
+def delete_team(request, team_id):
+    """Allow Team Leader to delete current team"""
+    team = Team.objects.filter(team_id = team_id ,team_leader = request.user)
+    for invite in Invites.objects.filter(team_id=team_id):
+        invite.delete()
+    if team:
+        team.delete()
+    return redirect('dashboard')
+
 def decline_team(request, team_id):
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
@@ -39,7 +62,11 @@ def team_page(request, team_id):
     teams = Team.objects.get(team_id=team_id)
     tasks_from_team = Task.objects.filter(related_to_team = teams)
     request.session['team'] = team_id
-    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team})
+    user = request.user
+    teams_members = []
+    for member in Team_Members.objects.filter(team_id=team_id):
+        teams_members.append(member)
+    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members,})
 
 @login_required
 def dashboard(request):

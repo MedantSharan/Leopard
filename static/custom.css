@@ -113,3 +113,25 @@ h3.profile-title {
   text-decoration: underline;
   color: #0d6efd;
 }
+
+/* Team Page */
+.section-title{
+  text-align: center;
+  margin-bottom: 50px;
+}
+.members-container{
+  text-align: center;
+}
+
+.members-list{
+  list-style: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.members{
+  background-color: lightgrey;
+  width: fit-content;
+  /* padding: 0px 20px; */
+  border-radius: 30px ;
+}
