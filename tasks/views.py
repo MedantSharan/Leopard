@@ -261,4 +261,10 @@ def edit_task(request, task_id):
     else:
         form = TaskForm(team_id, instance=task)
     return render(request, 'edit_task.html', {'form' : form})
+
+def delete_task(request, task_id):
+    team_id = request.session.get('team')
+    task = Task.objects.get(pk = task_id)
+    task.delete()
+    return redirect('team_page', team_id = team_id)
     

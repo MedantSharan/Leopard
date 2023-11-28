@@ -13,7 +13,10 @@
           {% for task in tasks %}
             <p>{{ task.title }}</p>
               {% if task.created_by == request.user %}
-                <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
+              <form action="{% url 'edit_task' task.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Edit task" class="btn btn-secondary">
+              </form>
               {% endif %}
         {% endfor %}
       {% endif %}
