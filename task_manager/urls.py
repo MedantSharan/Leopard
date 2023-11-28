@@ -35,4 +35,5 @@ urlpatterns = [
     path('join_team/<int:team_id>', views.join_team, name = 'join_team'),
     path('decline_team/<int:team_id>', views.decline_team, name = 'decline_team'),
     path('delete_team/<int:team_id>', views.delete_team, name = 'delete_team'),
+    path('leave_team/<int:team_id>', views.leave_team, name = 'leave_team'),
 ]

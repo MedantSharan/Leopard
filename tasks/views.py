@@ -15,6 +15,13 @@ from .models import Team_Members,Invites,Team, Task
 from django.template.defaulttags import register
 
 
+def leave_team(request, team_id):
+    """Allows Team Members to leave current team"""
+    team_member = Team_Members.objects.filter(username = request.user, team_id = team_id)
+    if team_member:
+        team_member.delete()
+    return redirect('dashboard')
+
 def delete_team(request, team_id):
     """Allow Team Leader to delete current team"""
     team = Team.objects.filter(team_id = team_id ,team_leader = request.user)

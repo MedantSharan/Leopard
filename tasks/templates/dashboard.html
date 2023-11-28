@@ -8,7 +8,7 @@
       <ul>
         {% for invite in invites %}
           {% if invite.invite_status == "S"%}
-            <li>{{team_invites|get_item:invite.team_id}} Has invited you</li>
+            <li>{{team_invites|get_item:invite.team_id}} Has invited you
             <form method="post" action="{% url 'join_team' team_id=invite.team_id%}">
               {%csrf_token%}
               <input type="submit" value="Accept" class="btn btn-primary">
@@ -16,7 +16,7 @@
             <form method="post" action="{% url 'decline_team' team_id=invite.team_id%}">
               {%csrf_token%}
               <input type="submit" value="Decline" class="btn btn-primary">
-            </form>
+            </form></li>
           {% endif %}
         {% endfor %}
       </ul>
