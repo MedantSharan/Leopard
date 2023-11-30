@@ -151,7 +151,7 @@ h3.profile-title {
  }
 
  .teams-heading {
-  font-size: 3rem;
+  font-size: 2.0rem;
  }
 
  .teams-text {
@@ -173,5 +173,23 @@ h3.profile-title {
  }
 
  .invites-text {
+  font-size: 1.7rem;
+ }
+
+ .tasks-card {
+  background-color: rgba(181, 186, 176, 0.535);
+  max-width: 30rem;
+  padding-top: 30px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 30px;
+  border-radius: 40px;
+ }
+
+ .tasks-heading {
+  font-size: 3rem;
+ }
+
+ .tasks-text {
   font-size: 1.7rem;
  }

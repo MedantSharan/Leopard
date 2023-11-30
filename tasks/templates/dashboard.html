@@ -13,7 +13,8 @@
   }
 
   .container {
-    padding-top: 50px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 </style>
 
@@ -37,7 +38,7 @@
         {% endfor %}
       </ul>
 
-      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-7">
+      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-0 col-5">
         <h1 class="teams-heading">Teams</h1>
         <a href="{% url 'team_creation' %}">CREATE TEAM</a>
         <p class="teams-text">View all your teams below:</p>
@@ -56,6 +57,29 @@
                     <button> {{ team.team_name }}</button>
                   </a></td>
                   <td>{{ team.team_description }}</td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-7">
+        <h1 class="teams-heading">Tasks</h1>
+        <p class="teams-text">View all of your tasks below:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Tasks Title</th>
+              <th>Task Decription</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if tasks %}
+              {% for task in tasks %}
+                <tr>
+                  <td>{{ task.title }}</td>
+                  <td>{{ task.task_description }}</td>
                 </tr>
               {% endfor %}
             {% endif %}
