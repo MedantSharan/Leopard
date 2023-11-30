@@ -22,7 +22,7 @@ def remove_member(request, team_id, username):
     team_member = Team.objects.filter(team_members=user)
     if team_member:
         team.team_members.remove(user)
-    return redirect('dashboard')
+    return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
 
 def leave_team(request, team_id):
     """Allows Team Members to leave current team"""
