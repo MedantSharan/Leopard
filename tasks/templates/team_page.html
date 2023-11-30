@@ -24,7 +24,7 @@
       <a href="{% url 'add_members' %}" class = "btn btn-primary"> Add Members</a>
       {% for member in teams_members %}
       <li class="members">{{member.username}}   </li>
-        {% if user == teams.team_leader and member.username != teams.team_leader %}
+        {% if user == teams.team_leader and member != teams.team_leader %}
         <form method="post" action="{% url 'remove_member' team_id=teams.team_id username=member.username %}">
           {%csrf_token%}
           <input type="submit" value="Remove" class="btn btn-primary">
