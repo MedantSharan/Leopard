@@ -96,5 +96,3 @@ class CreateTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)
-
-    
