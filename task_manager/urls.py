@@ -30,6 +30,7 @@ urlpatterns = [
     path('create_task/', views.create_task, name = 'create_task'),
     path('edit_task/<int:task_id>', views.edit_task, name = 'edit_task'),
     path('delete_task/<int:task_id>', views.delete_task, name = 'delete_task'),
+    path('view_task/<int:task_id>', views.view_task, name = 'view_task'),
     path('team_creation/', views.team_creation, name = "team_creation"),
     path('add_members/', views.add_members, name = "add_members"),
     path('team_page/<int:team_id>', views.team_page, name = "team_page"),

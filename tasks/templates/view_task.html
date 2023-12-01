@@ -1,0 +1,21 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1>{{ task.title }}</h1>
+        <p>{{ task.description }}</p>
+        {% if task.due_date %}
+            <h2>Due:</h2>
+            <p>{{ task.due_date }}</p>
+        {% endif %}
+        <h2>Assigned To:</h2>
+        <ul>
+            {% for user in task.assigned_to.all %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
