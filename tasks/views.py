@@ -308,7 +308,6 @@ def delete_task(request, task_id):
     return redirect('team_page', team_id = team_id)
 
 @login_required
-
 def view_task(request, task_id):
     task = Task.objects.get(pk = task_id)
     return render(request, 'view_task.html', {'task' : task})

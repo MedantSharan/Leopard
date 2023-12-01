@@ -1,4 +1,4 @@
-"""Tests of the delete_task view."""
+"""Tests of the view_task view."""
 from django.test import TestCase
 from django.urls import reverse
 from datetime import datetime, timedelta
@@ -6,7 +6,7 @@ from tasks.models import User, Task, Team
 from tasks.forms import TaskForm
 
 class CreateTaskViewTestCase(TestCase):
-    """Unit tests of the delete_task view."""
+    """Unit tests of the view_task view."""
 
     fixtures = [
         'tasks/tests/fixtures/default_user.json',
@@ -32,25 +32,22 @@ class CreateTaskViewTestCase(TestCase):
         self.task.related_to_team = self.team
         self.task.save()
 
-        self.url = reverse('delete_task', kwargs={'task_id': self.task.id})
+        self.url = reverse('view_task', kwargs={'task_id': self.task.id})
 
-    def test_delete_task_url(self):
-        self.assertEqual(self.url, f'/delete_task/{self.task.id}')
+    def test_view_task_url(self):
+        self.assertEqual(self.url, f'/view_task/{self.task.id}')
 
-    def test_delete_task(self):
+    def test_get_view_task(self):
         self.client.login(username=self.user.username, password='Password123')
         session = self.client.session
         session.update({'team': self.team.team_id})
         session.save()
         self.session = session
-        before_count = Task.objects.count()
-        response = self.client.post(self.url, follow = True)
-        after_count = Task.objects.count()
-        self.assertEqual(after_count, before_count - 1)
-        self.assertRedirects(response, reverse('team_page', kwargs={'team_id': self.team.team_id}), status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'team_page.html')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'view_task.html')
 
-    def test_delete_task_redirects_when_not_logged_in(self):
+    def test_get_view_task_redirects_when_not_logged_in(self):
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('log_in') + f'?next={self.url}'
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
