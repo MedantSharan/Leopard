@@ -275,9 +275,10 @@ h3.profile-title {
   }
 
   .title-bar {
+    margin-top: -50;
     background-color: rgb(231, 226, 226);
-    padding: 10px;
-    margin-bottom: 20px;
+    /* padding: 10px; */
+    /* margin-bottom: 20px; */
   }
 
   .dashboard-title {
