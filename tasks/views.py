@@ -9,11 +9,49 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm, TaskForm
+from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Team_Members,Invites,Team, Task
+from .models import Invites,Team, Task, User
 from django.template.defaulttags import register
 
+
+def remove_member(request, team_id, username):
+    """Allows Team Members to leave current team"""
+    user = User.objects.get(username = username)
+    team = Team.objects.get(team_id = team_id)
+    team_member = Team.objects.filter(team_members=user)
+    tasks = Task.objects.filter(related_to_team = team, assigned_to = user)
+    if team_member:
+        team.team_members.remove(user)
+    if tasks:
+        for task in tasks:
+            task.assigned_to.remove(user)
+            if task.assigned_to.count() == 0:
+                task.delete()
+    return redirect('dashboard')
+
+def leave_team(request, team_id):
+    """Allows Team Members to leave current team"""
+    team = Team.objects.get(team_id = team_id)
+    tasks = Task.objects.filter(related_to_team = team, assigned_to = request.user)
+    if team:
+        team.team_members.remove(request.user)
+    if tasks:
+        for task in tasks:
+            task.assigned_to.remove(request.user)
+            if task.assigned_to.count() == 0:
+                task.delete()
+    return redirect('dashboard')
+
+def delete_team(request, team_id):
+    """Allow Team Leader to delete current team"""
+    team = Team.objects.filter(team_id = team_id ,team_leader = request.user)
+    team_task = Team.objects.get(team_id = team_id)
+    for invite in Invites.objects.filter(team_id=team_id):
+        invite.delete()
+    if team:
+        team.delete()
+    return redirect('dashboard')
 
 def decline_team(request, team_id):
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
@@ -26,11 +64,8 @@ def join_team(request, team_id):
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
-        Team_Members.objects.create(
-            username = request.user,
-            team_id = team_id,
-            member_of_team = Team.objects.get(team_id = team_id)
-        )
+        team = Team.objects.get(team_id = team_id)
+        team.team_members.add(request.user)
     return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
 
 @register.filter
@@ -42,7 +77,11 @@ def team_page(request, team_id):
     teams = Team.objects.get(team_id=team_id)
     tasks_from_team = Task.objects.filter(related_to_team = teams)
     request.session['team'] = team_id
-    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team})
+    user = request.user
+    teams_members = []
+    for member in teams.team_members.all():
+        teams_members.append(member)
+    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members,})
 
 @login_required
 def dashboard(request):
@@ -52,9 +91,9 @@ def dashboard(request):
     current_user = request.user
     invite_list = []
     team_names = {}
-    user_teams = Team_Members.objects.filter(username=current_user)
+    user_teams = Team.objects.filter(team_members__in=[current_user])
     teams = Team.objects.filter(team_id__in=user_teams.values('team_id'))
-    tasks = Task.objects.filter(assigned_to__in=user_teams.values('id'))
+    tasks = Task.objects.filter(assigned_to__in=[current_user])
 
     for invite in Invites.objects.filter(username=current_user):
         invite_list.append(invite)
@@ -87,14 +126,8 @@ def team_creation(request):
             team.team_leader = request.user
             team.save()
             request.session['team'] = team.team_id
-            Team_Members.objects.create(
-                username=request.user,
-
-                team_id = request.session.get('team'),
-
-                member_of_team = team
-            )
-
+            team.team_members.set([request.user])
+            team.save
             return redirect('add_members'); 
     else:
         form = TeamCreationForm()
@@ -243,30 +276,47 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+@login_required
 def create_task(request):
     team_id = request.session.get('team')
-    form = TaskForm(team_id, request.POST, request.FILES)
-    if form.is_valid():
-        task = form.save(commit = False)
-        task.created_by = request.user
-        assigned_to_user = form.cleaned_data.get('assigned_to')
-        task.save()
-        task.assigned_to.set(assigned_to_user)
-        task.related_to_team = Team.objects.get(team_id = team_id)
-        task.save()
-        return redirect('team_page', team_id = team_id)
-    else:
+    if request.method == 'POST':
+        form = TaskForm(team_id, request.POST, request.FILES)
+        if form.is_valid():
+            task = form.save(commit = False)
+            task.created_by = request.user
+            assigned_to_user = form.cleaned_data.get('assigned_to')
+            task.save()
+            task.assigned_to.set(assigned_to_user)
+            task.related_to_team = Team.objects.get(team_id = team_id)
+            task.save()
+            return redirect('team_page', team_id = team_id)
+    else: 
         form = TaskForm(team_id)
     return render(request, 'task.html', {'form' : form})
 
+@login_required
 def edit_task(request, task_id):
     team_id = request.session.get('team')
     task = Task.objects.get(pk = task_id)
-    form = TaskForm(team_id, request.POST, request.FILES, instance = task)
-    if form.is_valid():
-        form.save()
-        return redirect('team_page', team_id = team_id)
-    else:
-        form = TaskForm(team_id, instance=task)
+    if request.method == 'POST':
+        form = TaskForm(team_id, request.POST, request.FILES, instance = task)
+        if form.is_valid():
+            form.save()
+            return redirect('team_page', team_id = team_id)
+    else: 
+        form = TaskForm(team_id, instance = task)
+    
     return render(request, 'edit_task.html', {'form' : form})
+
+@login_required
+def delete_task(request, task_id):
+    team_id = request.session.get('team')
+    task = Task.objects.get(pk = task_id)
+    task.delete()
+    return redirect('team_page', team_id = team_id)
+
+@login_required
+def view_task(request, task_id):
+    task = Task.objects.get(pk = task_id)
+    return render(request, 'view_task.html', {'task' : task})
     
