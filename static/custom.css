@@ -123,7 +123,7 @@ h3.profile-title {
 
 .content a:hover {
   text-decoration: underline;
-  color: rgb(14, 53, 14)
+  color: rgb(14, 53, 14);
 }
 
 /*
@@ -171,6 +171,7 @@ h3.profile-title {
   padding-right: 50px;
   padding-bottom: 30px;
   border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .invites-heading {
@@ -189,6 +190,7 @@ h3.profile-title {
   padding-right: 50px;
   padding-bottom: 30px;
   border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .tasks-heading {
