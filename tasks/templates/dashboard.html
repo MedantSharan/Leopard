@@ -6,10 +6,11 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <h1>Welcome to your dashboard {{ user.username }}</h1>
-
+      <div class="title-bar">
+        <h1 class="dashboard-title">Welcome to your dashboard {{ user.username }}</h1>
+      </div>
       <!--TEAMS COMPONENT-->
-      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-0 col-5">
+      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-8 col-8">
         <h1 class="teams-heading">Teams</h1>
         <a href="{% url 'team_creation' %}">CREATE TEAM</a>
         <p class="teams-text">View all your teams below:</p>
@@ -22,14 +23,14 @@
           </thead>
           <tbody>
             {% if teams %}
-              {% for team in teams %}
-                <tr>
-                  <td><a href="{% url 'team_page' team_id=team.team_id %}">
-                    <button> {{ team.team_name }}</button>
-                  </a></td>
-                  <td>{{ team.team_description }}</td>
-                </tr>
-              {% endfor %}
+            {% for team in teams %}
+            <tr>
+              <td><a href="{% url 'team_page' team_id=team.team_id %}">
+                  <button> {{ team.team_name }}</button>
+                </a></td>
+              <td>{{ team.team_description }}</td>
+            </tr>
+            {% endfor %}
             {% endif %}
           </tbody>
         </table>
@@ -48,12 +49,12 @@
           </thead>
           <tbody>
             {% if tasks %}
-              {% for task in tasks %}
-                <tr>
-                  <td>{{ task.title }}</td>
-                  <td>{{ task.description }}</td>
-                </tr>
-              {% endfor %}
+            {% for task in tasks %}
+            <tr>
+              <td>{{ task.title }}</td>
+              <td>{{ task.description }}</td>
+            </tr>
+            {% endfor %}
             {% endif %}
           </tbody>
         </table>
@@ -72,21 +73,21 @@
           </thead>
           <tbody>
             {% for invite in invites %}
-              {% if invite.invite_status == "S"%}
-                <tr>
-                  <td>{{team_invites|get_item:invite.team_id}} has invited you</td>
-                  <td>
-                    <form method="post" action="{% url 'join_team' team_id=invite.team_id%}">
-                      {%csrf_token%}
-                      <input type="submit" value="Accept" class="btn btn-primary">
-                    </form>
-                    <form method="post" action="{% url 'decline_team' team_id=invite.team_id%}">
-                      {%csrf_token%}
-                      <input type="submit" value="Decline" class="btn btn-primary">
-                    </form>
-                  </td>
-                </tr>
-              {% endif %}
+            {% if invite.invite_status == "S"%}
+            <tr>
+              <td>{{team_invites|get_item:invite.team_id}} has invited you</td>
+              <td>
+                <form method="post" action="{% url 'join_team' team_id=invite.team_id%}">
+                  {%csrf_token%}
+                  <input type="submit" value="Accept" class="btn btn-primary">
+                </form>
+                <form method="post" action="{% url 'decline_team' team_id=invite.team_id%}">
+                  {%csrf_token%}
+                  <input type="submit" value="Decline" class="btn btn-primary">
+                </form>
+              </td>
+            </tr>
+            {% endif %}
             {% endfor %}
           </tbody>
         </table>

@@ -46,13 +46,15 @@ p.cover-text {
 }
 
 .cover-card {
-  background-color: rgba(159, 200, 105, 0.6);
+  background-color: rgb(241, 238, 238);
   max-width: 30rem;
   padding-top: 30px;
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 40px;
+  border-radius: 0px;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .cover-card-block {
@@ -143,13 +145,14 @@ h3.profile-title {
  * Dashboard
  */
 .teams-card {
-  background-color: rgba(181, 186, 176, 0.535);
+  background-color: rgb(231, 226, 226);
   max-width: 30rem;
   padding-top: 30px;
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .teams-heading {
@@ -161,13 +164,13 @@ h3.profile-title {
 }
 
 .invites-card {
-  background-color: rgba(181, 186, 176, 0.535);
+  background-color: rgb(231, 226, 226);
   max-width: 30rem;
   padding-top: 30px;
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 40px;
+  border-radius: 20px;
 }
 
 .invites-heading {
@@ -179,13 +182,13 @@ h3.profile-title {
 }
 
 .tasks-card {
-  background-color: rgba(181, 186, 176, 0.535);
+  background-color: rgb(231, 226, 226);
   max-width: 30rem;
   padding-top: 30px;
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 40px;
+  border-radius: 20px;
 }
 
 .tasks-heading {
@@ -219,6 +222,13 @@ h3.profile-title {
   border-radius: 30px;
 }
 
+.encapsulate-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 0px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 .row {
   display: flex;
   align-items: center;
@@ -226,29 +236,23 @@ h3.profile-title {
   flex-grow: 1;
 }
 
-.login-box {
-  background-color: white;
-  padding: 30px;
-  border-radius: 0px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.login-box form {
+/* .login-box form {
   margin-top: 40px;
-}
+} */
 
 .form-group {
   margin-bottom: 40px;
 }
 
-.custom-login-button {
+.custom-button {
   background-color: darkgreen;
   border: rgb(3, 46, 3);
   color: white;
   font-size: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.custom-login-button:hover {
+.custom-button:hover {
   background-color: rgb(4, 58, 4);
 }
 
@@ -268,5 +272,17 @@ h3.profile-title {
     font-size: 1rem;
     font-weight: normal;
     margin-bottom: 10px;
+  }
+
+  .title-bar {
+    background-color: rgb(231, 226, 226);
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-title {
+    color: black;
+    font-size: 24px;
+    margin: 0;
   }
 }
