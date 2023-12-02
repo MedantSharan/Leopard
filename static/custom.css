@@ -30,8 +30,8 @@
 }
 
 .vcenter-item{
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 /*
@@ -169,7 +169,7 @@ h3.profile-title {
  }
 
  .invites-heading {
-  font-size: 3rem;
+  font-size: 2.0rem;
  }
 
  .invites-text {
@@ -187,7 +187,7 @@ h3.profile-title {
  }
 
  .tasks-heading {
-  font-size: 3rem;
+  font-size: 2.0rem;
  }
 
  .tasks-text {
