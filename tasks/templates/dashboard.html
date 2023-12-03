@@ -10,7 +10,7 @@
         <h1 class="dashboard-title">Welcome to your dashboard {{ user.username }}</h1>
       </div>
       <!--TEAMS COMPONENT-->
-      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-8 col-8">
+      <div class="card teams-card offset-sm-2 offset-md-4 offset-lg-0 col-8">
         <h1 class="teams-heading">Teams</h1>
         <a href="{% url 'team_creation' %}">CREATE TEAM</a>
         <p class="teams-text">View all your teams below:</p>
@@ -37,7 +37,7 @@
       </div>
 
       <!--TASKS COMPONENT-->
-      <div class="card tasks-card offset-sm-2 offset-md-4 offset-lg-7">
+      <div class="card tasks-card offset-sm-2 offset-md-4 offset-lg-0">
         <h1 class="tasks-heading">Tasks</h1>
         <p class="tasks-text">View all of your tasks below:</p>
         <table>
