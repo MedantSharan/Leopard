@@ -54,6 +54,7 @@ def delete_team(request, team_id):
     return redirect('dashboard')
 
 def decline_team(request, team_id):
+    """Allows users to decline invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
@@ -61,6 +62,7 @@ def decline_team(request, team_id):
 
 
 def join_team(request, team_id):
+    """Allows users to accept invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
@@ -74,6 +76,7 @@ def get_item(dictionary, key):
 
 
 def team_page(request, team_id):
+    """Displays selected team page information"""
     teams = Team.objects.get(team_id=team_id)
     tasks_from_team = Task.objects.filter(related_to_team = teams)
     request.session['team'] = team_id
@@ -105,10 +108,11 @@ def dashboard(request):
 
 @login_required
 def add_members(request):
+    """Display form that allows team leaders to add Members to their team"""
     if request.method == 'POST':
-        form = InviteForm(request.POST) 
+        team_id = request.session.get('team')
+        form = InviteForm(request.POST, team_id=team_id) 
         if form.is_valid():
-            team_id = request.session.get('team')
             form.save_invites(team_id=team_id)
             del request.session['team']
             return redirect('dashboard'); 
@@ -119,6 +123,7 @@ def add_members(request):
 
 @login_required
 def team_creation(request):
+    """Displays form to create a team with current user as leader"""
     if request.method == 'POST':
         form = TeamCreationForm(request.POST, request.FILES) 
         if form.is_valid():
