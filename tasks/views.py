@@ -289,16 +289,18 @@ def create_task(request):
 @login_required
 def edit_task(request, task_id):
     team_id = request.session.get('team')
-    task = Task.objects.get(pk = task_id)
+    task = Task.objects.get(pk=task_id)
     if request.method == 'POST':
-        form = TaskForm(team_id, request.POST, request.FILES, instance = task)
+        form = TaskForm(team_id, request.POST, request.FILES, instance=task)
         if form.is_valid():
-            form.save()
-            return redirect('team_page', team_id = team_id)
-    else: 
-        form = TaskForm(team_id, instance = task)
-    
-    return render(request, 'edit_task.html', {'form' : form})
+            task = form.save()
+            task.total_hours_worked = task.total_hours_worked + float(form.cleaned_data.get('total_hours_worked'))
+            task.save()
+            return redirect('team_page', team_id=team_id)
+    else:
+        form = TaskForm(team_id, instance=task)
+
+    return render(request, 'edit_task.html', {'form': form})
 
 @login_required
 def delete_task(request, task_id):
@@ -309,6 +311,18 @@ def delete_task(request, task_id):
 
 @login_required
 def view_task(request, task_id):
-    task = Task.objects.get(pk = task_id)
-    return render(request, 'view_task.html', {'task' : task})
+    task = Task.objects.get(pk=task_id)
+    team_id = request.session.get('team')
+    # Handle POST request for updating hours worked
+    if request.method == 'POST':
+        form = TaskForm(team_id, request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            task.total_hours_worked = sum(form.cleaned_data.get(f'user_{user.id}_hours_worked', 0.0) for user in task.assigned_to.all())
+            task.save()
+            return redirect('view_task', task_id=task_id)
+    else:
+        form = TaskForm(team_id, instance = task)
+
+    return render(request, 'view_task.html', {'task': task, 'form': form})
     

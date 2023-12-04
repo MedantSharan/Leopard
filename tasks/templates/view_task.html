@@ -15,6 +15,13 @@
                 <li>{{ user.username }}</li>
             {% endfor %}
         </ul>
+
+        <!-- Form for updating hours worked -->
+        <form method="post" action="{% url 'view_task' task.id %}">
+        </form>
+                <!-- Display total hours worked -->
+                <h2>Total Hours Worked:</h2>
+                <p>{{ task.total_hours_worked }}</p>
       </div>
     </div>
   </div>
