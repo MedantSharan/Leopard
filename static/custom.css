@@ -58,7 +58,7 @@ p.cover-text {
 }
 
 .cover-card-block {
-  opacity: 1
+  opacity: 1;
 }
 
 /*
@@ -99,7 +99,7 @@ ul.errorlist {
 
 .profile-text {
   overflow: hidden;
-  padding-left: 20px
+  padding-left: 20px;
 }
 
 h3.profile-title {
@@ -123,7 +123,7 @@ h3.profile-title {
 
 .content a:hover {
   text-decoration: underline;
-  color: rgb(14, 53, 14)
+  color: rgb(14, 53, 14);
 }
 
 /*
@@ -151,7 +151,7 @@ h3.profile-title {
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 20px;
+  border-radius: 0px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -170,7 +170,7 @@ h3.profile-title {
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 20px;
+  border-radius: 0px;
 }
 
 .invites-heading {
@@ -188,7 +188,7 @@ h3.profile-title {
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 20px;
+  border-radius: 0px;
 }
 
 .tasks-heading {

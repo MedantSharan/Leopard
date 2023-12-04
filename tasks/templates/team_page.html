@@ -4,10 +4,43 @@
   <div class="title-bar" style="background-color: antiquewhite; color: black;">
     <h1 class="section-title">{{teams.team_name}}</h1>
   </div>
+  <div class="team-details-dropdown">
+    <button class="btn btn-secondary dropdown-toggle custom-button" type="button" id="teamDetailsDropdown"
+      data-toggle="collapse" data-target="#teamDetailsCollapse" aria-expanded="false"
+      aria-controls="teamDetailsCollapse">
+      View Team Details
+    </button>
+    <div class="collapse" id="teamDetailsCollapse">
+      <div class="card card-body">
+        <h2>Team Leader: {{ teams.team_leader }}</h2>
+        <p>Description: {{ teams.team_description }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="view-tasks-dropdown">
+    <button class="btn btn-secondary dropdown-toggle custom-button" type="button" id="teamDetailsDropdown"
+      data-toggle="collapse" data-target="#teamDetailsCollapse" aria-expanded="false"
+      aria-controls="teamDetailsCollapse">
+      View Tasks
+    </button>
+    <div class="card card-body">
+    </div>
+  </div>
+  <div class="view-members-dropdown">
+    <button class="btn btn-secondary dropdown-toggle custom-button" type="button" id="teamDetailsDropdown"
+      data-toggle="collapse" data-target="#teamDetailsCollapse" aria-expanded="false"
+      aria-controls="teamDetailsCollapse">
+      View Members
+    </button>
+    <div class="card card-body">
+    </div>
+  </div>
+</div>
+<div class="encapsulate-box">
   <div class="row">
     <div class="col-9">
-      <h2>Team Leader: {{teams.team_leader}}</h2>
-      <h2>Description: {{teams.team_description}}</h2>
+      <!-- <h2>Team Leader: {{teams.team_leader}}</h2>
+      <h2>Description: {{teams.team_description}}</h2> -->
       <a href="{% url 'create_task' %}" class="btn btn-primary">Create task</a>
       {% if tasks %}
       {% for task in tasks %}
@@ -51,5 +84,6 @@
   </form>
   {% endif %}
 </div>
+
 
 {% endblock %}
