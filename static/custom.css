@@ -151,6 +151,10 @@ h3.profile-title {
   border-bottom: 1px solid #c9c9c9;
 }
 
+.tasks-table-row :hover {
+  background-color: #fdfbfb;
+}
+
 .teams-card {
   background-color: rgb(231, 226, 226);
   max-width: 30rem;

@@ -15,7 +15,7 @@
         <div class="card-body">
           <h4 class="card-title">Tasks</h4>
           <p class="card-text">View all of your tasks below:</p>
-          <table>
+          <table id="tasks-table">
             <thead>
               <tr>
                 <th>Task Title</th>
@@ -26,7 +26,7 @@
             <tbody>
               {% if tasks %}
               {% for task in tasks %}
-              <tr>
+              <tr class="tasks-table-row">
                 <td>{{ task.title }}</td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
@@ -44,7 +44,7 @@
           <h4 class="card-title">Teams</h4>
           <p class="card-text">View all of your teams below:</p>
           <a href="{% url 'team_creation' %}" class="btn btn-primary">CREATE TEAM</a>
-          <table>
+          <table id="teams-table">
             <thead>
               <tr>
                 <th>Team Name</th>
@@ -72,7 +72,7 @@
         <div class="card-body">
           <h4 class="card-title">Invites</h4>
           <p class="card-text">View all of your team invites below:</p>
-          <table>
+          <table id="invites-table">
             <thead>
               <tr>
                 <th>Team Request</th>
