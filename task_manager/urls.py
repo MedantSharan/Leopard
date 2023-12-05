@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tasks import views
+from tasks.views import requests_table
+# from tasks.views import fake_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +33,7 @@ urlpatterns = [
     path('edit_task/<int:task_id>', views.edit_task, name = 'edit_task'),
     path('delete_task/<int:task_id>', views.delete_task, name = 'delete_task'),
     path('view_task/<int:task_id>', views.view_task, name = 'view_task'),
+    path('task_search/', views.task_search, name = 'task_search'),
     path('team_creation/', views.team_creation, name = "team_creation"),
     path('add_members/', views.add_members, name = "add_members"),
     path('team_page/<int:team_id>', views.team_page, name = "team_page"),

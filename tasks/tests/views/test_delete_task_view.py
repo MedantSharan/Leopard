@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from tasks.models import User, Task, Team
 from tasks.forms import TaskForm
 
-class CreateTaskViewTestCase(TestCase):
+class DeleteTaskViewTestCase(TestCase):
     """Unit tests of the delete_task view."""
 
     fixtures = [

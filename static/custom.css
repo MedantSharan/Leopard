@@ -6,6 +6,15 @@
   border-radius: 0px;
 }
 
+/*
+ * Navbar
+ */
+
+.logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
 
 /*
  * Cover page
@@ -20,16 +29,16 @@
   height: 100vh;
 }
 
-.vcenter-item{
-    display: flex;
-    align-items: center;
+.vcenter-item {
+  display: flex;
+  align-items: center;
 }
 
 /*
  * Cover page
  */
 h1.cover-heading {
-  font-size: 4rem;
+  font-size: 3rem;
 }
 
 p.cover-text {
@@ -37,18 +46,20 @@ p.cover-text {
 }
 
 .cover-card {
-  background-color: rgba(245, 245, 245, 0.6);
+  background-color: rgb(241, 238, 238);
   max-width: 30rem;
   padding-top: 30px;
   padding-left: 50px;
   padding-right: 50px;
   padding-bottom: 30px;
-  border-radius: 15%;
-}
-.cover-card-block {
-  opacity: 1
+  border-radius: 0px;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.cover-card-block {
+  opacity: 1;
+}
 
 /*
  * forms
@@ -82,13 +93,13 @@ ul.errorlist {
  */
 .profile-image {
   width: 120px;
-  clear:both;
-  float:left;
+  clear: both;
+  float: left;
 }
 
 .profile-text {
-  overflow:hidden;
-  padding-left:20px
+  overflow: hidden;
+  padding-left: 20px;
 }
 
 h3.profile-title {
@@ -109,29 +120,182 @@ h3.profile-title {
   text-decoration: none;
   color: #0d6efd;
 }
+
 .content a:hover {
   text-decoration: underline;
-  color: #0d6efd;
+  color: rgb(14, 53, 14);
 }
 
+/*
+ * Background
+ */
+.back-ground {
+  background-image: url('{% static "/images/background.jpeg" %}');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+}
+
+*/ .container {
+  padding-top: 50px;
+}
+
+/*
+ * Dashboard
+ */
+
+ th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #c9c9c9;
+}
+
+.tasks-table-row :hover {
+  background-color: #fdfbfb;
+}
+
+.teams-card2 {
+  background-color: rgb(231, 226, 226);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+/*
+CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY 
+*/
+
+.teams-heading {
+  font-size: 2.0rem;
+}
+
+.teams-text {
+  font-size: 1.7rem;
+}
+
+.invites-card {
+  background-color: rgb(231, 226, 226);
+  max-width: 30rem;
+  padding-top: 30px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.invites-heading {
+  font-size: 2.0rem;
+}
+
+.invites-text {
+  font-size: 1.7rem;
+}
+
+.tasks-card {
+  background-color: rgb(231, 226, 226);
+  max-width: 30rem;
+  padding-top: 30px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.tasks-heading {
+  font-size: 2.0rem;
+}
+
+.tasks-text {
+  font-size: 1.7rem;
+}
+
+
 /* Team Page */
-.section-title{
+.section-title {
   text-align: center;
   margin-bottom: 50px;
 }
-.members-container{
+
+.members-container {
   text-align: center;
 }
 
-.members-list{
+.members-list {
   list-style: none;
   display: inline-block;
   text-align: center;
 }
 
-.members{
+.members {
   background-color: lightgrey;
   width: fit-content;
-  /* padding: 0px 20px; */
-  border-radius: 30px ;
+  border-radius: 30px;
+}
+
+.encapsulate-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 0px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  flex-grow: 1;
+}
+
+/* .login-box form {
+  margin-top: 40px;
+} */
+
+.form-group {
+  margin-bottom: 40px;
+}
+
+.custom-button {
+  background-color: darkgreen;
+  border: rgb(3, 46, 3);
+  color: white;
+  font-size: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.custom-button:hover {
+  background-color: rgb(4, 58, 4);
+}
+
+@media (min-width: 768px) {
+  .login-box {
+    width: 200%;
+    max-width: 1200px;
+    margin-right: left;
+  }
+
+  .login-box h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .login-box h2 {
+    font-size: 1rem;
+    font-weight: normal;
+    margin-bottom: 10px;
+  }
+
+  .title-bar {
+    background-color: rgb(231, 226, 226);
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-title {
+    color: black;
+    font-size: 24px;
+    margin: 0;
+  }
 }

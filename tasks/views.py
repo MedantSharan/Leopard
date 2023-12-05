@@ -12,6 +12,7 @@ from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
 from .models import Invites,Team, Task, User
+from django.db.models import Q
 from django.template.defaulttags import register
 
 
@@ -84,7 +85,20 @@ def team_page(request, team_id):
     teams_members = []
     for member in teams.team_members.all():
         teams_members.append(member)
-    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members,})
+
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'due_date')
+    tasks_assigned = request.GET.get('assigned_to', '')
+
+    if query:
+        tasks_from_team = tasks_from_team.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if tasks_assigned:
+        tasks_from_team = tasks_from_team.filter(assigned_to__username=tasks_assigned)
+
+    tasks_from_team = tasks_from_team.order_by(order_by)
+
+    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members, 'query': query, 'order_by': order_by})
 
 @login_required
 def dashboard(request):
@@ -147,8 +161,16 @@ def home(request):
 
     return render(request, 'home.html')
 
+def requests_table(request):
+     invites = get_invites()
+     return render(request, 'dashboard_html', {'invites': invites})
 
-class LoginProhibitedMixin:
+# def fake_dashboard(request):
+#     fake_invite = Invite(sender='TestSender', message='TestMessage')
+#     invites = [fake_invite]
+#     return render(request, 'dashboard.html', {'invites': invites})
+
+class LoginProhibitedMixin: 
     """Mixin that redirects when a user is logged in."""
 
     redirect_when_logged_in_url = None
@@ -315,5 +337,28 @@ def delete_task(request, task_id):
 @login_required
 def view_task(request, task_id):
     task = Task.objects.get(pk = task_id)
-    return render(request, 'view_task.html', {'task' : task})
-    
+    if(request.session.get('team')):
+        return render(request, 'view_task.html', {'task' : task})
+    else:
+        team = Team.objects.get(team_id = task.related_to_team.team_id)
+        return render(request, 'view_task.html', {'task' : task, 'team' : team})
+
+@login_required
+def task_search(request):
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'due_date')
+    teams_search = request.GET.get('team', '')
+    user_teams = Team.objects.filter(team_members__in=[request.user])
+
+    tasks = Task.objects.filter(assigned_to__in=[request.user])
+
+    if query:
+        tasks = tasks.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if teams_search:
+        selected_team = Team.objects.get(team_id=teams_search)
+        tasks = tasks.filter(related_to_team=selected_team)
+
+    tasks = tasks.order_by(order_by)
+
+    return render(request, 'task_search.html', {'tasks': tasks, 'query': query, 'order_by': order_by, 'teams' : user_teams})
