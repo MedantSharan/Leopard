@@ -88,9 +88,13 @@ def team_page(request, team_id):
 
     query = request.GET.get('q', '')
     order_by = request.GET.get('order_by', 'due_date')
+    tasks_assigned = request.GET.get('assigned_to', '')
 
     if query:
         tasks_from_team = tasks_from_team.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if tasks_assigned:
+        tasks_from_team = tasks_from_team.filter(assigned_to__username=tasks_assigned)
 
     tasks_from_team = tasks_from_team.order_by(order_by)
 
