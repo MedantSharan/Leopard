@@ -155,23 +155,16 @@ h3.profile-title {
   background-color: #fdfbfb;
 }
 
-.teams-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
 .teams-card2 {
   background-color: rgb(231, 226, 226);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   margin-bottom: 20px;
 }
+
+/*
+CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY 
+*/
 
 .teams-heading {
   font-size: 2.0rem;

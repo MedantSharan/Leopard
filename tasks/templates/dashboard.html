@@ -23,10 +23,10 @@
                 <th>Due Date</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="tasks-table-row">
               {% if tasks %}
               {% for task in tasks %}
-              <tr class="tasks-table-row">
+              <tr>
                 <td>{{ task.title }}</td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
