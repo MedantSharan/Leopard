@@ -12,6 +12,7 @@ from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
 from .models import Invites,Team, Task, User
+from django.db.models import Q
 from django.template.defaulttags import register
 
 
@@ -54,6 +55,7 @@ def delete_team(request, team_id):
     return redirect('dashboard')
 
 def decline_team(request, team_id):
+    """Allows users to decline invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
@@ -61,6 +63,7 @@ def decline_team(request, team_id):
 
 
 def join_team(request, team_id):
+    """Allows users to accept invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
@@ -74,6 +77,7 @@ def get_item(dictionary, key):
 
 
 def team_page(request, team_id):
+    """Displays selected team page information"""
     teams = Team.objects.get(team_id=team_id)
     tasks_from_team = Task.objects.filter(related_to_team = teams)
     request.session['team'] = team_id
@@ -81,7 +85,20 @@ def team_page(request, team_id):
     teams_members = []
     for member in teams.team_members.all():
         teams_members.append(member)
-    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members,})
+
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'due_date')
+    tasks_assigned = request.GET.get('assigned_to', '')
+
+    if query:
+        tasks_from_team = tasks_from_team.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if tasks_assigned:
+        tasks_from_team = tasks_from_team.filter(assigned_to__username=tasks_assigned)
+
+    tasks_from_team = tasks_from_team.order_by(order_by)
+
+    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members, 'query': query, 'order_by': order_by})
 
 @login_required
 def dashboard(request):
@@ -105,10 +122,11 @@ def dashboard(request):
 
 @login_required
 def add_members(request):
+    """Display form that allows team leaders to add Members to their team"""
     if request.method == 'POST':
-        form = InviteForm(request.POST) 
+        team_id = request.session.get('team')
+        form = InviteForm(request.POST, team_id=team_id) 
         if form.is_valid():
-            team_id = request.session.get('team')
             form.save_invites(team_id=team_id)
             del request.session['team']
             return redirect('dashboard'); 
@@ -119,6 +137,7 @@ def add_members(request):
 
 @login_required
 def team_creation(request):
+    """Displays form to create a team with current user as leader"""
     if request.method == 'POST':
         form = TeamCreationForm(request.POST, request.FILES) 
         if form.is_valid():
@@ -318,5 +337,28 @@ def delete_task(request, task_id):
 @login_required
 def view_task(request, task_id):
     task = Task.objects.get(pk = task_id)
-    return render(request, 'view_task.html', {'task' : task})
-    
+    if(request.session.get('team')):
+        return render(request, 'view_task.html', {'task' : task})
+    else:
+        team = Team.objects.get(team_id = task.related_to_team.team_id)
+        return render(request, 'view_task.html', {'task' : task, 'team' : team})
+
+@login_required
+def task_search(request):
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'due_date')
+    teams_search = request.GET.get('team', '')
+    user_teams = Team.objects.filter(team_members__in=[request.user])
+
+    tasks = Task.objects.filter(assigned_to__in=[request.user])
+
+    if query:
+        tasks = tasks.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if teams_search:
+        selected_team = Team.objects.get(team_id=teams_search)
+        tasks = tasks.filter(related_to_team=selected_team)
+
+    tasks = tasks.order_by(order_by)
+
+    return render(request, 'task_search.html', {'tasks': tasks, 'query': query, 'order_by': order_by, 'teams' : user_teams})
