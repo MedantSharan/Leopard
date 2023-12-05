@@ -27,6 +27,7 @@
               {% if tasks %}
               {% for task in tasks %}
               <tr>
+                <p><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></p
                 <td>{{ task.title }}</td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
