@@ -330,7 +330,8 @@ def delete_task(request, task_id):
 def view_task(request, task_id):
     task = Task.objects.get(pk = task_id)
     return render(request, 'view_task.html', {'task' : task})
-    
+
+@login_required
 def task_search(request):
     query = request.GET.get('q', '')
     order_by = request.GET.get('order_by', 'due_date')
@@ -344,7 +345,7 @@ def task_search(request):
 
     if teams_search:
         selected_team = Team.objects.get(team_id=teams_search)
-        tasks = tasks.filter(related_to_team=teams_search)
+        tasks = tasks.filter(related_to_team=selected_team)
 
     tasks = tasks.order_by(order_by)
 
