@@ -17,6 +17,10 @@
         </ul>
         <h2>Created by: </h2>
         <p>{{ task.created_by.username }}</p>
+        {% if team %}
+            <h2>Team:</h2>
+            <p>{{ team.team_name }}</p>
+        {% endif %}
       </div>
     </div>
   </div>

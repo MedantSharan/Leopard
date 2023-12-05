@@ -329,7 +329,11 @@ def delete_task(request, task_id):
 @login_required
 def view_task(request, task_id):
     task = Task.objects.get(pk = task_id)
-    return render(request, 'view_task.html', {'task' : task})
+    if(request.session.get('team')):
+        return render(request, 'view_task.html', {'task' : task})
+    else:
+        team = Team.objects.get(team_id = task.related_to_team.team_id)
+        return render(request, 'view_task.html', {'task' : task, 'team' : team})
 
 @login_required
 def task_search(request):
