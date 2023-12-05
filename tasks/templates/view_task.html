@@ -9,12 +9,14 @@
             <h2>Due:</h2>
             <p>{{ task.due_date }}</p>
         {% endif %}
-        <h2>Assigned To:</h2>
+        <h2>Assigned to:</h2>
         <ul>
             {% for user in task.assigned_to.all %}
                 <li>{{ user.username }}</li>
             {% endfor %}
         </ul>
+        <h2>Created by: </h2>
+        <p>{{ task.created_by.username }}</p>
       </div>
     </div>
   </div>
