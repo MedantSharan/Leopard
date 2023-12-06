@@ -20,16 +20,18 @@ def remove_member(request, team_id, username):
     """Allows Team Members to leave current team"""
     user = User.objects.get(username = username)
     team = Team.objects.get(team_id = team_id)
-    team_member = Team.objects.filter(team_members=user)
+    team_member = team.team_members.filter(username = username)
     tasks = Task.objects.filter(related_to_team = team, assigned_to = user)
-    if team_member:
+    if team_member and user != team.team_leader and request.user == team.team_leader:
         team.team_members.remove(user)
-    if tasks:
-        for task in tasks:
-            task.assigned_to.remove(user)
-            if task.assigned_to.count() == 0:
-                task.delete()
-    return redirect('dashboard')
+        if tasks:
+            for task in tasks:
+                task.assigned_to.remove(user)
+                if task.assigned_to.count() == 0:
+                    task.delete()
+        return redirect('team_page', team_id = team_id)
+    else:
+        return redirect('dashboard')
 
 @login_required
 def leave_team(request, team_id):
@@ -40,8 +42,7 @@ def leave_team(request, team_id):
         return redirect('dashboard')
     if request.user != team.team_leader and request.user in team.team_members.all():
         tasks = Task.objects.filter(related_to_team = team, assigned_to = request.user)
-        if team:
-            team.team_members.remove(request.user)
+        team.team_members.remove(request.user)
         if tasks:
             for task in tasks:
                 task.assigned_to.remove(request.user)
@@ -69,7 +70,7 @@ def decline_team(request, team_id):
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
-    return redirect(reverse('dashboard'))
+    return redirect('dashboard')
 
 @login_required
 def join_team(request, team_id):
@@ -79,7 +80,7 @@ def join_team(request, team_id):
         invite.delete()
         team = Team.objects.get(team_id = team_id)
         team.team_members.add(request.user)
-        return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
+        return redirect('team_page', team_id = team_id)
     else:
         return redirect('dashboard')
 
