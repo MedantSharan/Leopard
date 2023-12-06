@@ -34,16 +34,23 @@ def remove_member(request, team_id, username):
 @login_required
 def leave_team(request, team_id):
     """Allows Team Members to leave current team"""
-    team = Team.objects.get(team_id = team_id)
-    tasks = Task.objects.filter(related_to_team = team, assigned_to = request.user)
-    if team:
-        team.team_members.remove(request.user)
-    if tasks:
-        for task in tasks:
-            task.assigned_to.remove(request.user)
-            if task.assigned_to.count() == 0:
-                task.delete()
-    return redirect('dashboard')
+    if Team.objects.filter(team_id = team_id).exists():
+        team = Team.objects.get(team_id = team_id)
+    else:
+        return redirect('dashboard')
+    if request.user != team.team_leader and request.user in team.team_members.all():
+        tasks = Task.objects.filter(related_to_team = team, assigned_to = request.user)
+        if team:
+            team.team_members.remove(request.user)
+        if tasks:
+            for task in tasks:
+                task.assigned_to.remove(request.user)
+                if task.assigned_to.count() == 0:
+                    task.delete()
+        return redirect('dashboard')
+    else:
+        return redirect('dashboard')
+
 
 @login_required
 def delete_team(request, team_id):
@@ -83,7 +90,7 @@ def get_item(dictionary, key):
 @login_required
 def team_page(request, team_id):
     """Displays selected team page information"""
-    if(Team.objects.filter(team_id=team_id).exists()):
+    if Team.objects.filter(team_id=team_id).exists():
         teams = Team.objects.get(team_id=team_id)
         tasks_from_team = Task.objects.filter(related_to_team = teams)
         request.session['team'] = team_id
