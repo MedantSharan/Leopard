@@ -81,27 +81,30 @@ def get_item(dictionary, key):
 @login_required
 def team_page(request, team_id):
     """Displays selected team page information"""
-    teams = Team.objects.get(team_id=team_id)
-    tasks_from_team = Task.objects.filter(related_to_team = teams)
-    request.session['team'] = team_id
-    user = request.user
-    teams_members = []
-    for member in teams.team_members.all():
-        teams_members.append(member)
+    if(Team.objects.filter(team_id=team_id).exists()):
+        teams = Team.objects.get(team_id=team_id)
+        tasks_from_team = Task.objects.filter(related_to_team = teams)
+        request.session['team'] = team_id
+        user = request.user
+        teams_members = []
+        for member in teams.team_members.all():
+            teams_members.append(member)
 
-    query = request.GET.get('q', '')
-    order_by = request.GET.get('order_by', 'due_date')
-    tasks_assigned = request.GET.get('assigned_to', '')
+        query = request.GET.get('q', '')
+        order_by = request.GET.get('order_by', 'due_date')
+        tasks_assigned = request.GET.get('assigned_to', '')
 
-    if query:
-        tasks_from_team = tasks_from_team.filter(Q(title__icontains=query) | Q(description__icontains=query))
+        if query:
+            tasks_from_team = tasks_from_team.filter(Q(title__icontains=query) | Q(description__icontains=query))
 
-    if tasks_assigned:
-        tasks_from_team = tasks_from_team.filter(assigned_to__username=tasks_assigned)
+        if tasks_assigned:
+            tasks_from_team = tasks_from_team.filter(assigned_to__username=tasks_assigned)
 
-    tasks_from_team = tasks_from_team.order_by(order_by)
+        tasks_from_team = tasks_from_team.order_by(order_by)
 
-    return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members, 'query': query, 'order_by': order_by})
+        return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members, 'query': query, 'order_by': order_by})
+    else:
+        return redirect('dashboard')
 
 @login_required
 def dashboard(request):
@@ -153,8 +156,6 @@ def team_creation(request):
     else:
         form = TeamCreationForm()
     return render(request, "team_creation.html", {'form': form})
-
-
 
 
 @login_prohibited
