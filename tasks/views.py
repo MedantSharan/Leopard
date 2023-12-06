@@ -72,7 +72,9 @@ def join_team(request, team_id):
         invite.delete()
         team = Team.objects.get(team_id = team_id)
         team.team_members.add(request.user)
-    return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
+        return redirect(reverse('team_page', kwargs = {'team_id' : team_id}))
+    else:
+        return redirect('dashboard')
 
 @register.filter
 def get_item(dictionary, key):
