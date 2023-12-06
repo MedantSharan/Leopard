@@ -44,7 +44,6 @@ class User(AbstractUser):
 
 class Team(models.Model):
     """ Model used to represent a team with fields like id, leader, name etc."""
-    """ Model used to represent a team with fields like id, leader, name etc."""
     team_id = models.BigAutoField(primary_key=True)
     team_leader = models.ForeignKey(User, on_delete=models.CASCADE)
     team_name = models.CharField(max_length=30, blank=False)
@@ -57,9 +56,6 @@ class Team(models.Model):
 
 
 class Invites(models.Model):
-    """Model used to represent invites"""
-
-    """Three different states any invite can be in are sent, rejected and accepted"""
     """Model used to represent invites"""
 
     """Three different states any invite can be in are sent, rejected and accepted"""

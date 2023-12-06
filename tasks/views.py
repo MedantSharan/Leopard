@@ -15,7 +15,7 @@ from .models import Invites,Team, Task, User
 from django.db.models import Q
 from django.template.defaulttags import register
 
-
+@login_required
 def remove_member(request, team_id, username):
     """Allows Team Members to leave current team"""
     user = User.objects.get(username = username)
@@ -31,6 +31,7 @@ def remove_member(request, team_id, username):
                 task.delete()
     return redirect('dashboard')
 
+@login_required
 def leave_team(request, team_id):
     """Allows Team Members to leave current team"""
     team = Team.objects.get(team_id = team_id)
@@ -44,6 +45,7 @@ def leave_team(request, team_id):
                 task.delete()
     return redirect('dashboard')
 
+@login_required
 def delete_team(request, team_id):
     """Allow Team Leader to delete current team"""
     team = Team.objects.filter(team_id = team_id ,team_leader = request.user)
@@ -54,6 +56,7 @@ def delete_team(request, team_id):
         team.delete()
     return redirect('dashboard')
 
+@login_required
 def decline_team(request, team_id):
     """Allows users to decline invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
@@ -61,7 +64,7 @@ def decline_team(request, team_id):
         invite.delete()
     return redirect(reverse('dashboard'))
 
-
+@login_required
 def join_team(request, team_id):
     """Allows users to accept invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
@@ -75,7 +78,7 @@ def join_team(request, team_id):
 def get_item(dictionary, key):
     return dictionary.get(key)
 
-
+@login_required
 def team_page(request, team_id):
     """Displays selected team page information"""
     teams = Team.objects.get(team_id=team_id)
@@ -133,7 +136,6 @@ def add_members(request):
     else:
         form = InviteForm()
     return render(request, "add_members.html", {'form': form})
-@login_required
 
 @login_required
 def team_creation(request):
@@ -161,6 +163,7 @@ def home(request):
 
     return render(request, 'home.html')
 
+@login_required
 def requests_table(request):
      invites = get_invites()
      return render(request, 'dashboard_html', {'invites': invites})
