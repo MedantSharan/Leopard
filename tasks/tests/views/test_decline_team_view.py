@@ -5,7 +5,7 @@ from django.urls import reverse
 from tasks.models import User, Team, Invites
 from tasks.forms import InviteForm
 
-class JoinTeamViewTestCase(TestCase):
+class DeclineTeamViewTestCase(TestCase):
     """Unit tests of the decline_team view."""
 
     fixtures = [
