@@ -15,6 +15,7 @@ class EditTaskViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+        self.second_user = User.objects.get(username='@janedoe')
 
         self.form_input = {
             'title' : 'New task',
@@ -95,3 +96,16 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)
+
+    def test_only_creator_and_assigned_users_can_edit_tasks(self):
+        self.client.login(username=self.second_user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
+        session = self.client.session
+        session.update({'team': self.team.team_id})
+        session.save()
+        self.session = session
+        response = self.client.get(self.url, follow = True)
+        self.assertEqual(response.status_code, 200)
+        response_url = reverse('team_page', kwargs={'team_id': self.team.team_id})
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'team_page.html')

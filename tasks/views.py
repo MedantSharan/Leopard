@@ -323,15 +323,18 @@ def create_task(request):
 def edit_task(request, task_id):
     team_id = request.session.get('team')
     task = Task.objects.get(pk = task_id)
-    if request.method == 'POST':
-        form = TaskForm(team_id, request.POST, request.FILES, instance = task)
-        if form.is_valid():
-            form.save()
-            return redirect('team_page', team_id = team_id)
-    else: 
-        form = TaskForm(team_id, instance = task)
+    if(request.user == task.created_by or request.user in task.assigned_to.all()):
+        if request.method == 'POST':
+            form = TaskForm(team_id, request.POST, request.FILES, instance = task)
+            if form.is_valid():
+                form.save()
+                return redirect('team_page', team_id = team_id)
+        else: 
+            form = TaskForm(team_id, instance = task)
     
-    return render(request, 'edit_task.html', {'form' : form})
+        return render(request, 'edit_task.html', {'form' : form})
+    else:
+        return redirect('team_page', team_id = team_id)
 
 @login_required
 def delete_task(request, task_id):
