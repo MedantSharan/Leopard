@@ -2,7 +2,7 @@
 from django import forms
 from django.test import TestCase
 from tasks.forms import InviteForm
-from tasks.models import User,Invites,Team
+from tasks.models import User,Team, Invites
 
 class InviteFormTestCase(TestCase):
     """Unit tests of the invite form."""
@@ -56,3 +56,14 @@ class InviteFormTestCase(TestCase):
         self.form_input['usernames'] = '@janedoe, @janedoe, @janedoe, @janedoe, @janedoe'
         form = InviteForm(data=self.form_input, team_id=self.team.team_id)
         self.assertTrue(form.is_valid())
+
+    def test_form_must_save_correctly(self):
+        form = InviteForm(data=self.form_input, team_id=self.team.team_id)
+        before_count = Invites.objects.count()
+        form.save()
+        after_count = Invites.objects.count()
+        self.assertEqual(after_count, before_count+1)
+        invite = Invites.objects.get(username=self.userJane, team_id=self.team.team_id)
+        self.assertEqual(invite.username.username, "@janedoe")
+        self.assertEqual(invite.team_id, 1)
+        self.assertEqual(invite.invite_status, "S")
