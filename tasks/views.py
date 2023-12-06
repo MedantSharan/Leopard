@@ -337,8 +337,10 @@ def edit_task(request, task_id):
 def delete_task(request, task_id):
     team_id = request.session.get('team')
     task = Task.objects.get(pk = task_id)
-    task.delete()
+    if(request.user == task.created_by):
+        task.delete()
     return redirect('team_page', team_id = team_id)
+
 
 @login_required
 def view_task(request, task_id):
