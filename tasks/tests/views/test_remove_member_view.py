@@ -106,3 +106,11 @@ class RemoveMemberViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'team_page.html')
         self.assertNotIn(self.task, Task.objects.all())
         self.assertNotIn(self.task, self.second_user.assigned_tasks.all())
+
+    def test_removal_with_invalid_team_id(self):
+        self.client.login(username=self.user.username, password='Password123')
+        self.url = reverse('remove_member', kwargs={'team_id': 2, 'username': self.second_user.username})
+        response = self.client.get(self.url, follow=True)
+        response_url = reverse('dashboard')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')

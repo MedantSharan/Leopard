@@ -19,7 +19,10 @@ from django.template.defaulttags import register
 def remove_member(request, team_id, username):
     """Allows Team Members to leave current team"""
     user = User.objects.get(username = username)
-    team = Team.objects.get(team_id = team_id)
+    if Team.objects.filter(team_id = team_id).exists():
+        team = Team.objects.get(team_id = team_id)
+    else:
+        return redirect('dashboard')
     team_member = team.team_members.filter(username = username)
     tasks = Task.objects.filter(related_to_team = team, assigned_to = user)
     if team_member and user != team.team_leader and request.user == team.team_leader:
