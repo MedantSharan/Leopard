@@ -8,7 +8,7 @@
       <h2>Team Leader: {{teams.team_leader}}</h2>
       <h2>Description: {{teams.team_description}}</h2>
       <a href="{% url 'create_task' teams.team_id %}" class="btn btn-primary">Create task</a>
-        {% if tasks %}
+        {% if teams.team_tasks.exists %}
         <form method="get">
           <label for="q">Search:</label>
           <input type="text" name="q" value="{{ query }}">
@@ -35,8 +35,8 @@
               {% if task.created_by == request.user or request.user in task.assigned_to.all %}
                 <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
               {% endif %}
-        {% endfor %}
-      {% endif %}
+          {% endfor %}
+        {% endif %}
       </form>
     </div>
     <div class="members-container col-3">

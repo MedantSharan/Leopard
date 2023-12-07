@@ -73,7 +73,7 @@ class Task(models.Model):
     description = models.CharField(max_length = 500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
     assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
-    related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True)
+    related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
 
     def clean(self):
