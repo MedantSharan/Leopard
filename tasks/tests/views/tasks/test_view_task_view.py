@@ -51,3 +51,10 @@ class ViewTaskViewTestCase(TestCase):
         redirect_url = reverse('log_in') + f'?next={self.url}'
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'log_in.html')
+
+    def test_view_task_with_invalid_task_id(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.post(reverse('view_task', kwargs={'task_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')

@@ -340,7 +340,6 @@ def edit_task(request, task_id):
                 return redirect('team_page', team_id = team_id)
         else: 
             form = TaskForm(team_id, instance = task)
-    
         return render(request, 'edit_task.html', {'form' : form})
     else:
         return redirect('team_page', team_id = team_id)
