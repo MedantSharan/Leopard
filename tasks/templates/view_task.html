@@ -1,10 +1,32 @@
 {% extends 'base_content.html' %}
 {% block content %}
-<div class="container">
+<div class="container task-container ">
+  <div class="card task-card" style="height:80vh;">
+    <div class="card-title-container">
+        <h1 class="card-title">{{ task.title }}</h1>
+    </div>
+    <div class="card-body task-card-body">
+      <h2 class="card-subtitle mb-2 text-muted">
+        {% if task.due_date %}
+        Due Date: {{ task.due_date }}
+        {% endif %}</h2>
+        <h2 class="card-subtitle mb-2 text-muted"> Team: {{ task.related_to_team.team_name }}</h2>
+      <h3 class="card-text task-card-description">Description: {{ task.description }}</h3>
+      <h2 class="card-subtitle mb-2 text-muted">Assigned to:</h2>
+      <ul class="assign-list">
+          {% for user in task.assigned_to.all %}
+              <li class="card-subtitle mb-2 text-muted">{{ user.username }}</li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+  {% comment %} <div class="task-title-container">
+    <h1 class="task-title">{{ task.title }}</h1>
+  </div>
     <div class="row">
-      <div class="col-12">
-        <h1>{{ task.title }}</h1>
-        <p>{{ task.description }}</p>
+      <div class="col-12" style="padding: 0;">
+        <p class="task-description">{{ task.description }}</p>
         {% if task.due_date %}
             <h2>Due:</h2>
             <p>{{ task.due_date }}</p>
@@ -23,5 +45,5 @@
         {% endif %}
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 {% endblock %}
