@@ -97,3 +97,10 @@ class EditTaskViewTestCase(TestCase):
         response_url = reverse('team_page', kwargs={'team_id': self.team.team_id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'team_page.html')
+
+    def test_edit_task_with_invalid_task_id(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.post(reverse('edit_task', kwargs={'task_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')

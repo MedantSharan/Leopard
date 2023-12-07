@@ -309,6 +309,8 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
 @login_required
 def create_task(request, team_id):
+    if not Team.objects.filter(team_id = team_id).exists():
+        return redirect('dashboard')
     if request.method == 'POST':
         form = TaskForm(team_id, request.POST, request.FILES)
         if form.is_valid():
@@ -326,6 +328,8 @@ def create_task(request, team_id):
 
 @login_required
 def edit_task(request, task_id):
+    if not Task.objects.filter(pk = task_id).exists():
+        return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
     if(request.user == task.created_by or request.user in task.assigned_to.all()):
@@ -343,6 +347,8 @@ def edit_task(request, task_id):
 
 @login_required
 def delete_task(request, task_id):
+    if not Task.objects.filter(pk = task_id).exists():
+        return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
     if(request.user == task.created_by):
@@ -352,6 +358,8 @@ def delete_task(request, task_id):
 
 @login_required
 def view_task(request, task_id):
+    if not Task.objects.filter(pk = task_id).exists():
+        return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
     return render(request, 'view_task.html', {'task' : task})
 

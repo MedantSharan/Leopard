@@ -61,3 +61,10 @@ class DeleteTaskViewTestCase(TestCase):
         self.assertRedirects(response, reverse('team_page', kwargs={'team_id': self.team.team_id}), status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'team_page.html')
         self.assertIn(self.task, Task.objects.all())
+
+    def test_delete_task_with_invalid_task_id(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.post(reverse('delete_task', kwargs={'task_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')
