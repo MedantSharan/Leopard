@@ -82,7 +82,6 @@
             </thead>
             <tbody>
               {% for invite in invites %}
-              {% if invite.invite_status == "S"%}
               <tr>
                 <td>{{team_invites|get_item:invite.team_id}} has invited you</td>
                 <td>
@@ -96,7 +95,6 @@
                   </form>
                 </td>
               </tr>
-              {% endif %}
               {% endfor %}
             </tbody>
           </table>

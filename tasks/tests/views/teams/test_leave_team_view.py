@@ -27,7 +27,6 @@ class LeaveTeamViewTestCase(TestCase):
         self.invite = Invites.objects.create(
             username=self.second_user,
             team_id=self.team.team_id,
-            invite_status='S'
         )
 
         self.task = Task.objects.create(title = 'Test task',

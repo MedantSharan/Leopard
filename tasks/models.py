@@ -59,14 +59,8 @@ class Invites(models.Model):
     """Model used to represent invites"""
 
     """Three different states any invite can be in are sent, rejected and accepted"""
-    INVITE_STATUS = {
-        ("S", "Sent"),
-        ("R", "Rejected"),
-        ("A", "Accepted"),
-    }
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     team_id = models.IntegerField()
-    invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
 
     """Unique Constraint"""
     class Meta:

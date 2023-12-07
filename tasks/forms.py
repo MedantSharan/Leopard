@@ -186,7 +186,6 @@ class InviteForm(forms.Form):
             Invites.objects.create(
                 username = user,
                 team_id = team_id,
-                invite_status="S"
             )
 
 

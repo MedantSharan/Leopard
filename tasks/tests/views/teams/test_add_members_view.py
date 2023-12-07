@@ -56,7 +56,6 @@ class AddMembersViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'dashboard.html')
         invite = Invites.objects.get(username__username='@janedoe')
         self.assertEqual(invite.team_id, self.team.team_id)
-        self.assertEqual(invite.invite_status, 'S')
     
     def test_unsuccesful_add_members(self):
         self.client.login(username=self.user.username, password='Password123')
