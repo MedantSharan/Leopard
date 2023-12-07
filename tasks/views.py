@@ -97,7 +97,6 @@ def team_page(request, team_id):
     if Team.objects.filter(team_id=team_id).exists():
         teams = Team.objects.get(team_id=team_id)
         tasks_from_team = Task.objects.filter(related_to_team = teams)
-        request.session['team'] = team_id
         user = request.user
         teams_members = []
         for member in teams.team_members.all():
@@ -122,8 +121,6 @@ def team_page(request, team_id):
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
-    if request.session.get('team'):
-        del request.session['team']
     current_user = request.user
     invite_list = []
     team_names = {}
@@ -140,18 +137,16 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams, 'tasks' : tasks})
 
 @login_required
-def add_members(request):
+def add_members(request, team_id):
     """Display form that allows team leaders to add Members to their team"""
     if request.method == 'POST':
-        team_id = request.session.get('team')
         form = InviteForm(request.POST, team_id=team_id) 
         if form.is_valid():
             form.save_invites(team_id=team_id)
-            del request.session['team']
             return redirect('dashboard'); 
     else:
         form = InviteForm()
-    return render(request, "add_members.html", {'form': form})
+    return render(request, "add_members.html", {'form': form, 'team_id': team_id})
 
 @login_required
 def team_creation(request):
@@ -165,7 +160,7 @@ def team_creation(request):
             request.session['team'] = team.team_id
             team.team_members.set([request.user])
             team.save
-            return redirect('add_members'); 
+            return redirect('add_members', team_id = team.team_id); 
     else:
         form = TeamCreationForm()
     return render(request, "team_creation.html", {'form': form})

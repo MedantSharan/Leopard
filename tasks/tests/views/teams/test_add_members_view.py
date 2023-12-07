@@ -15,7 +15,6 @@ class AddMembersViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
-        self.url = reverse('add_members')
         
         self.form_input = {
             'usernames': '@janedoe'
@@ -28,8 +27,10 @@ class AddMembersViewTestCase(TestCase):
         )
         self.team.team_members.set([self.user])
 
+        self.url = reverse('add_members', kwargs={'team_id': self.team.team_id})
+
     def test_add_members_url(self):
-        self.assertEqual(self.url, '/add_members/')
+        self.assertEqual(self.url, f'/add_members/{self.team.team_id}/')
 
     def test_get_add_members(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -47,10 +48,6 @@ class AddMembersViewTestCase(TestCase):
     def test_sucessful_add_members(self):
         self.client.login(username=self.user.username, password='Password123')
         before_count = Invites.objects.count()
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Invites.objects.count()
         self.assertEqual(after_count, before_count+1)
@@ -65,10 +62,6 @@ class AddMembersViewTestCase(TestCase):
         self.client.login(username=self.user.username, password='Password123')
         self.form_input['usernames'] = 'Not a user'
         before_count = Invites.objects.count()
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         response = self.client.post(self.url, self.form_input)
         after_count = Invites.objects.count()
         self.assertEqual(after_count, before_count)

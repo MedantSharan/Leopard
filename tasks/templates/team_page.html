@@ -42,7 +42,7 @@
     <div class="members-container col-3">
       <h4 class="members-title">Members</h4>
       <ul class="members-list">
-      <a href="{% url 'add_members' %}" class = "btn btn-primary"> Add Members</a>
+      <a href="{% url 'add_members' teams.team_id %}" class = "btn btn-primary"> Add Members</a>
       {% for member in teams_members %}
       <li class="members">{{member.username}}   </li>
         {% if user == teams.team_leader and member.username != teams.team_leader %}
