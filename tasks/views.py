@@ -102,19 +102,10 @@ def team_page(request, team_id):
         for member in teams.team_members.all():
             teams_members.append(member)
 
-        query = request.GET.get('q', '')
-        order_by = request.GET.get('order_by', 'due_date')
-        tasks_assigned = request.GET.get('assigned_to', '')
+        tasks_assigned = request.GET.get('assigned_to')
+        tasks_from_team = get_filtered_tasks(request, tasks_assigned, team_id)
 
-        if query:
-            tasks_from_team = tasks_from_team.filter(Q(title__icontains=query) | Q(description__icontains=query))
-
-        if tasks_assigned:
-            tasks_from_team = tasks_from_team.filter(assigned_to__username=tasks_assigned)
-
-        tasks_from_team = tasks_from_team.order_by(order_by)
-
-        return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members, 'query': query, 'order_by': order_by})
+        return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members})
     else:
         return redirect('dashboard')
 
@@ -133,6 +124,8 @@ def dashboard(request):
 
     for invite in invite_list:
         team_names[invite.team_id] = (Team.objects.get(team_id = invite.team_id)).team_name
+
+    tasks = get_filtered_tasks(request)
 
     return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams, 'tasks' : tasks})
 
@@ -364,12 +357,19 @@ def view_task(request, task_id):
 
 @login_required
 def task_search(request):
+    user_teams = Team.objects.filter(team_members__in=[request.user])
+    tasks = get_filtered_tasks(request)
+
+    return render(request, 'task_search.html', {'tasks': tasks, 'teams' : user_teams})
+
+def get_filtered_tasks(request, assigned_to = None, team_id = None):
+    tasks = Task.objects.filter(assigned_to__in=[request.user])
     query = request.GET.get('q', '')
     order_by = request.GET.get('order_by', 'due_date')
     teams_search = request.GET.get('team', '')
-    user_teams = Team.objects.filter(team_members__in=[request.user])
 
-    tasks = Task.objects.filter(assigned_to__in=[request.user])
+    if team_id:
+        tasks = tasks.filter(related_to_team__team_id=team_id)
 
     if query:
         tasks = tasks.filter(Q(title__icontains=query) | Q(description__icontains=query))
@@ -378,6 +378,9 @@ def task_search(request):
         selected_team = Team.objects.get(team_id=teams_search)
         tasks = tasks.filter(related_to_team=selected_team)
 
+    if assigned_to:
+        tasks = tasks.filter(assigned_to__username=assigned_to)
+
     tasks = tasks.order_by(order_by)
 
-    return render(request, 'task_search.html', {'tasks': tasks, 'query': query, 'order_by': order_by, 'teams' : user_teams})
+    return tasks

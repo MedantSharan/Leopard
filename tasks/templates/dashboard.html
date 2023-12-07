@@ -15,6 +15,7 @@
         <div class="card-body">
           <h4 class="card-title">Tasks</h4>
           <p class="card-text">View all of your tasks below:</p>
+          {% include 'partials/search_form.html' %}
           <table id="tasks-table">
             <thead>
               <tr>
@@ -27,8 +28,7 @@
               {% if tasks %}
               {% for task in tasks %}
               <tr>
-                <p><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></p>
-                <td>{{ task.title }}</td>
+                <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
               </tr>
