@@ -49,8 +49,8 @@
           
           <label for="order_by">Order by:</label>
           <select name="order_by">
-              <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
-              <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
+              <option value="due_date" {% if order_by = 'due_date' %}selected{% endif %}>Due Date</option>
+              <option value="title" {% if order_by = 'title' %}selected{% endif %}>Title</option>
           </select>
 
           <label for="assigned_to">Assigned To:</label>
