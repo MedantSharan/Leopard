@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-12">
         <h1>Task</h1>
-        <form action="{% url 'create_task' %}" method="post">
+        <form action="{% url 'create_task' team_id %}" method="post">
           {% csrf_token %}
           {% include 'partials/bootstrap_form.html' with form=form %}
           <input type="submit" value="Create task" class="btn btn-primary">

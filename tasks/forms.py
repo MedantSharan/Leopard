@@ -122,7 +122,6 @@ class TaskForm(forms.ModelForm):
     
     def __init__(self, team_id, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
-        team = Team.objects.filter(team_id=team_id)
         team_members = User.objects.filter(member_of_team__team_id=team_id)
         self.fields['assigned_to'].queryset = team_members
 
@@ -187,7 +186,6 @@ class InviteForm(forms.Form):
             Invites.objects.create(
                 username = user,
                 team_id = team_id,
-                invite_status="S"
             )
 
 

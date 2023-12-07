@@ -15,6 +15,9 @@
         <div class="card-body">
           <h4 class="card-title">Tasks</h4>
           <p class="card-text">View all of your tasks below:</p>
+          {% if tasks %}
+            {% include 'partials/search_form.html' %}
+          {% endif %}
           <table id="tasks-table">
             <thead>
               <tr>
@@ -27,8 +30,7 @@
               {% if tasks %}
               {% for task in tasks %}
               <tr>
-                <p><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></p>
-                <td>{{ task.title }}</td>
+                <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
               </tr>
@@ -82,7 +84,6 @@
             </thead>
             <tbody>
               {% for invite in invites %}
-              {% if invite.invite_status == "S"%}
               <tr>
                 <td>{{team_invites|get_item:invite.team_id}} has invited you</td>
                 <td>
@@ -96,7 +97,6 @@
                   </form>
                 </td>
               </tr>
-              {% endif %}
               {% endfor %}
             </tbody>
           </table>

@@ -7,42 +7,22 @@
     <div class="col-9">
       <h2>Team Leader: {{teams.team_leader}}</h2>
       <h2>Description: {{teams.team_description}}</h2>
-      <a href="{% url 'create_task' %}" class="btn btn-primary">Create task</a>
-        {% if tasks %}
-        <form method="get">
-          <label for="q">Search:</label>
-          <input type="text" name="q" value="{{ query }}">
-          
-          <label for="order_by">Order by:</label>
-          <select name="order_by">
-              <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
-              <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
-          </select>
-
-          <label for="assigned_to">Assigned To:</label>
-          <select name="assigned_to">
-              <option value="" {% if not tasks_assigned %}selected{% endif %}>Any</option>
-              {% for member in teams_members %}
-                  <option value="{{ member.username }}" {% if tasks_assigned == member.username %}selected{% endif %}>{{ member.username }}</option>
-              {% endfor %}
-          </select>
-
-          <button type="submit">Search</button>
-        </form>
-
+      <a href="{% url 'create_task' teams.team_id %}" class="btn btn-primary">Create task</a>
+        {% if teams.team_tasks.exists %}
+          {% include 'partials/search_form.html' %}
           {% for task in tasks %}
             <p><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></p>
               {% if task.created_by == request.user or request.user in task.assigned_to.all %}
                 <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
               {% endif %}
-        {% endfor %}
-      {% endif %}
+          {% endfor %}
+        {% endif %}
       </form>
     </div>
     <div class="members-container col-3">
       <h4 class="members-title">Members</h4>
       <ul class="members-list">
-      <a href="{% url 'add_members' %}" class = "btn btn-primary"> Add Members</a>
+      <a href="{% url 'add_members' teams.team_id %}" class = "btn btn-primary"> Add Members</a>
       {% for member in teams_members %}
       <li class="members">{{member.username}}   </li>
         {% if user == teams.team_leader and member.username != teams.team_leader %}
