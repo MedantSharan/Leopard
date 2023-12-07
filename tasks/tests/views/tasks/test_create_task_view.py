@@ -14,7 +14,6 @@ class CreateTaskViewTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.url = reverse('create_task')
         self.user = User.objects.get(username='@johndoe')
         self.form_input = {
             'title' : 'Test task',
@@ -29,9 +28,11 @@ class CreateTaskViewTestCase(TestCase):
             team_description = 'This is a test team'
         )
         self.team.team_members.set([self.user])
+        
+        self.url = reverse('create_task', kwargs={'team_id': self.team.team_id})
     
     def test_create_task_url(self):
-        self.assertEqual(self.url, '/create_task/')
+        self.assertEqual(self.url, f'/create_task/{self.team.team_id}/')
 
     def test_get_create_task(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -64,10 +65,6 @@ class CreateTaskViewTestCase(TestCase):
     def test_succesful_task_creation(self):
         self.client.login(username=self.user.username, password='Password123')
         before_count = Task.objects.count()
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Task.objects.count()
         self.assertEqual(after_count, before_count+1)
@@ -89,3 +86,10 @@ class CreateTaskViewTestCase(TestCase):
         redirect_url = reverse('log_in') + f'?next={self.url}'
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'log_in.html')
+
+    def test_create_task_with_invalid_team(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.get(reverse('create_task', kwargs={'team_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')

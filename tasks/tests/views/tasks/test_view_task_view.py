@@ -27,15 +27,14 @@ class ViewTaskViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
+            related_to_team = self.team,
         )
         self.task.assigned_to.set([self.user])
-        self.task.related_to_team = self.team
-        self.task.save()
 
         self.url = reverse('view_task', kwargs={'task_id': self.task.id})
 
     def test_view_task_url(self):
-        self.assertEqual(self.url, f'/view_task/{self.task.id}')
+        self.assertEqual(self.url, f'/view_task/{self.task.id}/')
 
     def test_get_view_task(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -52,3 +51,10 @@ class ViewTaskViewTestCase(TestCase):
         redirect_url = reverse('log_in') + f'?next={self.url}'
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'log_in.html')
+
+    def test_view_task_with_invalid_task_id(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.post(reverse('view_task', kwargs={'task_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')

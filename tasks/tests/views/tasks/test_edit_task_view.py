@@ -15,6 +15,7 @@ class EditTaskViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+        self.second_user = User.objects.get(username='@janedoe')
 
         self.form_input = {
             'title' : 'New task',
@@ -34,22 +35,17 @@ class EditTaskViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
+            related_to_team = self.team
         )
         self.task.assigned_to.set([self.user])
-        self.task.related_to_team = self.team
-        self.task.save()
 
         self.url = reverse('edit_task', kwargs={'task_id': self.task.id})
 
     def test_edit_task_url(self):
-        self.assertEqual(self.url, f'/edit_task/{self.task.id}')
+        self.assertEqual(self.url, f'/edit_task/{self.task.id}/')
 
     def test_get_edit_task(self):
         self.client.login(username=self.user.username, password='Password123')
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'edit_task.html')
@@ -65,10 +61,6 @@ class EditTaskViewTestCase(TestCase):
 
     def test_succesful_task_edit(self):
         self.client.login(username=self.user.username, password='Password123')
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         response = self.client.post(self.url, self.form_input)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('team_page', kwargs={'team_id': self.team.team_id}))
@@ -96,3 +88,19 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)
+
+    def test_only_creator_and_assigned_users_can_edit_tasks(self):
+        self.client.login(username=self.second_user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
+        response = self.client.get(self.url, follow = True)
+        self.assertEqual(response.status_code, 200)
+        response_url = reverse('team_page', kwargs={'team_id': self.team.team_id})
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'team_page.html')
+
+    def test_edit_task_with_invalid_task_id(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.post(reverse('edit_task', kwargs={'task_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')
