@@ -34,7 +34,7 @@ class ViewTaskViewTestCase(TestCase):
         self.url = reverse('view_task', kwargs={'task_id': self.task.id})
 
     def test_view_task_url(self):
-        self.assertEqual(self.url, f'/view_task/{self.task.id}')
+        self.assertEqual(self.url, f'/view_task/{self.task.id}/')
 
     def test_get_view_task(self):
         self.client.login(username=self.user.username, password='Password123')

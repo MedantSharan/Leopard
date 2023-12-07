@@ -33,7 +33,7 @@ class JoinTeamViewTestCase(TestCase):
         self.url = reverse('join_team', kwargs={'team_id': self.team.team_id})
 
     def test_join_team_url(self):
-        self.assertEqual(self.url, f'/join_team/{self.team.team_id}')
+        self.assertEqual(self.url, f'/join_team/{self.team.team_id}/')
 
     def test_join_team_redirects_when_not_logged_in(self):
         response = self.client.get(self.url, follow=True)

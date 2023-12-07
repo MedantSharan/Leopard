@@ -32,17 +32,13 @@ class DeleteTaskViewTestCase(TestCase):
         )
         self.task.assigned_to.set([self.user])
 
-        self.url = reverse('delete_task', kwargs={'task_id': self.task.id})
+        self.url = reverse('delete_task', kwargs={'task_id': self.task.id, 'team_id': self.team.team_id})
 
     def test_delete_task_url(self):
-        self.assertEqual(self.url, f'/delete_task/{self.task.id}')
+        self.assertEqual(self.url, f'/delete_task/{self.task.id}/{self.team.team_id}/')
 
     def test_delete_task(self):
         self.client.login(username=self.user.username, password='Password123')
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         before_count = Task.objects.count()
         response = self.client.post(self.url, follow = True)
         after_count = Task.objects.count()
@@ -58,10 +54,6 @@ class DeleteTaskViewTestCase(TestCase):
 
     def test_cannot_delete_task_if_not_creator(self):
         self.client.login(username=self.second_user.username, password='Password123')
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         before_count = Task.objects.count()
         response = self.client.post(self.url, follow = True)
         after_count = Task.objects.count()

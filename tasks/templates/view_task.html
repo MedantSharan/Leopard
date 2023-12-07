@@ -17,9 +17,10 @@
         </ul>
         <h2>Created by: </h2>
         <p>{{ task.created_by.username }}</p>
-        {% if team %}
-            <h2>Team:</h2>
-            <p>{{ team.team_name }}</p>
+        <h2>Team:</h2>
+        <p>{{ task.related_to_team.team_name }}</p>
+        {% if request.user == task.created_by or request.user in task.assigned_to.all %}
+            <a href="{% url 'edit_task' task.id task.related_to_team.team_id %}" class="btn btn-secondary">Edit task</a>
         {% endif %}
       </div>
     </div>

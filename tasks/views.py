@@ -313,8 +313,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 @login_required
-def create_task(request):
-    team_id = request.session.get('team')
+def create_task(request, team_id):
     if request.method == 'POST':
         form = TaskForm(team_id, request.POST, request.FILES)
         if form.is_valid():
@@ -328,11 +327,10 @@ def create_task(request):
             return redirect('team_page', team_id = team_id)
     else: 
         form = TaskForm(team_id)
-    return render(request, 'task.html', {'form' : form})
+    return render(request, 'task.html', {'form' : form, 'team_id' : team_id})
 
 @login_required
-def edit_task(request, task_id):
-    team_id = request.session.get('team')
+def edit_task(request, task_id, team_id):
     task = Task.objects.get(pk = task_id)
     if(request.user == task.created_by or request.user in task.assigned_to.all()):
         if request.method == 'POST':
@@ -343,13 +341,12 @@ def edit_task(request, task_id):
         else: 
             form = TaskForm(team_id, instance = task)
     
-        return render(request, 'edit_task.html', {'form' : form})
+        return render(request, 'edit_task.html', {'form' : form, 'team_id' : team_id})
     else:
         return redirect('team_page', team_id = team_id)
 
 @login_required
-def delete_task(request, task_id):
-    team_id = request.session.get('team')
+def delete_task(request, task_id, team_id):
     task = Task.objects.get(pk = task_id)
     if(request.user == task.created_by):
         task.delete()
@@ -359,11 +356,7 @@ def delete_task(request, task_id):
 @login_required
 def view_task(request, task_id):
     task = Task.objects.get(pk = task_id)
-    if(request.session.get('team')):
-        return render(request, 'view_task.html', {'task' : task})
-    else:
-        team = Team.objects.get(team_id = task.related_to_team.team_id)
-        return render(request, 'view_task.html', {'task' : task, 'team' : team})
+    return render(request, 'view_task.html', {'task' : task})
 
 @login_required
 def task_search(request):

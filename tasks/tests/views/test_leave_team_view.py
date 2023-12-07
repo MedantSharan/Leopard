@@ -40,7 +40,7 @@ class LeaveTeamViewTestCase(TestCase):
         self.url = reverse('leave_team', kwargs={'team_id': self.team.team_id})
 
     def test_leave_team_url(self):
-        self.assertEqual(self.url, f'/leave_team/{self.team.team_id}')
+        self.assertEqual(self.url, f'/leave_team/{self.team.team_id}/')
     
     def test_leave_team_redirects_when_not_logged_in(self):
         response = self.client.get(self.url, follow=True)

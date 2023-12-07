@@ -33,7 +33,7 @@ class TeamPageViewTestCase(TestCase):
         self.url = reverse('team_page', kwargs={'team_id': self.team.team_id})
 
     def test_team_page_url(self):
-        self.assertEqual(self.url, f'/team_page/{self.team.team_id}')
+        self.assertEqual(self.url, f'/team_page/{self.team.team_id}/')
 
     def test_get_team_page(self):
         self.client.login(username=self.user.username, password='Password123')

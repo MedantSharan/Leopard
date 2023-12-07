@@ -40,7 +40,7 @@ class DeleteTeamViewTestCase(TestCase):
         self.url = reverse('delete_team', kwargs={'team_id': self.team.team_id})
 
     def test_delete_team_url(self):
-        self.assertEqual(self.url, f'/delete_team/{self.team.team_id}')
+        self.assertEqual(self.url, f'/delete_team/{self.team.team_id}/')
 
     def test_delete_team_redirects_when_not_logged_in(self):
         response = self.client.get(self.url, follow=True)
