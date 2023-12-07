@@ -363,13 +363,14 @@ def task_search(request):
     return render(request, 'task_search.html', {'tasks': tasks, 'teams' : user_teams})
 
 def get_filtered_tasks(request, assigned_to = None, team_id = None):
-    tasks = Task.objects.filter(assigned_to__in=[request.user])
     query = request.GET.get('q', '')
     order_by = request.GET.get('order_by', 'due_date')
     teams_search = request.GET.get('team', '')
 
     if team_id:
-        tasks = tasks.filter(related_to_team__team_id=team_id)
+        tasks = Task.objects.filter(related_to_team__team_id=team_id)
+    else:
+        tasks = Task.objects.filter(assigned_to__in=[request.user])
 
     if query:
         tasks = tasks.filter(Q(title__icontains=query) | Q(description__icontains=query))

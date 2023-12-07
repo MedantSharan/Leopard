@@ -8,13 +8,24 @@
         <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
     </select>
 
-    <label for="team">Team:</label>
-    <select name="team">
-        <option value="" {% if not teams_search %}selected{% endif %}>All</option>
-        {% for team in teams %}
-            <option value="{{ team.team_id }}" {% if teams_search == team.team_id %}selected{% endif %}>{{ team.team_name }}</option>
-        {% endfor %}
-    </select>
-
+    {% if teams.count > 1 %}
+        <label for="team">Team:</label>
+        <select name="team">
+            <option value="" {% if not teams_search %}selected{% endif %}>All</option>
+            {% for team in teams %}
+                <option value="{{ team.team_id }}" {% if teams_search == team.team_id %}selected{% endif %}>{{ team.team_name }}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
+    
+    {% if request.resolver_match.url_name == 'team_page' %}
+        <label for="assigned_to">Assigned To:</label>
+        <select name="assigned_to">
+            <option value="" {% if not tasks_assigned %}selected{% endif %}>Any</option>
+            {% for member in teams_members %}
+                <option value="{{ member.username }}" {% if tasks_assigned == member.username %}selected{% endif %}>{{ member.username }}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
     <button type="submit">Search</button>
 </form>
