@@ -140,17 +140,43 @@ class TeamCreationForm(forms.ModelForm):
         fields = ['team_name', 'team_description']
 
 class InviteForm(forms.Form):
-    """Form enabling registered users to log in."""
+    """Form enabling team leaders to add members."""
     usernames = forms.CharField(
         label="Enter usernames (comma-separated)",
         max_length=100
     )
 
+    def __init__(self, *args, **kwargs):
+        """Construct a new form instance with a team id instance"""
+        team_id = kwargs.pop('team_id', None)
+        super(InviteForm, self).__init__(*args, **kwargs)
+        self.team_id = team_id
+
     def getUsernames(self):
+        """Gets all listed usernames"""
         usernames = self.cleaned_data['usernames'].split(',')
-        return [username.strip() for username in usernames]
+        unique_usernames = set(username.strip() for username in usernames)
+        return list(unique_usernames)
+
+
+    def clean(self):
+        """Clean the data and generate messages for any errors."""
+        super().clean()
+        usernames = self.getUsernames()
+        for username in usernames:
+            try:
+                user = User.objects.get(username=username)
+                team =Team.objects.get(team_id = self.team_id)
+                if(team.team_members.filter(username = user).exists() or team.team_leader == user):
+                    self.add_error('usernames', f"User '{username}' is already in this team")
+                elif(Invites.objects.filter(team_id = self.team_id, username = user).exists()):
+                    self.add_error('usernames', f"User '{username}' has already been sent an invite to this team")
+            except User.DoesNotExist:
+                self.add_error('usernames', f"User '{username}' doesn't exist")
+        
 
     def save_invites(self, team_id):
+        """Creates an invite for each valid user listed"""
         usernames = self.getUsernames()
         for username in usernames:
             try:
@@ -163,6 +189,8 @@ class InviteForm(forms.Form):
                 team_id = team_id,
                 invite_status="S"
             )
+
+
 
 
 

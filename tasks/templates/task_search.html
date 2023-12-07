@@ -1,0 +1,47 @@
+{% extends 'base_content.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Task List</h1>
+
+            <form method="get">
+                <label for="q">Search:</label>
+                <input type="text" name="q" value="{{ query }}">
+                
+                <label for="order_by">Order by:</label>
+                <select name="order_by">
+                    <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
+                    <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
+                </select>
+
+                <label for="team">Team:</label>
+                <select name="team">
+                    <option value="" {% if not teams_search %}selected{% endif %}>All</option>
+                    {% for team in teams %}
+                        <option value="{{ team.team_id }}" {% if teams_search == team.team_id %}selected{% endif %}>{{ team.team_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Search</button>
+            </form>
+
+            <ul>
+                {% if tasks %}
+                    {% for task in tasks %}
+                        <li>
+                            <a href="{% url 'view_task' task.id %}">{{ task.title }}</a> - 
+                            {{ task.description }}
+                            {% if task.due_date %}
+                                - {{ task.due_date }}
+                            {% endif %}
+                            - {{ task.related_to_team.team_name }}
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -58,7 +58,7 @@ p.cover-text {
 }
 
 .cover-card-block {
-  opacity: 1;
+  opacity: 1;;
 }
 
 /*
@@ -100,6 +100,7 @@ ul.errorlist {
 .profile-text {
   overflow: hidden;
   padding-left: 20px;
+  padding-left: 20px;
 }
 
 h3.profile-title {
@@ -124,6 +125,7 @@ h3.profile-title {
 .content a:hover {
   text-decoration: underline;
   color: rgb(14, 53, 14);
+  color: rgb(14, 53, 14);
 }
 
 /*
@@ -144,7 +146,18 @@ h3.profile-title {
 /*
  * Dashboard
  */
-.teams-card {
+
+ th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #c9c9c9;
+}
+
+.tasks-table-row :hover {
+  background-color: #fdfbfb;
+}
+
+.teams-card2 {
   background-color: rgb(231, 226, 226);
   max-width: 30rem;
   padding-top: 30px;
@@ -153,7 +166,13 @@ h3.profile-title {
   padding-bottom: 30px;
   border-radius: 0px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  margin-bottom: 20px;
 }
+
+/*
+CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY TEAMS-CARD2 IS USED!
+*/
 
 .teams-heading {
   font-size: 2.0rem;
@@ -171,6 +190,7 @@ h3.profile-title {
   padding-right: 50px;
   padding-bottom: 30px;
   border-radius: 0px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .invites-heading {
@@ -189,6 +209,7 @@ h3.profile-title {
   padding-right: 50px;
   padding-bottom: 30px;
   border-radius: 0px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .tasks-heading {
