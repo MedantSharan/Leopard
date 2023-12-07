@@ -39,10 +39,10 @@ class EditTaskViewTestCase(TestCase):
         )
         self.task.assigned_to.set([self.user])
 
-        self.url = reverse('edit_task', kwargs={'task_id': self.task.id, 'team_id': self.team.team_id})
+        self.url = reverse('edit_task', kwargs={'task_id': self.task.id})
 
     def test_edit_task_url(self):
-        self.assertEqual(self.url, f'/edit_task/{self.task.id}/{self.team.team_id}/')
+        self.assertEqual(self.url, f'/edit_task/{self.task.id}/')
 
     def test_get_edit_task(self):
         self.client.login(username=self.user.username, password='Password123')

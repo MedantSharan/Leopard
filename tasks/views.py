@@ -325,8 +325,9 @@ def create_task(request, team_id):
     return render(request, 'task.html', {'form' : form, 'team_id' : team_id})
 
 @login_required
-def edit_task(request, task_id, team_id):
+def edit_task(request, task_id):
     task = Task.objects.get(pk = task_id)
+    team_id = task.related_to_team.team_id
     if(request.user == task.created_by or request.user in task.assigned_to.all()):
         if request.method == 'POST':
             form = TaskForm(team_id, request.POST, request.FILES, instance = task)
@@ -336,13 +337,14 @@ def edit_task(request, task_id, team_id):
         else: 
             form = TaskForm(team_id, instance = task)
     
-        return render(request, 'edit_task.html', {'form' : form, 'team_id' : team_id})
+        return render(request, 'edit_task.html', {'form' : form})
     else:
         return redirect('team_page', team_id = team_id)
 
 @login_required
-def delete_task(request, task_id, team_id):
+def delete_task(request, task_id):
     task = Task.objects.get(pk = task_id)
+    team_id = task.related_to_team.team_id
     if(request.user == task.created_by):
         task.delete()
     return redirect('team_page', team_id = team_id)
