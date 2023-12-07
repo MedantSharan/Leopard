@@ -172,10 +172,14 @@ class InviteForm(forms.Form):
                     self.add_error('usernames', f"User '{username}' has already been sent an invite to this team")
             except User.DoesNotExist:
                 self.add_error('usernames', f"User '{username}' doesn't exist")
+            
         
 
-    def save_invites(self, team_id):
+    def save(self):
         """Creates an invite for each valid user listed"""
+        if not self.is_valid():
+        # Handle the case where the form is not valid
+            return
         usernames = self.getUsernames()
         for username in usernames:
             try:
@@ -185,7 +189,8 @@ class InviteForm(forms.Form):
 
             Invites.objects.create(
                 username = user,
-                team_id = team_id,
+                team_id = self.team_id,
+                invite_status="S"
             )
 
 

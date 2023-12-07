@@ -135,7 +135,8 @@ def add_members(request, team_id):
     if request.method == 'POST':
         form = InviteForm(request.POST, team_id=team_id) 
         if form.is_valid():
-            form.save_invites(team_id=team_id)
+            form.save()
+            del request.session['team']
             return redirect('dashboard'); 
     else:
         form = InviteForm()
