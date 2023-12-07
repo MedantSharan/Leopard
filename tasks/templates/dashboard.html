@@ -39,31 +39,6 @@
         </div>
       </div>
 
-
-      <!--TASKS COMPONENT-->
-      <div class="card tasks-card offset-sm-2 offset-md-4 offset-lg-7">
-        <h1 class="tasks-heading">Tasks</h1>
-        <p class="tasks-text">View all of your tasks below:</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Tasks Title</th>
-              <th>Task Decription</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% if tasks %}
-            {% for task in tasks %}
-            <tr>
-              <td>{{ task.title }}</td>
-              <td>{{ task.description }}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-          </tbody>
-        </table>
-      </div>
-
       <!--TEAMS COMPONENT-->
       <div class="card teams-card2" style="width:400px">
         <div class="card-body">
@@ -127,15 +102,6 @@
           </table>
         </div>
       </div>
-
-
-
-
-
-
-
-
-
     </div>
   </div>
 </div>
