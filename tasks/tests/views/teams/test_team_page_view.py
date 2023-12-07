@@ -58,9 +58,8 @@ class TeamPageViewTestCase(TestCase):
         response = self.client.get(self.url + '?q=Task')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'team_page.html')
-        self.assertIn('query', response.context)
-        self.assertEqual(response.context['query'], 'Task')
         self.assertIn('tasks', response.context)
+        self.assertIn(self.task, response.context['tasks'])
 
     
 

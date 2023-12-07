@@ -74,4 +74,12 @@ class TeamPageViewTestCase(TestCase):
         self.assertIn('teams', response.context)
         self.assertIn(self.team, response.context['teams'])
 
+    def test_dashboard_with_query(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.get(self.url + '?q=Task')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertIn('tasks', response.context)
+        self.assertIn(self.task, response.context['tasks'])
+
     
