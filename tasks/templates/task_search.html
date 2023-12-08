@@ -1,0 +1,26 @@
+{% extends 'base_content.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Task List</h1>
+            {% include 'partials/search_form.html' %}
+            <ul>
+                {% if tasks %}
+                    {% for task in tasks %}
+                        <li>
+                            <a href="{% url 'view_task' task.id %}">{{ task.title }}</a> - 
+                            {{ task.description }}
+                            {% if task.due_date %}
+                                - {{ task.due_date }}
+                            {% endif %}
+                            - {{ task.related_to_team.team_name }}
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

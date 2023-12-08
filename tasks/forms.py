@@ -2,7 +2,9 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from .models import User,Team,Team_Members,Invites
+import datetime
+from django.core.validators import MinValueValidator
+from .models import User,Team,Invites, Task
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -108,7 +110,25 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
         return user
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+class TaskForm(forms.ModelForm):
+    """Form to create tasks"""
+
+    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
+    due_date = forms.DateField(widget = DateInput, validators=[MinValueValidator(datetime.date.today)], required = False)
     
+    def __init__(self, team_id, *args, **kwargs):
+        super(TaskForm, self).__init__(*args, **kwargs)
+        team_members = User.objects.filter(member_of_team__team_id=team_id)
+        self.fields['assigned_to'].queryset = team_members
+
+    class Meta:
+        model = Task
+        fields = ['title', 'description', 'due_date', 'assigned_to']
+        widgets = {'description' : forms.Textarea()} 
 
 
 class TeamCreationForm(forms.ModelForm):
@@ -119,17 +139,47 @@ class TeamCreationForm(forms.ModelForm):
         fields = ['team_name', 'team_description']
 
 class InviteForm(forms.Form):
-    """Form enabling registered users to log in."""
+    """Form enabling team leaders to add members."""
     usernames = forms.CharField(
         label="Enter usernames (comma-separated)",
         max_length=100
     )
 
-    def getUsernames(self):
-        usernames = self.cleaned_data['usernames'].split(',')
-        return [username.strip() for username in usernames]
+    def __init__(self, *args, **kwargs):
+        """Construct a new form instance with a team id instance"""
+        team_id = kwargs.pop('team_id', None)
+        super(InviteForm, self).__init__(*args, **kwargs)
+        self.team_id = team_id
 
-    def save_invites(self, team_id):
+    def getUsernames(self):
+        """Gets all listed usernames"""
+        usernames = self.cleaned_data['usernames'].split(',')
+        unique_usernames = set(username.strip() for username in usernames)
+        return list(unique_usernames)
+
+
+    def clean(self):
+        """Clean the data and generate messages for any errors."""
+        super().clean()
+        usernames = self.getUsernames()
+        for username in usernames:
+            try:
+                user = User.objects.get(username=username)
+                team =Team.objects.get(team_id = self.team_id)
+                if(team.team_members.filter(username = user).exists() or team.team_leader == user):
+                    self.add_error('usernames', f"User '{username}' is already in this team")
+                elif(Invites.objects.filter(team_id = self.team_id, username = user).exists()):
+                    self.add_error('usernames', f"User '{username}' has already been sent an invite to this team")
+            except User.DoesNotExist:
+                self.add_error('usernames', f"User '{username}' doesn't exist")
+            
+        
+
+    def save(self):
+        """Creates an invite for each valid user listed"""
+        if not self.is_valid():
+        # Handle the case where the form is not valid
+            return
         usernames = self.getUsernames()
         for username in usernames:
             try:
@@ -139,26 +189,10 @@ class InviteForm(forms.Form):
 
             Invites.objects.create(
                 username = user,
-                team_id = team_id,
-                invite_status="S"
+                team_id = self.team_id,
             )
 
 
 
-class MemberForm(forms.ModelForm):
-     class Meta:
-        """Form options."""
 
-        model = Team_Members
-        fields = ['username',]
 
-    #  def save(self):
-    #     super().save(commit=False)
-    #     team = Team.objects.create(
-    #         team_id = self.cleaned_data.get('team_id'),
-    #         team_leader = self.cleaned_data.get('team_leader'),
-    #         team_name =self.cleaned_data.get('team_name'),
-    #         team_description = self.cleaned_data.get('team_description'),
-    #     )
-
-    #     return team

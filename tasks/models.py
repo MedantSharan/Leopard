@@ -51,30 +51,32 @@ class Team(models.Model):
         unique=False,
         blank=True,
         max_length=200,
-    )   
-
-class Team_Members(models.Model):
-    """Model used to represent the members of a team"""
-    team_id = models.IntegerField()
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
-    
-    class Meta:
-            unique_together = ('team_id', 'username')
+    ) 
+    team_members = models.ManyToManyField(User, related_name = 'member_of_team')
 
 
 class Invites(models.Model):
     """Model used to represent invites"""
 
     """Three different states any invite can be in are sent, rejected and accepted"""
-    INVITE_STATUS = {
-        ("S", "Sent"),
-        ("R", "Rejected"),
-        ("A", "Accepted"),
-    }
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     team_id = models.IntegerField()
-    invite_status = models.CharField(max_length=1, choices=INVITE_STATUS, default="S")
 
     """Unique Constraint"""
     class Meta:
         unique_together = ('team_id', 'username')
+
+class Task(models.Model):
+    """Tasks to be set to users"""
+
+    title = models.CharField(max_length = 100)
+    description = models.CharField(max_length = 500)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
+    assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
+    related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
+    due_date = models.DateField(null = True, blank = True)
+
+    def clean(self):
+        super().clean()
+        if self.id and not self.assigned_to.exists():
+            raise Exception({'assigned_to': 'This task must be assigned to a user'})

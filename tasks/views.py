@@ -9,43 +9,117 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
-from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, MemberForm, InviteForm
+from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Team_Members,Invites,Team
+from .models import Invites,Team, Task, User
+from django.db.models import Q
 from django.template.defaulttags import register
 
+@login_required
+def remove_member(request, team_id, username):
+    """Allows Team Members to leave current team"""
+    user = User.objects.get(username = username)
+    if Team.objects.filter(team_id = team_id).exists():
+        team = Team.objects.get(team_id = team_id)
+    else:
+        return redirect('dashboard')
+    team_member = team.team_members.filter(username = username)
+    tasks = Task.objects.filter(related_to_team = team, assigned_to = user)
+    if team_member and user != team.team_leader and request.user == team.team_leader:
+        team.team_members.remove(user)
+        if tasks:
+            for task in tasks:
+                task.assigned_to.remove(user)
+                if task.assigned_to.count() == 0:
+                    # If last member assigned to task is removed, delete task
+                    task.delete()
+        return redirect('team_page', team_id = team_id)
+    else:
+        return redirect('dashboard')
 
+@login_required
+def leave_team(request, team_id):
+    """Allows Team Members to leave current team"""
+    if Team.objects.filter(team_id = team_id).exists():
+        team = Team.objects.get(team_id = team_id)
+    else:
+        return redirect('dashboard')
+    if request.user != team.team_leader and request.user in team.team_members.all():
+        tasks = Task.objects.filter(related_to_team = team, assigned_to = request.user)
+        team.team_members.remove(request.user)
+        if tasks:
+            for task in tasks:
+                task.assigned_to.remove(request.user)
+                if task.assigned_to.count() == 0:
+                    # If last member assigned to task leaves, delete task
+                    task.delete()
+        return redirect('dashboard')
+    else:
+        return redirect('dashboard')
+
+
+@login_required
+def delete_team(request, team_id):
+    """Allow Team Leader to delete current team"""
+    team = Team.objects.filter(team_id = team_id ,team_leader = request.user)
+    team_task = Team.objects.get(team_id = team_id)
+    for invite in Invites.objects.filter(team_id=team_id):
+        invite.delete()
+    if team:
+        team.delete()
+    return redirect('dashboard')
+
+@login_required
 def decline_team(request, team_id):
+    """Allows users to decline invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
-    return redirect(reverse('dashboard'))
+    return redirect('dashboard')
 
-
+@login_required
 def join_team(request, team_id):
+    """Allows users to accept invites to teams"""
     invite = Invites.objects.filter(team_id = team_id ,username = request.user)
     if invite:
         invite.delete()
-        Team_Members.objects.create(
-            username = request.user,
-            team_id = team_id,
-        )
-    return redirect(reverse('team_page'))
+        team = Team.objects.get(team_id = team_id)
+        team.team_members.add(request.user)
+        return redirect('team_page', team_id = team_id)
+    else:
+        return redirect('dashboard')
 
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
 
+@login_required
+def team_page(request, team_id):
+    """Displays selected team page information"""
+    if Team.objects.filter(team_id=team_id).exists():
+        teams = Team.objects.get(team_id=team_id)
+        tasks_from_team = Task.objects.filter(related_to_team = teams)
+        user = request.user
+        teams_members = []
+        for member in teams.team_members.all():
+            teams_members.append(member)
 
-def team_page(request):
-    return render(request, 'team_page.html')
+        tasks_assigned = request.GET.get('assigned_to')
+        tasks_from_team = get_filtered_tasks(request, tasks_assigned, team_id)
+
+        return render(request, 'team_page.html', {'teams' : teams, 'tasks' : tasks_from_team, 'user': user, 'teams_members': teams_members})
+    else:
+        return redirect('dashboard')
+
 @login_required
 def dashboard(request):
     """Display the current user's dashboard."""
-
     current_user = request.user
     invite_list = []
     team_names = {}
+    user_teams = Team.objects.filter(team_members__in=[current_user])
+    teams = Team.objects.filter(team_id__in=user_teams.values('team_id'))
+    tasks = Task.objects.filter(assigned_to__in=[current_user])
 
     for invite in Invites.objects.filter(username=current_user):
         invite_list.append(invite)
@@ -53,41 +127,37 @@ def dashboard(request):
     for invite in invite_list:
         team_names[invite.team_id] = (Team.objects.get(team_id = invite.team_id)).team_name
 
-    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list})
+    tasks = get_filtered_tasks(request) # Filter tasks if search query is provided
+
+    return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams, 'tasks' : tasks})
+
 @login_required
-def add_members(request):
+def add_members(request, team_id):
+    """Display form that allows team leaders to add Members to their team"""
     if request.method == 'POST':
-        form = InviteForm(request.POST) 
+        form = InviteForm(request.POST, team_id=team_id) 
         if form.is_valid():
-            team_id = request.session.get('team')
-            form.save_invites(team_id=team_id)
-            del request.session['team']
+            form.save()
             return redirect('dashboard'); 
     else:
         form = InviteForm()
-    return render(request, "add_members.html", {'form': form})
-@login_required
+    return render(request, "add_members.html", {'form': form, 'team_id': team_id})
 
 @login_required
 def team_creation(request):
+    """Displays form to create a team with current user as leader"""
     if request.method == 'POST':
         form = TeamCreationForm(request.POST, request.FILES) 
         if form.is_valid():
             team = form.save(commit=False)
             team.team_leader = request.user
             team.save()
-            request.session['team'] = team.team_id
-            Team_Members.objects.create(
-                username=request.user,
-
-                team_id = request.session.get('team'),
-            )
-            return redirect('add_members'); 
+            team.team_members.set([request.user])
+            team.save
+            return redirect('add_members', team_id = team.team_id); 
     else:
         form = TeamCreationForm()
     return render(request, "team_creation.html", {'form': form})
-
-
 
 
 @login_prohibited
@@ -96,8 +166,17 @@ def home(request):
 
     return render(request, 'home.html')
 
+@login_required
+def requests_table(request):
+     invites = get_invites()
+     return render(request, 'dashboard_html', {'invites': invites})
 
-class LoginProhibitedMixin:
+# def fake_dashboard(request):
+#     fake_invite = Invite(sender='TestSender', message='TestMessage')
+#     invites = [fake_invite]
+#     return render(request, 'dashboard.html', {'invites': invites})
+
+class LoginProhibitedMixin: 
     """Mixin that redirects when a user is logged in."""
 
     redirect_when_logged_in_url = None
@@ -221,4 +300,104 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+
+@login_required
+def create_task(request, team_id):
+    """Handle displaying and processing the task creation form."""
+
+    if not Team.objects.filter(team_id = team_id).exists():
+        return redirect('dashboard')
+    if request.method == 'POST':
+        form = TaskForm(team_id, request.POST, request.FILES)
+        if form.is_valid():
+            task = form.save(commit = False)
+            task.created_by = request.user
+            assigned_to_user = form.cleaned_data.get('assigned_to')
+            task.save()
+            task.assigned_to.set(assigned_to_user)
+            task.related_to_team = Team.objects.get(team_id = team_id)
+            task.save()
+            return redirect('team_page', team_id = team_id)
+    else: 
+        form = TaskForm(team_id)
+    return render(request, 'task.html', {'form' : form, 'team_id' : team_id})
+
+@login_required
+def edit_task(request, task_id):
+    """Display the task edit page and handle task edits."""
+
+    if not Task.objects.filter(pk = task_id).exists():
+        return redirect('dashboard')
+    task = Task.objects.get(pk = task_id)
+    team_id = task.related_to_team.team_id
+    if(request.user == task.created_by or request.user in task.assigned_to.all()):
+        if request.method == 'POST':
+            form = TaskForm(team_id, request.POST, request.FILES, instance = task)
+            if form.is_valid():
+                form.save()
+                return redirect('team_page', team_id = team_id)
+        else: 
+            form = TaskForm(team_id, instance = task)
+        return render(request, 'edit_task.html', {'form' : form})
+    else:
+        return redirect('team_page', team_id = team_id)
+
+@login_required
+def delete_task(request, task_id):
+    """Handle deletion of tasks."""
+
+    if not Task.objects.filter(pk = task_id).exists():
+        return redirect('dashboard')
+    task = Task.objects.get(pk = task_id)
+    team_id = task.related_to_team.team_id
+    if(request.user == task.created_by):
+        task.delete()
+    return redirect('team_page', team_id = team_id)
+
+
+@login_required
+def view_task(request, task_id):
+    """Display the task view page."""
+
+    if not Task.objects.filter(pk = task_id).exists():
+        return redirect('dashboard')
+    task = Task.objects.get(pk = task_id)
+    return render(request, 'view_task.html', {'task' : task})
+
+@login_required
+def task_search(request):
+    """Display the task search page and filter tasks by search."""
     
+    user_teams = Team.objects.filter(team_members__in=[request.user])
+    tasks = get_filtered_tasks(request) # Filter tasks if search query is provided
+
+    return render(request, 'task_search.html', {'tasks': tasks, 'teams' : user_teams})
+
+def get_filtered_tasks(request, assigned_to = None, team_id = None):
+    """Return a list of filtered tasks based on search and order_by."""
+
+    query = request.GET.get('q', '')
+    order_by = request.GET.get('order_by', 'due_date')
+    teams_search = request.GET.get('team', '')
+
+    if team_id:
+        # Allow for filtering by team if team_id is provided
+        tasks = Task.objects.filter(related_to_team__team_id=team_id)
+    else:
+        # Otherwise, filter by tasks assigned to the current user
+        tasks = Task.objects.filter(assigned_to__in=[request.user])
+
+    if query:
+        # Filter by search query if provided
+        tasks = tasks.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    if teams_search:
+        selected_team = Team.objects.get(team_id=teams_search)
+        tasks = tasks.filter(related_to_team=selected_team)
+
+    if assigned_to:
+        tasks = tasks.filter(assigned_to__username=assigned_to)
+
+    tasks = tasks.order_by(order_by)
+
+    return tasks
