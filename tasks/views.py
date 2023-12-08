@@ -397,7 +397,16 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
 
     if assigned_to:
         tasks = tasks.filter(assigned_to__username=assigned_to)
+    
+    # Custom priority order
+    custom_priority_order = {'none': 3, 'low': 2, 'medium': 1, 'high': 0}
 
-    tasks = tasks.order_by(order_by)
+    if order_by == 'priority':
+        # Order tasks using custom priority key
+        tasks = sorted(tasks, key=lambda task: custom_priority_order.get(task.priority, 0))
+    elif order_by == 'due_date':
+        tasks = tasks.order_by('due_date')
+    elif order_by == 'title':
+        tasks = tasks.order_by('title')
 
     return tasks

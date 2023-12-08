@@ -119,7 +119,8 @@ class TaskForm(forms.ModelForm):
 
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
     due_date = forms.DateField(widget = DateInput, validators=[MinValueValidator(datetime.date.today)], required = False)
-    
+    priority = forms.ChoiceField(choices=Task.PRIORITY_CHOICES, label='Priority', required = False)
+
     def __init__(self, team_id, *args, **kwargs):
         super(TaskForm, self).__init__(*args, **kwargs)
         team_members = User.objects.filter(member_of_team__team_id=team_id)
@@ -127,7 +128,7 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'assigned_to']
+        fields = ['title', 'description', 'due_date', 'assigned_to', 'priority']
         widgets = {'description' : forms.Textarea()} 
 
 

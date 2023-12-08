@@ -24,6 +24,7 @@
                 <th>Task Title</th>
                 <th>Task Decription</th>
                 <th>Due Date</th>
+                <th>Priority</th>
               </tr>
             </thead>
             <tbody class="tasks-table-row">
@@ -33,6 +34,7 @@
                 <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
+                <td>{{ task.priority }}</td>
               </tr>
               {% endfor %}
               {% endif %}

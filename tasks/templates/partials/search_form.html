@@ -6,6 +6,7 @@
     <select name="order_by">
         <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
         <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
+        <option value="priority" {% if order_by == 'priority' %}selected{% endif %}>Priority</option>
     </select>
 
     {% if teams.count > 1 %}
