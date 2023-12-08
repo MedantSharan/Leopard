@@ -1,8 +1,13 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+<<<<<<< Updated upstream
 from django.contrib.auth.models import User
 from tasks.models import Team
 from django.contrib.auth import get_user_model  
+=======
+from tasks.models import User, Team
+from django.contrib.auth import get_user_model
+>>>>>>> Stashed changes
 
 class TeamModelTestCase(TestCase):
     """Unit tests for the Team model."""
@@ -77,8 +82,66 @@ class TeamModelTestCase(TestCase):
     def test_team_description_may_not_exceed_200_chars(self):
         
         self.team.team_description = 'x' + 'x'*200
+<<<<<<< Updated upstream
         self._assert_team_is_invalid()       
         
+=======
+        self._assert_team_is_invalid()   
+
+    def test_team_members_can_be_added(self):
+        self.team.team_members.add(self.second_user)
+        self.assertTrue(self.second_user in self.team.team_members.all())
+        self._assert_team_is_valid()    
+
+    def test_team_leader_must_exist(self):
+        self.team.team_leader = None
+        self._assert_team_is_invalid()
+
+    def test_team_name_unique_to_team_leader(self):
+        # Create a team with a unique team name for the team leader
+        unique_team = Team(
+            team_leader=self.user,
+            team_name='Unique Team',
+            team_description='Unique Description'
+        )
+        self.team.team_name = unique_team.team_name
+        self._assert_team_is_valid()
+
+    def test_team_members_must_exist(self):
+        # Try to add a non-existent user as a team member
+        self.team.team_members.add(None)
+        self._assert_team_is_valid()
+    
+    def test_team_member_uniqueness(self):
+        # Ensure the same team member is not added twice
+        team_member = get_user_model().objects.get(username="@johndoe")
+        self.team.team_members.add(team_member)
+        self.team.team_members.add(team_member)
+        self._assert_team_is_valid()
+
+    def test_team_member_can_be_removed(self):
+        # Add a team member and then remove
+        team_member = get_user_model().objects.get(username="@johndoe")
+        self.team.team_members.add(team_member)
+        self.team.team_members.remove(team_member)
+        self._assert_team_is_valid()
+
+    def test_team_name_may_not_be_unique(self):
+        # Create another team with the same name and different leader
+        another_user = get_user_model().objects.get(username="@johndoe")
+        duplicate_team = Team(
+            team_leader=another_user,
+            team_name='Team Default',
+            team_description='Another team'
+        )
+        self._assert_team_is_valid()
+
+    def test_team_member_count(self):
+        # Add three team members
+        team_members = get_user_model().objects.filter(username__in=["@johndoe", "@janedoe"])
+        self.team.team_members.set(team_members)
+        self.assertEqual(self.team.team_members.count(), 2) 
+>>>>>>> Stashed changes
 
     def _assert_team_is_valid(self):
         try:
@@ -89,3 +152,6 @@ class TeamModelTestCase(TestCase):
     def _assert_team_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.team.full_clean()
+    
+    
+    
