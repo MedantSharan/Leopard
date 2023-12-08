@@ -15,7 +15,7 @@
         <div class="card-body">
           <h4 class="card-title">Tasks</h4>
           <p class="card-text">View all of your tasks below:</p>
-          {% if tasks %}
+          {% if request.user.assigned_tasks.count > 0 %}
             {% include 'partials/search_form.html' %}
           {% endif %}
           <table id="tasks-table">
