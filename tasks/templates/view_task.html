@@ -18,33 +18,13 @@
               <li class="card-subtitle mb-2 text-muted">{{ user.username }}</li>
           {% endfor %}
       </ul>
-    </div>
-  </div>
-</div>
-  {% comment %} <div class="task-title-container">
-    <h1 class="task-title">{{ task.title }}</h1>
-  </div>
-    <div class="row">
-      <div class="col-12" style="padding: 0;">
-        <p class="task-description">{{ task.description }}</p>
-        {% if task.due_date %}
-            <h2>Due:</h2>
-            <p>{{ task.due_date }}</p>
-        {% endif %}
-        <h2>Assigned to:</h2>
-        <ul>
-            {% for user in task.assigned_to.all %}
-                <li>{{ user.username }}</li>
-            {% endfor %}
-        </ul>
-        <h2>Created by: </h2>
-        <p>{{ task.created_by.username }}</p>
-        <h2>Team:</h2>
-        <p>{{ task.related_to_team.team_name }}</p>
+      <div>
         {% if request.user == task.created_by or request.user in task.assigned_to.all %}
             <a href="{% url 'edit_task' task.id %}" class="btn btn-secondary">Edit task</a>
         {% endif %}
       </div>
     </div>
-  </div> {% endcomment %}
+  </div>
+</div>
+ 
 {% endblock %}

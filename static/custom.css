@@ -131,7 +131,7 @@ h3.profile-title {
  * Background
  */
 .back-ground {
-  background-image: url('{% static "/images/background.jpeg" %}');
+  background-image: url('{% static "/images/background.jpeg" %}'); 
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -220,9 +220,14 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   text-align: center;
   margin-bottom: 50px;
 }
-
+.members-title{
+  color: white;
+  background-color: black;
+}
 .members-container {
   text-align: center;
+  /* padding-top: 37.33px; */
+  padding-bottom: 10px;
 }
 
 .members-list {
@@ -232,9 +237,11 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 }
 
 .members {
-  background-color: lightgrey;
+  background-color:  rgb(4, 58, 4);
   width: fit-content;
   border-radius: 30px;
+  color: white;
+  padding: 10px;
 }
 
 .encapsulate-box {
@@ -280,8 +287,10 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 .assign-list{
   list-style: none;
   padding-right: 40px;
+  overflow:scroll;
+   height:200px;
 }
-.page-title{
+.page-title, .title-container{
   color:  rgb(4, 58, 4);
   background-color: white;
   font-weight: 800;
@@ -296,20 +305,19 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   color: white;
   overflow: hidden;
 }
-.task-list{
+.task-list, .team-task-list{
   margin-top: 30px;
-  columns: 1;
+ 
 }
-
-@media (min-width: 1024px) {
-  .task-list{
-    columns: 3;
-  }
-}
-
-.task-list li{
-  list-style: none;
+.task-list ul, .team-task-list ul{
+  display: flex;
+  flex-wrap: wrap;
   
+}
+
+.task-list li, .team-task-list li{
+  list-style: none;
+  margin-right: 20px;
 }
 
 .task-card{
@@ -326,7 +334,8 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 }
 .task-search-bar{
   background-color: white ;
-  padding: 10px;
+  /* padding-top: 3px; */
+  padding: 3px 10px 10px 0px;
   color: rgb(4, 58, 4);
   text-align: right;
 }
