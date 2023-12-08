@@ -303,6 +303,8 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
 @login_required
 def create_task(request, team_id):
+    """Handle displaying and processing the task creation form."""
+
     if not Team.objects.filter(team_id = team_id).exists():
         return redirect('dashboard')
     if request.method == 'POST':
@@ -322,6 +324,8 @@ def create_task(request, team_id):
 
 @login_required
 def edit_task(request, task_id):
+    """Display the task edit page and handle task edits."""
+
     if not Task.objects.filter(pk = task_id).exists():
         return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
@@ -340,6 +344,8 @@ def edit_task(request, task_id):
 
 @login_required
 def delete_task(request, task_id):
+    """Handle deletion of tasks."""
+
     if not Task.objects.filter(pk = task_id).exists():
         return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
@@ -351,6 +357,8 @@ def delete_task(request, task_id):
 
 @login_required
 def view_task(request, task_id):
+    """Display the task view page."""
+
     if not Task.objects.filter(pk = task_id).exists():
         return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
@@ -358,12 +366,16 @@ def view_task(request, task_id):
 
 @login_required
 def task_search(request):
+    """Display the task search page and filter tasks by search."""
+    
     user_teams = Team.objects.filter(team_members__in=[request.user])
     tasks = get_filtered_tasks(request) # Filter tasks if search query is provided
 
     return render(request, 'task_search.html', {'tasks': tasks, 'teams' : user_teams})
 
 def get_filtered_tasks(request, assigned_to = None, team_id = None):
+    """Return a list of filtered tasks based on search and order_by."""
+
     query = request.GET.get('q', '')
     order_by = request.GET.get('order_by', 'due_date')
     teams_search = request.GET.get('team', '')
