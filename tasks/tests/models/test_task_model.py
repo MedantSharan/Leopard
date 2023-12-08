@@ -60,7 +60,7 @@ class TaskTest(TestCase):
         with self.assertRaises(ValidationError):
             self.task.full_clean()
 
-    def test_description_must_not_be_longet_than_500_characters(self):
+    def test_description_must_not_be_longer_than_500_characters(self):
         self.task.description = 'x' * 501
         with self.assertRaises(ValidationError):
             self.task.full_clean()

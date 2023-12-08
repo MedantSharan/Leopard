@@ -23,7 +23,6 @@ class InvitesModelTestCase(TestCase):
         self._assert_invite_is_valid()
 
     def test_duplicate_invite_not_allowed(self):
-        # Create a duplicate invite
         with self.assertRaises(IntegrityError):
             Invites.objects.create(username=self.team_member, team_id=self.team.team_id)
 
@@ -41,16 +40,13 @@ class InvitesModelTestCase(TestCase):
             invite.full_clean()
 
     def test_empty_username_not_allowed(self):
-        # Ensure invite with an empty username is invalid
         with self.assertRaises(IntegrityError):
             empty_username_invite = Invites.objects.create(username=None, team_id=self.team.team_id)
 
     def test_team_member_can_have_multiple_invites(self):
-        # Ensure a team member can have multiple invites from different teams
         Invites.objects.create(username=self.team_member, team_id=2)
         self.assertEqual(Invites.objects.filter(username=self.team_member).count(), 2)
 
     def test_team_member_can_only_have_one_invite_per_team(self):
-        # Ensure a team member can have duplicate invites
         with self.assertRaises(IntegrityError):
             Invites.objects.create(username=self.team_member, team_id=self.team.team_id)

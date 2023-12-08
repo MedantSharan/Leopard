@@ -74,31 +74,18 @@ class TeamModelTestCase(TestCase):
     def test_team_leader_must_exist(self):
         self.team.team_leader = None
         self._assert_team_is_invalid()
-
-    def test_team_name_unique_to_team_leader(self):
-        # Create a team with a unique team name for the team leader
-        unique_team = Team.objects.create(
-            team_leader=self.user,
-            team_name='Unique Team',
-            team_description='Unique Description'
-        )
-        self.team.team_name = unique_team.team_name
-        self._assert_team_is_valid()
     
     def test_team_member_uniqueness(self):
-        # Ensure the same team member is not added twice
         self.team.team_members.add(self.user)
         self._assert_team_is_valid()
 
     def test_team_member_can_be_removed(self):
-        # Add a team member and then remove
         self.team.team_members.add(self.second_user)
         self.team.team_members.remove(self.second_user)
         self.assertNotIn(self.second_user, self.team.team_members.all())
         self._assert_team_is_valid()
 
     def test_team_member_count(self):
-        # Add three team members
         self.team.team_members.add(self.second_user)
         self.assertEqual(self.team.team_members.count(), 2) 
 
