@@ -223,11 +223,17 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 .members-title{
   color: white;
   background-color: black;
+  padding: 0px 30px 0px;
 }
 .members-container {
   text-align: center;
   /* padding-top: 37.33px; */
   padding-bottom: 10px;
+  background-color: white;
+  border-radius: 30px;
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .members-list {
