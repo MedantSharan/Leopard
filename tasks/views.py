@@ -31,6 +31,7 @@ def remove_member(request, team_id, username):
             for task in tasks:
                 task.assigned_to.remove(user)
                 if task.assigned_to.count() == 0:
+                    # If last member assigned to task is removed, delete task
                     task.delete()
         return redirect('team_page', team_id = team_id)
     else:
@@ -50,6 +51,7 @@ def leave_team(request, team_id):
             for task in tasks:
                 task.assigned_to.remove(request.user)
                 if task.assigned_to.count() == 0:
+                    # If last member assigned to task leaves, delete task
                     task.delete()
         return redirect('dashboard')
     else:
@@ -125,7 +127,7 @@ def dashboard(request):
     for invite in invite_list:
         team_names[invite.team_id] = (Team.objects.get(team_id = invite.team_id)).team_name
 
-    tasks = get_filtered_tasks(request)
+    tasks = get_filtered_tasks(request) # Filter tasks if search query is provided
 
     return render(request, 'dashboard.html', {'user': current_user, 'team_invites': team_names, 'invites': invite_list, 'teams' : teams, 'tasks' : tasks})
 
@@ -150,7 +152,6 @@ def team_creation(request):
             team = form.save(commit=False)
             team.team_leader = request.user
             team.save()
-            request.session['team'] = team.team_id
             team.team_members.set([request.user])
             team.save
             return redirect('add_members', team_id = team.team_id); 
@@ -358,7 +359,7 @@ def view_task(request, task_id):
 @login_required
 def task_search(request):
     user_teams = Team.objects.filter(team_members__in=[request.user])
-    tasks = get_filtered_tasks(request)
+    tasks = get_filtered_tasks(request) # Filter tasks if search query is provided
 
     return render(request, 'task_search.html', {'tasks': tasks, 'teams' : user_teams})
 
@@ -368,11 +369,14 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
     teams_search = request.GET.get('team', '')
 
     if team_id:
+        # Allow for filtering by team if team_id is provided
         tasks = Task.objects.filter(related_to_team__team_id=team_id)
     else:
+        # Otherwise, filter by tasks assigned to the current user
         tasks = Task.objects.filter(assigned_to__in=[request.user])
 
     if query:
+        # Filter by search query if provided
         tasks = tasks.filter(Q(title__icontains=query) | Q(description__icontains=query))
 
     if teams_search:
