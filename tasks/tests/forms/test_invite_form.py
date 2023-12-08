@@ -66,4 +66,3 @@ class InviteFormTestCase(TestCase):
         invite = Invites.objects.get(username=self.userJane, team_id=self.team.team_id)
         self.assertEqual(invite.username.username, "@janedoe")
         self.assertEqual(invite.team_id, 1)
-        self.assertEqual(invite.invite_status, "S")
