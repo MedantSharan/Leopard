@@ -4,22 +4,51 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1>Task List</h1>
-            {% include 'partials/search_form.html' %}
-            <ul>
-                {% if tasks %}
-                    {% for task in tasks %}
-                        <li>
-                            <a href="{% url 'view_task' task.id %}">{{ task.title }}</a> - 
-                            {{ task.description }}
-                            {% if task.due_date %}
-                                - {{ task.due_date }}
-                            {% endif %}
-                            - {{ task.related_to_team.team_name }}
-                        </li>
+            <h1 class="page-title">Task List</h1>
+            <form class="task-search-bar" method="get">
+                <label for="q">Search:</label>
+                <input type="text" name="q" value="{{ query }}">
+                
+                <label for="order_by">Order by:</label>
+                <select name="order_by">
+                    <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
+                    <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
+                </select>
+
+                <label for="team">Team:</label>
+                <select name="team">
+                    <option value="" {% if not teams_search %}selected{% endif %}>All</option>
+                    {% for team in teams %}
+                        <option value="{{ team.team_id }}" {% if teams_search == team.team_id %}selected{% endif %}>{{ team.team_name }}</option>
                     {% endfor %}
-                {% endif %}
-            </ul>
+                </select>
+
+                <button class="custom-button" type="submit">Search</button>
+            </form>
+            <div class="task-list">
+                <ul>
+                    {% if tasks %}
+                        {% for task in tasks %}
+                            <li>
+                                <div class="card task-card" style="width: 18rem;">
+                                    <div class="card-title-container">
+                                        <h5 class="card-title">{{ task.title }}</h5>
+                                    </div>
+                                    <div class="card-body task-card-body">
+                                      <h6 class="card-subtitle mb-2 text-muted">
+                                        {% if task.due_date %}
+                                        Due Date: {{ task.due_date }}
+                                        {% endif %}</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted"> Team: {{ task.related_to_team.team_name }}</h6>
+                                      <p class="card-text task-card-description">Description: {{ task.description }}</p>
+                                      <a href="{% url 'view_task' task.id %}" class="card-link">View Task</a>
+                                    </div>
+                                  </div>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
