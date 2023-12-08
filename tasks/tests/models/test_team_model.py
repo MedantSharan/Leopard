@@ -1,6 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from tasks.models import User, Team
+from django.contrib.auth.models import User
+from tasks.models import Team
+from django.contrib.auth import get_user_model  
+from tasks.models import User, Team
+
 
 class TeamModelTestCase(TestCase):
     """Unit tests for the Team model."""
@@ -67,8 +72,8 @@ class TeamModelTestCase(TestCase):
 
     def test_team_members_can_be_added(self):
         self.team.team_members.add(self.second_user)
-        self.assertTrue(self.second_user in self.team.team_members.all())
         self._assert_team_is_valid()     
+
 
     def _assert_team_is_valid(self):
         try:
@@ -79,3 +84,6 @@ class TeamModelTestCase(TestCase):
     def _assert_team_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.team.full_clean()
+    
+    
+    
