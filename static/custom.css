@@ -3,7 +3,7 @@
  * Alerts
  */
 
-.alert {
+ .alert {
   border-radius: 0px;
 }
 
@@ -240,6 +240,9 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   list-style: none;
   display: inline-block;
   text-align: center;
+  overflow-y:scroll;
+  max-height: 50vh;
+  width:auto;
 }
 
 .members {
@@ -249,7 +252,9 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   color: white;
   padding: 10px;
 }
-
+.members-list form{
+  margin-bottom:20px;
+}
 .encapsulate-box {
   background-color: white;
   padding: 30px;
@@ -294,7 +299,7 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   list-style: none;
   padding-right: 40px;
   overflow:scroll;
-   height:200px;
+  height:200px;
 }
 .page-title, .title-container{
   color:  rgb(4, 58, 4);
