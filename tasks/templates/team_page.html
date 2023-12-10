@@ -1,12 +1,14 @@
 {% extends 'base_content.html' %}
 {% block content %}
 <div class="container">
+  <!--TEAM INFORMATION COMPONENT-->
   <div class="title-container"> 
     <h1 class="page-title">{{teams.team_name}}</h1>
     <h2>Team Leader: {{teams.team_leader}}</h2>
     <h2>Description: {{teams.team_description}}</h2>
   </div>
   <div class="row align-items-start">
+    <!--TASKS COMPONENT-->
     <div class="col-9">
       {% if teams.team_tasks.exists %}
       <div class="task-search-bar">
@@ -45,6 +47,7 @@
           </ul>
     
       </div>
+      <!--TEAM MEMBERS COMPONENT-->
     <div class="members-container col-3">
       <h4 class="members-title">Members</h4>
       <div>
@@ -63,11 +66,11 @@
       {% if user == teams.team_leader%}
       <a href="{% url 'add_members' teams.team_id %}" class = "btn btn-primary"> Add Members</a>
       {%endif%}
-      <ul class="members-list" style="overflow-y:scroll; height: 80vh; width:auto;">
+      <ul class="members-list">
       {% for member in teams_members %}
       <li class="members">{{member.username}}   </li>
         {% if user == teams.team_leader and member != teams.team_leader %}
-        <form method="post" action="{% url 'remove_member' team_id=teams.team_id username=member.username %}" style="margin-bottom:20px;">
+        <form id="remove" method="post" action="{% url 'remove_member' team_id=teams.team_id username=member.username %}">
           {%csrf_token%}
           <input type="submit" value="Remove" class="btn btn-danger" onclick="return confirm('Remove {{member.username}}?')">
         </form>
