@@ -35,6 +35,10 @@
                       Due Date: {{ task.due_date }}
                       {% endif %}</h6>
                     <p class="card-text task-card-description">Description: {{ task.description }}</p>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                      {% if task.priority %}
+                      Priority: {{ task.priority }}</h6>
+                      {% endif %}</h6>
                     <a href="{% url 'view_task' task.id %}" class="card-link">View Task</a>
                     {% if task.created_by == request.user or request.user in task.assigned_to.all %}
                     <a href="{% url 'edit_task' task.id %}" class="card-link">Edit task</a>
