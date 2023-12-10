@@ -399,7 +399,7 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
         tasks = tasks.filter(assigned_to__username=assigned_to)
     
     # Custom priority order
-    custom_priority_order = {'none': 3, 'low': 2, 'medium': 1, 'high': 0}
+    custom_priority_order = {'': 3, 'low': 2, 'medium': 1, 'high': 0}
 
     if order_by == 'priority':
         # Order tasks using custom priority key
