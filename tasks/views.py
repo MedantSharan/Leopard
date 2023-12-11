@@ -318,7 +318,7 @@ def create_task(request, team_id):
             task.save()
             task.assigned_to.set(assigned_to_user)
             task.save()
-            audit_log_add(request, team_id, task.title, request.user, 'Created')
+            audit_log_add(request, team_id, task.title, request.user, 'created')
             return redirect('team_page', team_id = team_id)
     else: 
         form = TaskForm(team_id)
@@ -341,7 +341,7 @@ def edit_task(request, task_id):
                 form.save()
                 after_edit = form.instance
                 changes = compare_task_details(before_edit, after_edit, before_assigned_to)
-                audit_log_add(request, team_id, task.title, request.user, 'Edited', changes)
+                audit_log_add(request, team_id, task.title, request.user, 'edited', changes)
                 return redirect('team_page', team_id = team_id)
         else: 
             form = TaskForm(team_id, instance = task)
@@ -358,7 +358,7 @@ def delete_task(request, task_id):
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
     if(request.user == task.created_by):
-        audit_log_add(request, team_id, task.title, request.user, 'Deleted')
+        audit_log_add(request, team_id, task.title, request.user, 'deleted')
         task.delete()
     return redirect('team_page', team_id = team_id)
 
@@ -435,16 +435,21 @@ def audit_log_add(request, team_id, task, username, action, changes = None):
 
     team = Team.objects.get(team_id = team_id)
 
+    if(AuditLog.objects.filter(team_id = team_id).count() >= 20 and changes):
+        # If there are more than 20 logs, delete the oldest one
+        AuditLog.objects.filter(team_id = team_id).order_by('timestamp').first().delete()
+
     if changes:
         changes = ', '.join(changes)
 
-    AuditLog.objects.create(
-        username = username, 
-        team_id = team_id, 
-        task_title = task, 
-        action = action,
-        changes = changes
-    )
+    if changes:
+        AuditLog.objects.create(
+            username = username, 
+            team_id = team_id, 
+            task_title = task, 
+            action = action,
+            changes = changes
+        )
 
 def compare_task_details(before_edit, after_edit, assigned):
     """Find changes made during task edits."""
@@ -453,21 +458,23 @@ def compare_task_details(before_edit, after_edit, assigned):
     for field, display_name in [('title', 'Title'), ('description', 'Description'), ('due_date', 'Due date'), ('priority', 'Priority'), ('assigned_to', 'Assigned to')]:
         value_before = getattr(before_edit, field)
         value_after = getattr(after_edit, field)
+
         if field == 'assigned_to':
             before_users = set(assigned)
             after_users = set(value_after.all())
 
             added_users = after_users - before_users
             removed_users = before_users - after_users
+            if not before_users == after_users:
+                if added_users:
+                    added_usernames = ', '.join(user.username for user in added_users)
+                    changes.append(f"{display_name}: Added {added_usernames}")
 
-            if added_users:
-                added_usernames = ', '.join(user.username for user in added_users)
-                changes.append(f"{display_name}: Added {added_usernames}")
+                if removed_users:
+                    removed_usernames = ', '.join(user.username for user in removed_users)
+                    changes.append(f"{display_name}: Removed {removed_usernames}")
+                continue
 
-            if removed_users:
-                removed_usernames = ', '.join(user.username for user in removed_users)
-                changes.append(f"{display_name}: Removed {removed_usernames}")
-            continue
         if value_before != value_after:
             change_string = f"{display_name}: '{value_before}' to '{value_after}'"
             changes.append(change_string)
