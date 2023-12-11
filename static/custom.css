@@ -38,8 +38,16 @@
 /*
  * Cover page
  */
-h1.cover-heading {
+h1.cover-card {
   font-size: 3rem;
+}
+
+h1 {
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bolder;
+  -webkit-text-stroke: 0.2px #054107;
+  text-shadow: 1px 1px 3px #054107;
+  color: rgb(23, 203, 23)
 }
 
 p.cover-text {
