@@ -425,7 +425,7 @@ def audit_log(request, team_id):
     team = Team.objects.get(team_id = team_id)
 
     if not request.user == team.team_leader:
-        return redirect('dashboard')
+        return redirect('team_page', team_id = team_id)
     else:
         logs = AuditLog.objects.filter(team_id = team_id)
         return render(request, 'audit_log.html', {'logs' : logs})
@@ -477,5 +477,5 @@ def compare_task_details(before_edit, after_edit, assigned):
         if value_before != value_after:
             change_string = f"{display_name}: '{value_before}' to '{value_after}'"
             changes.append(change_string)
-            
+
     return '\n'.join(changes)
