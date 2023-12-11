@@ -11,9 +11,11 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Invites,Team, Task, User
+from .models import Invites, Notification,Team, Task, User
 from django.db.models import Q
 from django.template.defaulttags import register
+from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 
 @login_required
 def remove_member(request, team_id, username):
@@ -166,6 +168,11 @@ def home(request):
 
     return render(request, 'home.html')
 
+def get_invites(request):
+    """Get a list of team invites for the current user."""
+    invites = Invites.objects.filter(username=request.user)
+    return render(request, 'dashboard.html', {'invites': invites})
+
 @login_required
 def requests_table(request):
      invites = get_invites()
@@ -300,27 +307,105 @@ class SignUpView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+    
+
 
 @login_required
 def create_task(request, team_id):
     """Handle displaying and processing the task creation form."""
 
-    if not Team.objects.filter(team_id = team_id).exists():
+    if not Team.objects.filter(team_id=team_id).exists():
         return redirect('dashboard')
     if request.method == 'POST':
         form = TaskForm(team_id, request.POST, request.FILES)
         if form.is_valid():
-            task = form.save(commit = False)
+            task = form.save(commit=False)
             task.created_by = request.user
-            assigned_to_user = form.cleaned_data.get('assigned_to')
+            assigned_to_users = form.cleaned_data.get('assigned_to')
             task.save()
-            task.assigned_to.set(assigned_to_user)
-            task.related_to_team = Team.objects.get(team_id = team_id)
+            task.assigned_to.set(assigned_to_users)
+            task.related_to_team = Team.objects.get(team_id=team_id)
             task.save()
-            return redirect('team_page', team_id = team_id)
+            
+            # Create a notification for each assigned user
+            for assigned_to_user in assigned_to_users:
+                Notification.objects.create(
+                    due_date=task.due_date,
+                    assigner=request.user,
+                    assigned_to=assigned_to_user,
+                    team=task.related_to_team,
+                    task=task,
+                )
+            
+            # Send email notifications to the assigned users
+            for assigned_to_user in assigned_to_users:
+                send_task_assignment_notification(assigned_to_user.email, task)
+
+            return redirect('team_page', team_id=team_id)
     else: 
         form = TaskForm(team_id)
-    return render(request, 'task.html', {'form' : form, 'team_id' : team_id})
+
+    return render(request, 'task.html', {'form': form, 'team_id': team_id})
+
+def send_task_assignment_notification(email, task):
+    """Send a notification email for task assignment."""
+    subject = f"You have been assigned a new task: {task.title}"
+    message = f"Hello,\n\nYou have been assigned a new task: {task.title}\n\nDescription: {task.description}\n\nDue Date: {task.due_date}\n\nTeam: {task.related_to_team}\n\nCreated by: {task.created_by}\n\nBest regards,\nThe Task Manager Team"
+    from_email = "task_manager@example.com"
+    recipient_list = [email]
+    
+    send_mail(subject, message, from_email, recipient_list)
+    
+# @login_required
+# def create_task(request, team_id):
+#     """Handle displaying and processing the task creation form."""
+
+#     if not Team.objects.filter(team_id = team_id).exists():
+#         return redirect('dashboard')
+#     if request.method == 'POST':
+#         form = TaskForm(team_id, request.POST, request.FILES)
+#         if form.is_valid():
+#             task = form.save(commit = False)
+#             task.created_by = request.user
+#             assigned_to_user = form.cleaned_data.get('assigned_to')
+#             task.save()
+#             task.assigned_to.set(assigned_to_user)
+#             task.related_to_team = Team.objects.get(team_id = team_id)
+#             task.save()
+#             for user in assigned_to_users:
+#                 Notification.objects.create(
+#                     due_date=task.due_date,
+#                     assigner=request.user,
+#                     assigned_to=user,
+#                     team=task.related_to_team,
+#                     task=task,
+#                 )
+#             for user in assigned_to_users:
+#                 send_task_assignment_notification(user.email, task)
+
+#             return redirect('team_page', team_id=team_id)
+#     else:
+#         form = TaskForm(team_id)
+
+#     #         for assigned_to_user in assigned_to_users:
+#     #             Notification.objects.create(
+#     #                 due_date=task.due_date,
+#     #                 assigner=request.user,
+#     #                 assigned_to=assigned_to_user,
+#     #                 team=task.related_to_team,
+#     #                 task=task,
+#     #             )
+#     #         for assigned_to_user in assigned_to_users:
+#     #             send_task_assignment_notification(assigned_to_user.email, task)
+
+#     #         return redirect('team_page', team_id=team_id)
+#     # else: 
+#     #     form = TaskForm(team_id)
+
+#     #         return redirect('team_page', team_id = team_id)
+#     # else: 
+#     #     form = TaskForm(team_id)
+#     return render(request, 'task.html', {'form' : form, 'team_id' : team_id})
 
 @login_required
 def edit_task(request, task_id):

@@ -90,3 +90,10 @@ class Task(models.Model):
         if self.id and not self.assigned_to.exists():
             raise Exception({'assigned_to': 'This task must be assigned to a user'})
         
+class Notification(models.Model):
+    date_assigned = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField()
+    assigner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assigned_by')
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assigned_to')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True, blank=True)
