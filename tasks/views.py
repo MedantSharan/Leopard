@@ -435,7 +435,7 @@ def audit_log_add(request, team_id, task, username, action, changes = None):
 
     team = Team.objects.get(team_id = team_id)
 
-    if(AuditLog.objects.filter(team_id = team_id).count() >= 20 and changes):
+    if(AuditLog.objects.filter(team_id = team_id).count() > 20 and changes):
         # If there are more than 20 logs, delete the oldest one
         AuditLog.objects.filter(team_id = team_id).order_by('timestamp').first().delete()
 
@@ -473,7 +473,7 @@ def compare_task_details(before_edit, after_edit, assigned):
                     removed_usernames = ', '.join(user.username for user in removed_users)
                     changes.append(f"{display_name}: Removed {removed_usernames}")
                 continue
-                
+
         if value_before == "": 
             value_before = "None"
 
