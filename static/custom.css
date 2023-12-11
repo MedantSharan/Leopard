@@ -401,13 +401,13 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   text-align: center;
   border-radius: 40px;
   height:35rem;
-  overflow:scroll;
+  overflow:show;
 } 
 
 .audit-log-card{
   border: 0px;
   border-radius: 30px;
-  overflow: hidden;
+  overflow: scroll;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   margin-bottom: 20px;
 }
