@@ -94,8 +94,8 @@ class AuditLog(models.Model):
     """Model used to represent audit logs"""
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    task_title = models.CharField(max_length = 100, null = True)
+    task_title = models.CharField(max_length = 100, null = True, blank = True)
     action = models.CharField(max_length = 100)
     timestamp = models.DateTimeField(auto_now_add=True)
-    changes = models.CharField(max_length = 1000, null = True)
+    changes = models.CharField(max_length = 1000, null = True, blank = True)
         

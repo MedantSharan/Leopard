@@ -477,4 +477,5 @@ def compare_task_details(before_edit, after_edit, assigned):
         if value_before != value_after:
             change_string = f"{display_name}: '{value_before}' to '{value_after}'"
             changes.append(change_string)
+            
     return '\n'.join(changes)
