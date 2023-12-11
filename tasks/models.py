@@ -89,4 +89,13 @@ class Task(models.Model):
         super().clean()
         if self.id and not self.assigned_to.exists():
             raise Exception({'assigned_to': 'This task must be assigned to a user'})
+
+class AuditLog(models.Model):
+    """Model used to represent audit logs"""
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    team_id = models.IntegerField()
+    task_title = models.CharField(max_length = 100, null = True)
+    action = models.CharField(max_length = 100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
         

@@ -11,9 +11,10 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Invites,Team, Task, User
+from .models import Invites,Team, Task, User, AuditLog
 from django.db.models import Q
 from django.template.defaulttags import register
+import copy
 
 @login_required
 def remove_member(request, team_id, username):
@@ -313,10 +314,11 @@ def create_task(request, team_id):
             task = form.save(commit = False)
             task.created_by = request.user
             assigned_to_user = form.cleaned_data.get('assigned_to')
-            task.save()
-            task.assigned_to.set(assigned_to_user)
             task.related_to_team = Team.objects.get(team_id = team_id)
             task.save()
+            task.assigned_to.set(assigned_to_user)
+            task.save()
+            audit_log_add(request, team_id, task.title, request.user, 'created')
             return redirect('team_page', team_id = team_id)
     else: 
         form = TaskForm(team_id)
@@ -332,9 +334,13 @@ def edit_task(request, task_id):
     team_id = task.related_to_team.team_id
     if(request.user == task.created_by or request.user in task.assigned_to.all()):
         if request.method == 'POST':
+            before_edit = copy.deepcopy(task)
             form = TaskForm(team_id, request.POST, request.FILES, instance = task)
             if form.is_valid():
                 form.save()
+                after_edit = Task.objects.get(pk = task_id)
+                changes = compare_task_details(before_edit, after_edit)
+                audit_log_add(request, team_id, task.title, request.user, 'edited')
                 return redirect('team_page', team_id = team_id)
         else: 
             form = TaskForm(team_id, instance = task)
@@ -351,6 +357,7 @@ def delete_task(request, task_id):
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
     if(request.user == task.created_by):
+        audit_log_add(request, team_id, task.title, request.user, 'deleted')
         task.delete()
     return redirect('team_page', team_id = team_id)
 
@@ -410,3 +417,39 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
         tasks = tasks.order_by('title')
 
     return tasks
+
+@login_required
+def audit_log(request, team_id):
+    """Display the audit log page."""
+    team = Team.objects.get(team_id = team_id)
+
+    if not request.user == team.team_leader:
+        return redirect('dashboard')
+    else:
+        logs = AuditLog.objects.filter(team_id = team_id)
+        return render(request, 'audit_log.html', {'logs' : logs})
+
+def audit_log_add(request, team_id, task, username, action):
+    """Add an audit log entry."""
+
+    team = Team.objects.get(team_id = team_id)
+    AuditLog.objects.create(
+        username = username, 
+        team_id = team_id, 
+        task_title = task, 
+        action = action
+    )
+
+def compare_task_details(before_edit, after_edit):
+    """Find changes made during task edits."""
+
+    changes = {}
+    for field in ['title', 'description', 'due_date', 'priority']:
+        value_before = getattr(before_edit, field)
+        value_after = getattr(after_edit, field)
+        if value_before != value_after:
+            changes[field] = {
+                'before': value_before,
+                'after': value_after,
+            }
+    return changes

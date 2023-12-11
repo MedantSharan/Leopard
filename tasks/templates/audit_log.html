@@ -1,0 +1,12 @@
+{% extends 'base_content.html' %}
+{% load static %}
+{% block content %}
+    <h2>Audit Log</h2>
+    <ul>
+        {% for log in logs %}
+            <p>{{ log.username }} - {{ log.task_title }} 
+                - {{ log.action }} - {{ log.timestamp }}
+            </p>
+        {% endfor %}
+    </ul>
+{% endblock %}
