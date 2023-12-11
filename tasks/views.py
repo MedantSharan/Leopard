@@ -318,7 +318,7 @@ def create_task(request, team_id):
             task.save()
             task.assigned_to.set(assigned_to_user)
             task.save()
-            audit_log_add(request, team_id, task.title, request.user, 'created')
+            audit_log_add(request, team_id, task.title, request.user, 'Created')
             return redirect('team_page', team_id = team_id)
     else: 
         form = TaskForm(team_id)
@@ -335,12 +335,13 @@ def edit_task(request, task_id):
     if(request.user == task.created_by or request.user in task.assigned_to.all()):
         if request.method == 'POST':
             before_edit = copy.deepcopy(task)
+            before_assigned_to = set(task.assigned_to.all())
             form = TaskForm(team_id, request.POST, request.FILES, instance = task)
             if form.is_valid():
                 form.save()
-                after_edit = Task.objects.get(pk = task_id)
-                changes = compare_task_details(before_edit, after_edit)
-                audit_log_add(request, team_id, task.title, request.user, 'edited')
+                after_edit = form.instance
+                changes = compare_task_details(before_edit, after_edit, before_assigned_to)
+                audit_log_add(request, team_id, task.title, request.user, 'Edited', changes)
                 return redirect('team_page', team_id = team_id)
         else: 
             form = TaskForm(team_id, instance = task)
@@ -357,7 +358,7 @@ def delete_task(request, task_id):
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
     if(request.user == task.created_by):
-        audit_log_add(request, team_id, task.title, request.user, 'deleted')
+        audit_log_add(request, team_id, task.title, request.user, 'Deleted')
         task.delete()
     return redirect('team_page', team_id = team_id)
 
@@ -429,27 +430,45 @@ def audit_log(request, team_id):
         logs = AuditLog.objects.filter(team_id = team_id)
         return render(request, 'audit_log.html', {'logs' : logs})
 
-def audit_log_add(request, team_id, task, username, action):
+def audit_log_add(request, team_id, task, username, action, changes = None):
     """Add an audit log entry."""
 
     team = Team.objects.get(team_id = team_id)
+
+    if changes:
+        changes = ', '.join(changes)
+
     AuditLog.objects.create(
         username = username, 
         team_id = team_id, 
         task_title = task, 
-        action = action
+        action = action,
+        changes = changes
     )
 
-def compare_task_details(before_edit, after_edit):
+def compare_task_details(before_edit, after_edit, assigned):
     """Find changes made during task edits."""
 
-    changes = {}
-    for field in ['title', 'description', 'due_date', 'priority']:
+    changes = []
+    for field, display_name in [('title', 'Title'), ('description', 'Description'), ('due_date', 'Due date'), ('priority', 'Priority'), ('assigned_to', 'Assigned to')]:
         value_before = getattr(before_edit, field)
         value_after = getattr(after_edit, field)
+        if field == 'assigned_to':
+            before_users = set(assigned)
+            after_users = set(value_after.all())
+
+            added_users = after_users - before_users
+            removed_users = before_users - after_users
+
+            if added_users:
+                added_usernames = ', '.join(user.username for user in added_users)
+                changes.append(f"{display_name}: Added {added_usernames}")
+
+            if removed_users:
+                removed_usernames = ', '.join(user.username for user in removed_users)
+                changes.append(f"{display_name}: Removed {removed_usernames}")
+            continue
         if value_before != value_after:
-            changes[field] = {
-                'before': value_before,
-                'after': value_after,
-            }
+            change_string = f"{display_name}: '{value_before}' to '{value_after}'"
+            changes.append(change_string)
     return changes

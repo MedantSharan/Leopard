@@ -97,5 +97,5 @@ class AuditLog(models.Model):
     task_title = models.CharField(max_length = 100, null = True)
     action = models.CharField(max_length = 100)
     timestamp = models.DateTimeField(auto_now_add=True)
-
+    changes = models.CharField(max_length = 1000, null = True)
         

@@ -4,8 +4,11 @@
     <h2>Audit Log</h2>
     <ul>
         {% for log in logs %}
-            <p>{{ log.username }} - {{ log.task_title }} 
-                - {{ log.action }} - {{ log.timestamp }}
+            <p>{{ log.username }} {{ log.action }} {{ log.task_title }} 
+                {% if log.changes %}
+                   : {{ log.changes }}  
+                {% endif %} 
+                on {{ log.timestamp }}
             </p>
         {% endfor %}
     </ul>
