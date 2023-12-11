@@ -22,6 +22,7 @@ class EditTaskViewTestCase(TestCase):
             'description' : 'This is a new task',
             'assigned_to' : [self.user.id],
             'due_date' : (datetime.now().date() + timedelta(days=2)),
+            'priority' : 'high'
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -35,7 +36,8 @@ class EditTaskViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
-            related_to_team = self.team
+            related_to_team = self.team,
+            priority = 'low'
         )
         self.task.assigned_to.set([self.user])
 
@@ -71,6 +73,7 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)
+        self.assertEqual(task.priority, self.form_input['priority'])
 
     def test_unsuccesful_task_edit(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -88,6 +91,7 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)
+        self.assertEqual(task.priority, self.task.priority)
 
     def test_only_creator_and_assigned_users_can_edit_tasks(self):
         self.client.login(username=self.second_user.username, password='Password123')
@@ -119,5 +123,5 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(log.changes, 
            f"Title: {self.task.title} to {self.form_input['title']}\nDescription: {self.task.description} to {self.form_input['description']}"
            f"\nDue date: {self.task.due_date} to {self.form_input['due_date']}"
-           f"\nPriority: None to "              
+           f"\nPriority: low to high"              
         )
