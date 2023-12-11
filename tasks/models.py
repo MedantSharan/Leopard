@@ -71,7 +71,7 @@ class Task(models.Model):
 
     # Choices for priority
     PRIORITY_CHOICES = [
-        ('none', 'None'),
+        ('', '-'),
         ('low', 'Low'),
         ('medium', 'Medium'),
         ('high', 'High'),
@@ -83,7 +83,7 @@ class Task(models.Model):
     assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='none')
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=True, blank=True)
 
     def clean(self):
         super().clean()
