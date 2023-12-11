@@ -397,6 +397,21 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 * Audit Log
 */
 
+.audit-log-container{
+  text-align: center;
+  border-radius: 40px;
+  height:35rem;
+  overflow:hidden;
+} 
+
+.audit-log-card{
+  border: 0px;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
 .audit-log{
   margin-bottom: 20px; 
 }
