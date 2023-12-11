@@ -473,6 +473,11 @@ def compare_task_details(before_edit, after_edit, assigned):
                     removed_usernames = ', '.join(user.username for user in removed_users)
                     changes.append(f"{display_name}: Removed {removed_usernames}")
                 continue
+        if value_before == "": 
+            value_before = "None"
+
+        if value_after == "":
+            value_after = "None"
 
         if value_before != value_after:
             change_string = f"{display_name}: {value_before} to {value_after}"
