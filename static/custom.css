@@ -393,3 +393,14 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   }
 }
 
+/*
+* Audit Log
+*/
+
+.audit-log{
+  margin-bottom: 20px; 
+}
+
+.changes {
+  margin-left: 40px;
+}

@@ -2,14 +2,14 @@
 {% load static %}
 {% block content %}
     <h2>Audit Log</h2>
-    <ul>
-        {% for log in logs %}
-            <p>{{ log.username }} {{ log.action }} {{ log.task_title }} 
+    {% for log in logs %}
+        <li class = "audit-log">
+            {{ log.username }} {{ log.action }} {{ log.task_title }} on {{ log.timestamp }} :
                 {% if log.changes %}
-                   : {{ log.changes }}  
+                    <div class = "changes">
+                        {{ log.changes|linebreaksbr|safe }}  
+                    </div>
                 {% endif %} 
-                on {{ log.timestamp }}
-            </p>
-        {% endfor %}
-    </ul>
+        </li>
+    {% endfor %}
 {% endblock %}

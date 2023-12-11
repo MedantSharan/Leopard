@@ -439,17 +439,16 @@ def audit_log_add(request, team_id, task, username, action, changes = None):
         # If there are more than 20 logs, delete the oldest one
         AuditLog.objects.filter(team_id = team_id).order_by('timestamp').first().delete()
 
-    if changes:
-        changes = ', '.join(changes)
+    if action == 'edited' and not changes:
+        return
 
-    if changes:
-        AuditLog.objects.create(
-            username = username, 
-            team_id = team_id, 
-            task_title = task, 
-            action = action,
-            changes = changes
-        )
+    AuditLog.objects.create(
+        username = username, 
+        team_id = team_id, 
+        task_title = task, 
+        action = action,
+        changes = changes
+    )
 
 def compare_task_details(before_edit, after_edit, assigned):
     """Find changes made during task edits."""
@@ -478,4 +477,4 @@ def compare_task_details(before_edit, after_edit, assigned):
         if value_before != value_after:
             change_string = f"{display_name}: '{value_before}' to '{value_after}'"
             changes.append(change_string)
-    return changes
+    return '\n'.join(changes)
