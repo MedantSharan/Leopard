@@ -139,7 +139,7 @@ def add_members(request, team_id):
         form = InviteForm(request.POST, team_id=team_id) 
         if form.is_valid():
             form.save()
-            return redirect('dashboard'); 
+            return redirect('team_page', team_id = team_id) 
     else:
         form = InviteForm()
     return render(request, "add_members.html", {'form': form, 'team_id': team_id})
