@@ -13,6 +13,7 @@
           {% csrf_token %}
           <input type="submit" value="Delete Task" class="btn btn-danger" onclick="return confirm('Delete task?')">
         </form>
+        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Back</a>
       </div>
     </div>
 </div>
