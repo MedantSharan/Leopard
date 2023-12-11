@@ -93,7 +93,7 @@ class Task(models.Model):
 class AuditLog(models.Model):
     """Model used to represent audit logs"""
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    team_id = models.IntegerField()
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     task_title = models.CharField(max_length = 100, null = True)
     action = models.CharField(max_length = 100)
     timestamp = models.DateTimeField(auto_now_add=True)

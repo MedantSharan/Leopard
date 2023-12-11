@@ -444,7 +444,7 @@ def audit_log_add(request, team_id, task, username, action, changes = None):
 
     AuditLog.objects.create(
         username = username, 
-        team_id = team_id, 
+        team = team,
         task_title = task, 
         action = action,
         changes = changes
