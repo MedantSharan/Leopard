@@ -35,6 +35,13 @@
   align-items: center;
 }
 
+.field label{
+  font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 1rem;
+  font-weight: bolder;
+  text-shadow: 1px 1px 1px #054107;
+  color: rgb(6, 156, 6)
+}
 /*
  * Cover page
  */
