@@ -2,6 +2,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+import datetime
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -83,7 +84,7 @@ class Task(models.Model):
     assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=True, blank=True)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=False, blank=True)
 
     def days_until_due(self):
         return self.due_date - datetime.date.today()
