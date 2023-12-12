@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Assignment Notification</title>
+</head>
+<body>
+    <p>Hello,</p>
+    <p>You have been assigned a new task: {{ task.title }}</p>
+    <p>Description: {{ task.description }}</p>
+    <p>Due Date: {{ task.due_date }}</p>
+    <p>Team: {{ task.related_to_team.team_name }}</p>
+    <p>Created by: {{ task.created_by.full_name }}</p>
+    <p>Best regards,<br>The Task Manager Team</p>
+</body>
+</html>

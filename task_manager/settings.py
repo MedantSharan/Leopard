@@ -105,12 +105,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'your_smtp_server.com'  # Replace with your SMTP server hostname or IP address
-EMAIL_PORT = 587  # Use the appropriate port for your SMTP server
-EMAIL_USE_TLS = True  # Set to True if your SMTP server requires TLS, False otherwise
-EMAIL_USE_SSL = False  # Set to True if your SMTP server requires SSL, False otherwise
-EMAIL_HOST_USER = 'your_username'  # Provide your SMTP username if required
-EMAIL_HOST_PASSWORD = 'your_password'  # Provide your SMTP password if required
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = '' 
+
 
 
 

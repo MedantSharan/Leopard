@@ -25,6 +25,20 @@ def login_prohibited(view_function):
 
 #     send_mail(subject, message, from_email, recipient_list)
 
+# def send_task_assignment_notification(receiver_email, task):
+#     """Send a task assignment email notification."""
+#     subject = f"You've been assigned a new task: {task.title}"
+#     html_message = render_to_string('task_assignment_email.html', {'task': task})
+#     plain_message = strip_tags(html_message)
+
+#     send_mail(
+#         subject,
+#         plain_message,
+#         'your-sender-email@example.com',  # Update with your email address
+#         [receiver_email],
+#         html_message=html_message,
+#     )
+
 def send_task_assignment_notification(receiver_email, task):
     """Send a task assignment email notification."""
     subject = f"You've been assigned a new task: {task.title}"
@@ -34,7 +48,7 @@ def send_task_assignment_notification(receiver_email, task):
     send_mail(
         subject,
         plain_message,
-        'your-sender-email@example.com',  # Update with your email address
+        'your-sender-email@example.com',
         [receiver_email],
         html_message=html_message,
     )
