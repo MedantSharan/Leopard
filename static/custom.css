@@ -157,6 +157,10 @@ h3.profile-title {
   background-color: #fdfbfb;
 }
 
+.high-priority-nearing-due {
+  background-color: #e88181;
+}
+
 .teams-card2 {
   background-color: rgb(231, 226, 226);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -384,4 +388,3 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
     margin: 0;
   }
 }
-

@@ -85,6 +85,9 @@ class Task(models.Model):
     due_date = models.DateField(null = True, blank = True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=True, blank=True)
 
+    def days_until_due(self):
+        return self.due_date - datetime.date.today()
+
     def clean(self):
         super().clean()
         if self.id and not self.assigned_to.exists():
