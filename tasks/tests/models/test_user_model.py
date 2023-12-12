@@ -122,11 +122,64 @@ class UserModelTestCase(TestCase):
         self.user.email = 'johndoe@@example.org'
         self._assert_user_is_invalid()
 
-
     def test_full_name_must_be_correct(self):
         full_name = self.user.full_name()
         self.assertEqual(full_name, "John Doe")
 
+    def test_username_must_not_contain_special_characters(self):
+        """Test that the username must not contain special characters."""
+        self.user.username = '@john!doe'
+        self._assert_user_is_invalid()
+
+    def test_username_must_not_contain_spaces(self):
+        """Test that the username must not contain spaces."""
+        self.user.username = '@john doe'
+        self._assert_user_is_invalid()
+
+    def test_username_may_start_with_digit(self):
+        """Test that the username may start with a digit."""
+        self.user.username = '@1johndoe'
+        self._assert_user_is_valid()
+
+    def test_first_name_must_not_contain_digits(self):
+        """Test that the first name must not contain digits."""
+        self.user.first_name = 'John123'
+        self._assert_user_is_invalid()
+
+    def test_last_name_must_not_contain_special_characters(self):
+        """Test that the last name must not contain special characters."""
+        self.user.last_name = 'Doe!'
+        self._assert_user_is_invalid()
+
+    def test_email_must_contain_at_least_one_dot_after_at(self):
+        """Test that the email must contain at least one dot after the @ symbol."""
+        self.user.email = 'johndoe@example'
+        self._assert_user_is_invalid()
+
+    def test_email_must_not_contain_spaces(self):
+        """Test that the email must not contain spaces."""
+        self.user.email = 'john doe@example.com'
+        self._assert_user_is_invalid()
+
+    def test_email_must_not_contain_special_characters(self):
+        """Test that the email must not contain special characters."""
+        self.user.email = 'john@doe!example.com'
+        self._assert_user_is_invalid()
+
+    def test_email_must_not_start_with_dot(self):
+        """Test that the email must not start with a dot."""
+        self.user.email = '.johndoe@example.com'
+        self._assert_user_is_invalid()
+
+    def test_email_must_not_end_with_dot(self):
+        """Test that the email must not end with a dot."""
+        self.user.email = 'johndoe@example.com.'
+        self._assert_user_is_invalid()
+
+    def test_email_must_not_contain_consecutive_dots(self):
+        """Test that the email must not contain consecutive dots."""
+        self.user.email = 'john..doe@example.com'
+        self._assert_user_is_invalid()
 
     def test_default_gravatar(self):
         actual_gravatar_url = self.user.gravatar()
