@@ -87,6 +87,7 @@ class Task(models.Model):
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=False, blank=True)
 
     def days_until_due(self):
+        """Return the number of days until the task is due."""
         return self.due_date - datetime.date.today()
 
     def clean(self):
