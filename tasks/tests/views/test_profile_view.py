@@ -18,10 +18,10 @@ class ProfileViewTest(TestCase):
         self.user = User.objects.get(username='@johndoe')
         self.url = reverse('profile')
         self.form_input = {
-            'first_name': 'John2',
-            'last_name': 'Doe2',
-            'username': '@johndoe2',
-            'email': 'johndoe2@example.org',
+            'first_name': 'Jane',
+            'last_name': 'Does',
+            'username': '@janedoes',
+            'email': 'janedoes@example.org',
         }
 
     def test_profile_url(self):
@@ -90,10 +90,10 @@ class ProfileViewTest(TestCase):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.username, '@johndoe2')
-        self.assertEqual(self.user.first_name, 'John2')
-        self.assertEqual(self.user.last_name, 'Doe2')
-        self.assertEqual(self.user.email, 'johndoe2@example.org')
+        self.assertEqual(self.user.username, '@janedoes')
+        self.assertEqual(self.user.first_name, 'Jane')
+        self.assertEqual(self.user.last_name, 'Does')
+        self.assertEqual(self.user.email, 'janedoes@example.org')
 
     def test_post_profile_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)

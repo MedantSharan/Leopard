@@ -35,6 +35,12 @@
   align-items: center;
 }
 
+.field label{
+  font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 1px #054107;
+  color: rgb(6, 156, 6)
+}
 /*
  * Cover page
  */
@@ -175,57 +181,6 @@ h3.profile-title {
   border-radius: 20px;
   margin-bottom: 20px;
 }
-
-/*
-CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY 
-*/
-
-.teams-heading {
-  font-size: 2.0rem;
-}
-
-.teams-text {
-  font-size: 1.7rem;
-}
-
-.invites-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.invites-heading {
-  font-size: 2.0rem;
-}
-
-.invites-text {
-  font-size: 1.7rem;
-}
-
-.tasks-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.tasks-heading {
-  font-size: 2.0rem;
-}
-
-.tasks-text {
-  font-size: 1.7rem;
-}
-
 
 /* Team Page */
 .section-title {

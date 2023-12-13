@@ -14,8 +14,27 @@ class User(AbstractUser):
             message='Username must consist of @ followed by at least three alphanumericals'
         )]
     )
-    first_name = models.CharField(max_length=50, blank=False)
-    last_name = models.CharField(max_length=50, blank=False)
+    first_name = models.CharField(
+        max_length=50,
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Za-z]+$',
+                message='First name must contain only letters.',
+            ),
+        ],
+    )
+
+    last_name = models.CharField(
+        max_length=50,
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Za-z]+$',
+                message='Last name must contain only letters.',
+            ),
+        ],
+    )
     email = models.EmailField(unique=True, blank=False)
 
 
