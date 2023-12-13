@@ -328,7 +328,7 @@ def create_task(request, team_id):
 def edit_task(request, task_id):
     """Display the task edit page and handle task edits."""
 
-    if not Task.objects.filter(pk = task_id).exists():
+    if not Task.objects.filter(pk = task_id).exists() or not request.user in Task.objects.get(pk = task_id).related_to_team.team_members.all():
         return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
@@ -353,7 +353,7 @@ def edit_task(request, task_id):
 def delete_task(request, task_id):
     """Handle deletion of tasks."""
 
-    if not Task.objects.filter(pk = task_id).exists():
+    if not Task.objects.filter(pk = task_id).exists() or not request.user in Task.objects.get(pk = task_id).related_to_team.team_members.all():
         return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
     team_id = task.related_to_team.team_id
