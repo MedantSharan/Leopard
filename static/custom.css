@@ -176,56 +176,10 @@ h3.profile-title {
   margin-bottom: 20px;
 }
 
-/*
-CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY 
-*/
-
-.teams-heading {
-  font-size: 2.0rem;
+.card-body{
+  max-height: 700px;
+  overflow-y: auto;
 }
-
-.teams-text {
-  font-size: 1.7rem;
-}
-
-.invites-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.invites-heading {
-  font-size: 2.0rem;
-}
-
-.invites-text {
-  font-size: 1.7rem;
-}
-
-.tasks-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.tasks-heading {
-  font-size: 2.0rem;
-}
-
-.tasks-text {
-  font-size: 1.7rem;
-}
-
 
 /* Team Page */
 .section-title {
