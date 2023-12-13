@@ -5,7 +5,7 @@
     {{ field.label_tag }}
     <div class="mb-3">
       {% if field.name == 'assigned_to' %}
-        <div class="form-control">
+        <div class="form-control form-check-container">
           {% for widget in field %}
             <div class="form-check">
               {{ widget }}

@@ -79,11 +79,13 @@ class Command(BaseCommand):
         for user in User.objects.all():
             if user.username != '@johndoe':
                 for i in range(randint(1, self.TEAMS_PER_USER)):
+                    team_leader = self.users.exclude(id=user.id).exclude(username='@johndoe').order_by('?').first()
                     team = Team.objects.create(
-                        team_leader=self.users.exclude(id=user.id).exclude(username='@johndoe').order_by('?').first(),
+                        team_leader=team_leader,
                         team_name=self.faker.word(),
                         team_description=self.faker.sentence(),
                     )
+                    team.team_members.add(team_leader)
                     team.team_members.add(user)
             else:
                 team = Team.objects.create(

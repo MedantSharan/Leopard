@@ -435,3 +435,8 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   margin-bottom: 5px;
   margin-left: -30px; 
 }
+
+.form-check-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
