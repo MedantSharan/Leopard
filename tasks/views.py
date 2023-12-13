@@ -367,7 +367,7 @@ def delete_task(request, task_id):
 def view_task(request, task_id):
     """Display the task view page."""
 
-    if not Task.objects.filter(pk = task_id).exists():
+    if not Task.objects.filter(pk = task_id).exists() or not request.user in Task.objects.get(pk = task_id).related_to_team.team_members.all():
         return redirect('dashboard')
     task = Task.objects.get(pk = task_id)
     return render(request, 'view_task.html', {'task' : task})
