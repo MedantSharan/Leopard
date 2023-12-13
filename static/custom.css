@@ -47,7 +47,7 @@ h1 {
   font-weight: bolder;
   -webkit-text-stroke: 0.2px #054107;
   text-shadow: 1px 1px 3px #054107;
-  color: rgb(23, 203, 23)
+  color: rgb(23, 203, 23);
 }
 
 p.cover-text {
@@ -159,12 +159,16 @@ h3.profile-title {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #c9c9c9;
+  overflow-wrap: break-word;
+  max-width: 200px;
 }
 
 .tasks-table-row :hover {
   background-color: #fdfbfb;
 }
-
+#teams-table, #invites-table, #tasks-table{
+  width: 100%;
+}
 .teams-card2 {
   background-color: rgb(231, 226, 226);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -323,6 +327,7 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   text-align: center;
   color: white;
   overflow: hidden;
+  padding: 10px;
 }
 .task-list, .team-task-list{
   margin-top: 30px;
@@ -348,8 +353,8 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 }
 
 .task-card-description{
-  overflow:hidden;
-  max-height: 100px
+  overflow-y:scroll;
+  max-height: 100px;
 }
 .task-search-bar{
   background-color: white ;
