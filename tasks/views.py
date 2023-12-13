@@ -306,7 +306,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
 def create_task(request, team_id):
     """Handle displaying and processing the task creation form."""
 
-    if not Team.objects.filter(team_id = team_id).exists():
+    if not Team.objects.filter(team_id = team_id).exists() or not request.user in Team.objects.get(team_id = team_id).team_members.all():
         return redirect('dashboard')
     if request.method == 'POST':
         form = TaskForm(team_id, request.POST, request.FILES)
