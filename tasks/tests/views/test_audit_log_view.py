@@ -73,9 +73,18 @@ class AuditLogViewTestCase(TestCase):
 
     def test_redirect_if_not_team_leader(self):
         self.client.login(username=self.second_user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, f'/team_page/{self.team.team_id}/')
+
+    def test_redirect_if_not_team_member(self):
+        self.client.login(username=self.second_user, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('dashboard'))
+
+    
 
 
     

@@ -20,7 +20,7 @@ class EditTaskViewTestCase(TestCase):
         self.form_input = {
             'title' : 'New task',
             'description' : 'This is a new task',
-            'assigned_to' : [self.user.id],
+            'assigned_to' : [self.second_user.id],
             'due_date' : (datetime.now().date() + timedelta(days=2)),
             'priority' : 'high'
         }
@@ -63,6 +63,7 @@ class EditTaskViewTestCase(TestCase):
 
     def test_succesful_task_edit(self):
         self.client.login(username=self.user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
         response = self.client.post(self.url, self.form_input)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('team_page', kwargs={'team_id': self.team.team_id}))
@@ -71,7 +72,7 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.description, self.form_input['description'])
         self.assertEqual(task.due_date, self.form_input['due_date'])
         self.assertEqual(task.assigned_to.count(), 1)
-        self.assertEqual(task.assigned_to.first().username, self.user.username)
+        self.assertIn(self.second_user, task.assigned_to.all())
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.priority, self.form_input['priority'])
 
@@ -111,6 +112,7 @@ class EditTaskViewTestCase(TestCase):
 
     def test_audit_log_created(self):
         self.client.login(username=self.user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
         before_count = AuditLog.objects.count()
         response = self.client.post(self.url, self.form_input)
         after_count = AuditLog.objects.count()
@@ -123,5 +125,6 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(log.changes, 
            f"Title: {self.task.title} to {self.form_input['title']}\nDescription: {self.task.description} to {self.form_input['description']}"
            f"\nDue date: {self.task.due_date} to {self.form_input['due_date']}"
-           f"\nPriority: low to high"              
+           f"\nPriority: low to high"     
+           f"\nAssigned to: Added {self.second_user.username} Removed {self.user.username} "         
         )

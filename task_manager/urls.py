@@ -17,8 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tasks import views
-from tasks.views import requests_table
-# from tasks.views import fake_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),

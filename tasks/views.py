@@ -167,16 +167,6 @@ def home(request):
 
     return render(request, 'home.html')
 
-@login_required
-def requests_table(request):
-     invites = get_invites()
-     return render(request, 'dashboard_html', {'invites': invites})
-
-# def fake_dashboard(request):
-#     fake_invite = Invite(sender='TestSender', message='TestMessage')
-#     invites = [fake_invite]
-#     return render(request, 'dashboard.html', {'invites': invites})
-
 class LoginProhibitedMixin: 
     """Mixin that redirects when a user is logged in."""
 
@@ -424,6 +414,9 @@ def audit_log(request, team_id):
     """Display the audit log page."""
     team = Team.objects.get(team_id = team_id)
 
+    if request.user not in team.team_members.all():
+        return redirect('dashboard')
+
     if not request.user == team.team_leader:
         return redirect('team_page', team_id = team_id)
     else:
@@ -465,13 +458,15 @@ def compare_task_details(before_edit, after_edit, assigned):
             added_users = after_users - before_users
             removed_users = before_users - after_users
             if not before_users == after_users:
+                added_string = ""
                 if added_users:
                     added_usernames = ', '.join(user.username for user in added_users)
-                    changes.append(f"{display_name}: Added {added_usernames}")
+                    added_string += (f"Added {added_usernames} ")
 
                 if removed_users:
                     removed_usernames = ', '.join(user.username for user in removed_users)
-                    changes.append(f"{display_name}: Removed {removed_usernames}")
+                    added_string += (f"Removed {removed_usernames} ")
+                changes.append(f"{display_name}: {added_string}")
                 continue
 
         if value_before == "": 
