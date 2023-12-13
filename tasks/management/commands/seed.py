@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from tasks.models import User, Team, Task, Invites
+from tasks.models import User, Team, Task, Invites, AuditLog
 
 import pytz
 from faker import Faker
@@ -109,6 +109,13 @@ class Command(BaseCommand):
                         priority=Task.PRIORITY_CHOICES[randint(0, 3)][0],
                     )
                     task.assigned_to.add(user)
+
+                    AuditLog.objects.create(
+                        username=user,
+                        team=team,
+                        task_title=task.title,
+                        action='Created',
+                    )
             print(f"Seeding tasks", end='\r')
 
     def create_invites(self):
