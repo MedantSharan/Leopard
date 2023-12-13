@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% for field in form %}
   <div class="mb-3 field">
-    {{ field.label_tag }}
+    <label class="header-labels">{{ field.label }}</label>
     <div class="mb-3">
       {% if field.name == 'assigned_to' %}
         <div class="form-control form-check-container">
