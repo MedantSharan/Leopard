@@ -87,13 +87,14 @@ class Command(BaseCommand):
                     team.team_members.add(user)
             else:
                 team = Team.objects.create(
-                    team_leader=User.objects.get(username='@johndoe'),
+                    team_leader=user,
                     team_name="Seeded team",
                     team_description="This team is seeded as required",
                 )
+                team.team_members.add(user)
                 team.team_members.add(User.objects.get(username='@janedoe'))
                 team.team_members.add(User.objects.get(username='@charlie'))
-            print(f"Seeding teams {user.id}/{User.objects.count()}", end='\r')
+            print(f"Seeding teams", end='\r')
 
     def create_tasks(self):
         for team in Team.objects.all():
@@ -108,7 +109,7 @@ class Command(BaseCommand):
                         priority=Task.PRIORITY_CHOICES[randint(0, 3)][0],
                     )
                     task.assigned_to.add(user)
-            print(f"Seeding tasks {user.id}/{team.team_members.count() * Team.objects.count()}", end='\r')
+            print(f"Seeding tasks", end='\r')
 
     def create_invites(self):
         for user in User.objects.all():
@@ -119,7 +120,7 @@ class Command(BaseCommand):
                         username=user,
                         team_id=team.team_id,
                     )
-            print(f"Seeding invites {Invites.objects.count()}/{User.objects.count()}", end='\r')
+            print(f"Seeding invites", end='\r')
 
 def create_username(first_name, last_name):
     return '@' + first_name.lower() + last_name.lower()
