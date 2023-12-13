@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from tasks.models import User
+from tasks.models import User, Team, Task, Invites
 
 import pytz
 from faker import Faker
@@ -18,6 +18,9 @@ class Command(BaseCommand):
 
     USER_COUNT = 300
     DEFAULT_PASSWORD = 'Password123'
+    TASKS_PER_USER = 5
+    TEAMS_PER_USER = 10
+    INVITES_PER_USER = 10
     help = 'Seeds the database with sample data'
 
     def __init__(self):
@@ -26,6 +29,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.create_users()
         self.users = User.objects.all()
+        self.create_teams()
+        self.create_tasks()
+        self.create_invites()
 
     def create_users(self):
         self.generate_user_fixtures()
@@ -57,16 +63,68 @@ class Command(BaseCommand):
             pass
 
     def create_user(self, data):
-        User.objects.create_user(
+        user = User.objects.create_user(
             username=data['username'],
             email=data['email'],
             password=Command.DEFAULT_PASSWORD,
             first_name=data['first_name'],
             last_name=data['last_name'],
         )
+        if data['username'] == '@johndoe':
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+
+    def create_teams(self):
+        for user in User.objects.all():
+            if user.username != '@johndoe':
+                for i in range(randint(1, self.TEAMS_PER_USER)):
+                    team = Team.objects.create(
+                        team_leader=self.users.exclude(id=user.id).exclude(username='@johndoe').order_by('?').first(),
+                        team_name=self.faker.word(),
+                        team_description=self.faker.sentence(),
+                    )
+                    team.team_members.add(user)
+            else:
+                team = Team.objects.create(
+                    team_leader=User.objects.get(username='@johndoe'),
+                    team_name="Seeded team",
+                    team_description="This team is seeded as required",
+                )
+                team.team_members.add(User.objects.get(username='@janedoe'))
+                team.team_members.add(User.objects.get(username='@charlie'))
+            print(f"Seeding teams {user.id}/{User.objects.count()}", end='\r')
+
+    def create_tasks(self):
+        for team in Team.objects.all():
+            for user in team.team_members.all():
+                for i in range(randint(1, self.TASKS_PER_USER)):
+                    task = Task.objects.create(
+                        title=self.faker.sentence(),
+                        description=self.faker.sentence(),
+                        created_by=user,
+                        related_to_team=team,
+                        due_date=self.faker.date_time_between(start_date='+10y', end_date='+100y', tzinfo=pytz.UTC),
+                        priority=Task.PRIORITY_CHOICES[randint(0, 3)][0],
+                    )
+                    task.assigned_to.add(user)
+            print(f"Seeding tasks {user.id}/{team.team_members.count() * Team.objects.count()}", end='\r')
+
+    def create_invites(self):
+        for user in User.objects.all():
+            for i in range(randint(1, self.INVITES_PER_USER)):
+                team = Team.objects.all().order_by('?').first()
+                if not Invites.objects.filter(team_id=team.team_id, username=user).exists():
+                    invite = Invites.objects.create(
+                        username=user,
+                        team_id=team.team_id,
+                    )
+            print(f"Seeding invites {Invites.objects.count()}/{User.objects.count()}", end='\r')
 
 def create_username(first_name, last_name):
     return '@' + first_name.lower() + last_name.lower()
 
 def create_email(first_name, last_name):
     return first_name + '.' + last_name + '@example.org'
+
+

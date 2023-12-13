@@ -78,12 +78,12 @@ class Task(models.Model):
     ]
 
     title = models.CharField(max_length = 100)
-    description = models.CharField(max_length = 500)
+    description = models.CharField(max_length = 1000)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
     assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=True, blank=True)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=False, blank=True)
 
     def clean(self):
         super().clean()
@@ -97,5 +97,5 @@ class AuditLog(models.Model):
     task_title = models.CharField(max_length = 100, null = True, blank = True)
     action = models.CharField(max_length = 100)
     timestamp = models.DateTimeField(auto_now_add=True)
-    changes = models.CharField(max_length = 1000, null = True, blank = True)
+    changes = models.CharField(max_length = 2000, null = True, blank = True)
         

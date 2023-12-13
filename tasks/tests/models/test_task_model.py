@@ -60,8 +60,8 @@ class TaskTest(TestCase):
         with self.assertRaises(ValidationError):
             self.task.full_clean()
 
-    def test_description_must_not_be_longer_than_500_characters(self):
-        self.task.description = 'x' * 501
+    def test_description_must_not_be_longer_than_1000_characters(self):
+        self.task.description = 'x' * 1001
         with self.assertRaises(ValidationError):
             self.task.full_clean()
 
@@ -76,5 +76,11 @@ class TaskTest(TestCase):
             self.task.full_clean()
         except ValidationError:
             self.fail("Due date should be valid")
+
+    def test_priority_must_be_one_of_the_choices(self):
+        self.task.priority = 'invalid'
+        with self.assertRaises(ValidationError):
+            self.task.full_clean()
+
 
     

@@ -49,8 +49,8 @@ class AuditLogTest(TestCase):
         with self.assertRaises(ValidationError):
             self.log.full_clean()
 
-    def test_changes_must_not_be_longer_than_1000_characters(self):
-        self.log.changes = 'x' * 1001
+    def test_changes_must_not_be_longer_than_2000_characters(self):
+        self.log.changes = 'x' * 2001
         with self.assertRaises(ValidationError):
             self.log.full_clean()
 

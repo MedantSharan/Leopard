@@ -54,12 +54,23 @@ class DeleteTaskViewTestCase(TestCase):
 
     def test_cannot_delete_task_if_not_creator(self):
         self.client.login(username=self.second_user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
         before_count = Task.objects.count()
         response = self.client.post(self.url, follow = True)
         after_count = Task.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertRedirects(response, reverse('team_page', kwargs={'team_id': self.team.team_id}), status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'team_page.html')
+        self.assertIn(self.task, Task.objects.all())
+
+    def test_cannot_delete_task_if_not_team_member(self):
+        self.client.login(username=self.second_user.username, password='Password123')
+        before_count = Task.objects.count()
+        response = self.client.post(self.url, follow = True)
+        after_count = Task.objects.count()
+        self.assertEqual(after_count, before_count)
+        self.assertRedirects(response, reverse('dashboard'), status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')
         self.assertIn(self.task, Task.objects.all())
 
     def test_delete_task_with_invalid_task_id(self):

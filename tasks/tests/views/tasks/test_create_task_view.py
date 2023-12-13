@@ -20,6 +20,7 @@ class CreateTaskViewTestCase(TestCase):
             'description' : 'This is a test task',
             'assigned_to' : [self.user.id],
             'due_date' : (datetime.now().date() + timedelta(days=1)),
+            'priority' : 'low'
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -77,6 +78,7 @@ class CreateTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.first(), self.user)
         self.assertEqual(task.due_date, (datetime.now().date() + timedelta(days = 1)))
         self.assertEqual(task.related_to_team, self.team)
+        self.assertEqual(task.priority, 'low')
 
     def test_post_create_task_redirects_when_not_logged_in(self):
         before_count = Task.objects.count()

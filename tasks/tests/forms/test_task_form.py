@@ -20,6 +20,7 @@ class TaskFormTestCase(TestCase):
             'description' : 'This is a test task',
             'assigned_to' : [self.user],
             'due_date' : (datetime.now().date() + timedelta(days=1)),
+            'priority' : 'low'
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -41,6 +42,9 @@ class TaskFormTestCase(TestCase):
         self.assertIn('due_date', form.fields)
         due_date_field = form.fields['due_date']
         self.assertTrue(isinstance(due_date_field.widget, forms.DateInput))
+        self.assertIn('priority', form.fields)
+        priority_field = form.fields['priority']
+        self.assertTrue(isinstance(priority_field, forms.ChoiceField))
 
     def test_valid_task_form(self):
         form = TaskForm(team_id = 1, data=self.form_input)
@@ -58,7 +62,8 @@ class TaskFormTestCase(TestCase):
             description = "Description of the task",
             created_by = testUser,
             related_to_team = self.team,
-            due_date = (datetime.now().date() + timedelta(days=2))
+            due_date = (datetime.now().date() + timedelta(days=2)),
+            priority = 'high'
         )
         task.assigned_to.set([self.user])
 
@@ -73,6 +78,7 @@ class TaskFormTestCase(TestCase):
         self.assertQuerysetEqual(task.assigned_to.all(), [repr(self.user)], transform=repr)
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.due_date, (datetime.now().date() + timedelta(days=1)))
+        self.assertEqual(task.priority, 'low')
 
     def test_due_date_must_be_in_the_future(self):
         self.form_input['due_date'] =  (datetime.now().date() - timedelta(days=1))
@@ -88,3 +94,5 @@ class TaskFormTestCase(TestCase):
         self.form_input['assigned_to'] = []
         form = TaskForm(team_id = 1, data=self.form_input)
         self.assertFalse(form.is_valid())
+
+    
