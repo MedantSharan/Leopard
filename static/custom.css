@@ -419,3 +419,19 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 .changes {
   margin-left: 40px;
 }
+
+
+/*
+* Task Form
+*/
+
+.form-check input {
+  display: inline-block; 
+  margin-right: 10px;   
+  vertical-align: middle;
+}
+.form-check {
+  display: block;
+  margin-bottom: 5px;
+  margin-left: -30px; 
+}

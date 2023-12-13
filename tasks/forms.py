@@ -117,7 +117,7 @@ class DateInput(forms.DateInput):
 class TaskForm(forms.ModelForm):
     """Form to create tasks"""
 
-    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects.none(), required=True, label='Assign to user', widget=forms.SelectMultiple())
+    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects.none(), required=True, label='Assign to user', widget=forms.CheckboxSelectMultiple())
     due_date = forms.DateField(widget = DateInput, validators=[MinValueValidator(datetime.date.today)], required = False)
     priority = forms.ChoiceField(choices=Task.PRIORITY_CHOICES, label='Priority', required = False)
 

@@ -1,21 +1,33 @@
+{% load static %}
 {% load widget_tweaks %}
 {% for field in form %}
   <div class="mb-3">
     {{ field.label_tag }}
-    {% if form.is_bound %}
-      {% if field.errors %}
-        {% render_field field class="form-control is-invalid" %}
+    <div class="mb-3">
+      {% if field.name == 'assigned_to' %}
+        <div class="form-control">
+          {% for widget in field %}
+            <div class="form-check">
+              {{ widget }}
+            </div>
+          {% endfor %}
+        </div>
       {% else %}
-        {% render_field field class="form-control is-valid" %}
+        {% if form.is_bound %}
+          {% if field.errors %}
+            {% render_field field class="form-control is-invalid" %}
+          {% else %}
+            {% render_field field class="form-control is-valid" %}
+          {% endif %}
+        {% else %}
+          {% render_field field class="form-control" %}
+        {% endif %}
+        <div class="valid-feedback">
+          Looks good!
+        </div>
+        <div class="invalid-feedback">
+          {{ field.errors }}
+        </div>
       {% endif %}
-    {% else %}
-      {% render_field field class="form-control" %}
-    {% endif %}
-    <div class="valid-feedback">
-      Looks good!
     </div>
-    <div class="invalid-feedback">
-      {{ field.errors }}
-    </div>
-  </div>
 {% endfor %}
