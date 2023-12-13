@@ -95,6 +95,7 @@ class Command(BaseCommand):
                 team.team_members.add(User.objects.get(username='@janedoe'))
                 team.team_members.add(User.objects.get(username='@charlie'))
             print(f"Seeding teams", end='\r')
+        print("Team seeding complete.      ")
 
     def create_tasks(self):
         for team in Team.objects.all():
@@ -117,6 +118,7 @@ class Command(BaseCommand):
                         action='Created',
                     )
             print(f"Seeding tasks", end='\r')
+        print("Task seeding complete.      ")
 
     def create_invites(self):
         for user in User.objects.all():
@@ -128,6 +130,7 @@ class Command(BaseCommand):
                         team_id=team.team_id,
                     )
             print(f"Seeding invites", end='\r')
+        print("Invite seeding complete.      ")
 
 def create_username(first_name, last_name):
     return '@' + first_name.lower() + last_name.lower()
