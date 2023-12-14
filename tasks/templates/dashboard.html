@@ -30,7 +30,7 @@
             <tbody class="tasks-table-row">
               {% if tasks %}
               {% for task in tasks %}
-              <tr>
+              <tr class ="{% if task.completed %}completed-task{% endif %}">
                 <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
