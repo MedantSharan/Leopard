@@ -9,6 +9,7 @@
           {% include 'partials/bootstrap_form.html' with form=form %}
           <input type="submit" value="Create task" class="btn btn-primary">
         </form>
+        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Back</a>
       </div>
     </div>
   </div>

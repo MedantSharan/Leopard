@@ -30,6 +30,7 @@ class ViewTaskViewTestCase(TestCase):
             priority = '',
             status = 'to do',
             related_to_team = self.team,
+            priority = 'low'
         )
         self.task.assigned_to.set([self.user])
 
@@ -40,13 +41,12 @@ class ViewTaskViewTestCase(TestCase):
 
     def test_get_view_task(self):
         self.client.login(username=self.user.username, password='Password123')
-        session = self.client.session
-        session.update({'team': self.team.team_id})
-        session.save()
-        self.session = session
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'view_task.html')
+        self.assertIn('task', response.context)
+        task = response.context['task']
+        self.assertEqual(task, self.task)
 
     def test_get_view_task_redirects_when_not_logged_in(self):
         response = self.client.get(self.url, follow=True)

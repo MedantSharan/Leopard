@@ -14,6 +14,10 @@
       <div class="task-search-bar">
         {% include 'partials/search_form.html' %}
       </div>
+        {% if user == teams.team_leader %}
+        <a href="{% url 'audit_log' teams.team_id %}" class = "btn btn-secondary mt-3">Audit Log</a> 
+        <br>
+        {% endif %}
       {% endif %}
       <a 
       href="{% url 'create_task' teams.team_id %}" 
@@ -25,7 +29,7 @@
           <ul>
             {% for task in tasks %}
             <li>
-              <div class="card task-card" style="width: 18rem;">
+              <div class="card task-card {% if task.completed %}completed-task{% endif %}" style="width: 18rem;">
                   <div class="card-title-container">
                       <h5 class="card-title"><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></h5>
                   </div>
@@ -43,6 +47,14 @@
                       {% if task.priority %}
                       Priority: {{ task.priority }}</h6>
                       {% endif %}</h6>
+                      {% if request.user in task.assigned_to.all or request.user == task.created_by %}
+                        <form method="post" action="{% url 'update_task_completion' task.id %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="task_id" value="{{ task.id }}">
+                          <input type="checkbox" id="task-completed-{{ task.id }}" name="completed" {% if task.completed %}checked{% endif %} onchange="this.form.submit()">
+                          <label>Completed</label>
+                        </form>
+                      {% endif %}
                     <a href="{% url 'view_task' task.id %}" class="card-link">View Task</a>
                     {% if task.created_by == request.user or request.user in task.assigned_to.all %}
                     <a href="{% url 'edit_task' task.id %}" class="card-link">Edit task</a>

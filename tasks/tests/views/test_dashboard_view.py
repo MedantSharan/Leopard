@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from tasks.models import User, Team, Task, Invites
 
-class TeamPageViewTestCase(TestCase):
+class DashboardPageViewTestCase(TestCase):
     """Unit tests of the dashboard view."""
 
     fixtures = [

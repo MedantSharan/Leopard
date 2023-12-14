@@ -10,7 +10,7 @@
       </div>
 
       <!--TASKS COMPONENT-->
-      <div class="card teams-card2" style="width:500px">
+      <div class="card teams-card2" style="width:700px">
         <div class="card-body">
           <h4 class="card-title">Tasks</h4>
           <p class="card-text">View all of your tasks below:</p>
@@ -30,12 +30,15 @@
             <tbody class="tasks-table-row">
               {% if tasks %}
               {% for task in tasks %}
-              <!-- Make the row red if task is high priority and due in 3 days or less -->
-              {% if task.priority == 'high' and task.days_until_due <= 3 and task.status != 'done' %}
-              <tr class="high-priority-nearing-due">
-              {% else %}
-              <tr>
-              {% endif %}
+                <!-- Make the row green if task is completed -->
+                {% if task.completed %}
+                  <tr class ="completed-task">
+                <!-- Make the row red if task is high priority and due in 3 days or less and not completed -->
+                {% elif task.priority == 'high' and task.days_until_due <= 3 and not task.completed %}
+                  <tr class="high-priority-nearing-due">
+                {% else %}
+                  <tr>
+                {% endif %}
                 <td><a href="{% url 'view_task' task.id %}">
                   <button>{{ task.title }}</button>
                 </a></td>

@@ -66,3 +66,10 @@ class InviteFormTestCase(TestCase):
         invite = Invites.objects.get(username=self.userJane, team_id=self.team.team_id)
         self.assertEqual(invite.username.username, "@janedoe")
         self.assertEqual(invite.team_id, 1)
+
+    def test_form_must_add_errors_correctly(self):
+        self.form_input['usernames'] = '@johndoe'
+        form = InviteForm(data=self.form_input, team_id=self.team.team_id)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(form.errors), 1)
+        self.assertEqual(form.errors['usernames'][0], "User '@johndoe' is already in this team")
