@@ -35,11 +35,25 @@
   align-items: center;
 }
 
+.field .header-labels{
+  font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 1px #054107;
+  color: rgb(6, 156, 6)
+}
 /*
  * Cover page
  */
-h1.cover-heading {
+h1.cover-card {
   font-size: 3rem;
+}
+
+h1 {
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bolder;
+  -webkit-text-stroke: 0.2px #054107;
+  text-shadow: 1px 1px 3px #054107;
+  color: rgb(23, 203, 23);
 }
 
 p.cover-text {
@@ -151,6 +165,8 @@ h3.profile-title {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #c9c9c9;
+  overflow-wrap: break-word;
+  max-width: 200px;
 }
 
 .tasks-table-row :hover {
@@ -164,7 +180,9 @@ h3.profile-title {
 .high-priority-nearing-due {
   background-color: #f59797;
 }
-
+#teams-table, #invites-table, #tasks-table{
+  width: 100%;
+}
 .teams-card2 {
   background-color: rgb(231, 226, 226);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -172,56 +190,10 @@ h3.profile-title {
   margin-bottom: 20px;
 }
 
-/*
-CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY 
-*/
-
-.teams-heading {
-  font-size: 2.0rem;
+.card-body{
+  max-height: 700px;
+  overflow-y: auto;
 }
-
-.teams-text {
-  font-size: 1.7rem;
-}
-
-.invites-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.invites-heading {
-  font-size: 2.0rem;
-}
-
-.invites-text {
-  font-size: 1.7rem;
-}
-
-.tasks-card {
-  background-color: rgb(231, 226, 226);
-  max-width: 30rem;
-  padding-top: 30px;
-  padding-left: 50px;
-  padding-right: 50px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.tasks-heading {
-  font-size: 2.0rem;
-}
-
-.tasks-text {
-  font-size: 1.7rem;
-}
-
 
 /* Team Page */
 .section-title {
@@ -277,6 +249,10 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   flex-grow: 1;
 }
 
+.completed-task {
+  background-color: rgb(152, 212, 152);
+}
+
 /* .login-box form {
   margin-top: 40px;
 } */
@@ -323,6 +299,7 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
   text-align: center;
   color: white;
   overflow: hidden;
+  padding: 10px;
 }
 .task-list, .team-task-list{
   margin-top: 30px;
@@ -348,8 +325,8 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
 }
 
 .task-card-description{
-  overflow:hidden;
-  max-height: 100px
+  overflow-y:scroll;
+  max-height: 100px;
 }
 .task-search-bar{
   background-color: white ;
@@ -391,4 +368,51 @@ CAN GET RID OF THINGS BELOW THIS UNDER DASHBOARD BC ONLY
     font-size: 24px;
     margin: 0;
   }
+
+/*
+* Audit Log
+*/
+
+.audit-log-container{
+  text-align: center;
+  border-radius: 40px;
+  height:35rem;
+  overflow:show;
+} 
+
+.audit-log-card{
+  border: 0px;
+  border-radius: 30px;
+  overflow: scroll;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+.audit-log{
+  margin-bottom: 20px; 
+}
+
+.changes {
+  margin-left: 40px;
+}
+
+
+/*
+* Task Form
+*/
+
+.form-check input {
+  display: inline-block; 
+  margin-right: 5px;   
+  vertical-align: middle;
+}
+.form-check {
+  display: block;
+  margin-bottom: 5px;
+  margin-left: -30px; 
+}
+
+.form-check-container {
+  max-height: 200px;
+  overflow-y: auto;
 }

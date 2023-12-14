@@ -14,6 +14,7 @@ class TeamPageViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+        self.second_user = User.objects.get(username='@janedoe')
 
         self.team = Team.objects.create(
             team_name='Test team',
@@ -60,6 +61,23 @@ class TeamPageViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'team_page.html')
         self.assertIn('tasks', response.context)
         self.assertIn(self.task, response.context['tasks'])
+
+    def test_team_page_assigned_to_filtering(self):
+        self.client.login(username=self.user.username, password='Password123')
+        self.team.team_members.add(self.second_user)
+        new_task = Task.objects.create(
+            title='Test task',
+            description='This is a test task',
+            created_by=self.user,
+            related_to_team=self.team,
+        )
+        new_task.assigned_to.set([self.second_user])
+        response = self.client.get(self.url, {'assigned_to': self.second_user.username})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'team_page.html')
+        self.assertIn('tasks', response.context)
+        self.assertIn(new_task, response.context['tasks'])
+        self.assertNotIn(self.task, response.context['tasks'])
 
     
 

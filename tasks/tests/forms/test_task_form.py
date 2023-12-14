@@ -20,8 +20,7 @@ class TaskFormTestCase(TestCase):
             'description' : 'This is a test task',
             'assigned_to' : [self.user],
             'due_date' : (datetime.now().date() + timedelta(days=1)),
-            'priority' : 'low',
-            'status' : 'to do',
+            'priority' : 'low'
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -43,12 +42,9 @@ class TaskFormTestCase(TestCase):
         self.assertIn('due_date', form.fields)
         due_date_field = form.fields['due_date']
         self.assertTrue(isinstance(due_date_field.widget, forms.DateInput))
-        priority_field = form.fields['priority']
-        self.assertTrue(isinstance(priority_field.widget, forms.Select))
         self.assertIn('priority', form.fields)
-        status_field = form.fields['status']
-        self.assertTrue(isinstance(status_field.widget, forms.Select))
-        self.assertIn('status', form.fields)
+        priority_field = form.fields['priority']
+        self.assertTrue(isinstance(priority_field, forms.ChoiceField))
 
     def test_valid_task_form(self):
         form = TaskForm(team_id = 1, data=self.form_input)
@@ -67,8 +63,7 @@ class TaskFormTestCase(TestCase):
             created_by = testUser,
             related_to_team = self.team,
             due_date = (datetime.now().date() + timedelta(days=2)),
-            priority = 'low',
-            status = 'to do',
+            priority = 'high'
         )
         task.assigned_to.set([self.user])
 
@@ -84,7 +79,6 @@ class TaskFormTestCase(TestCase):
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.due_date, (datetime.now().date() + timedelta(days=1)))
         self.assertEqual(task.priority, 'low')
-        self.assertEqual(task.status, 'to do')
 
     def test_due_date_must_be_in_the_future(self):
         self.form_input['due_date'] =  (datetime.now().date() - timedelta(days=1))
@@ -100,3 +94,10 @@ class TaskFormTestCase(TestCase):
         self.form_input['assigned_to'] = []
         form = TaskForm(team_id = 1, data=self.form_input)
         self.assertFalse(form.is_valid())
+
+    def test_completion_status_can_be_altered(self):
+        self.form_input['completed'] = True
+        form = TaskForm(team_id = 1, data=self.form_input)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['completed'], True)
+    

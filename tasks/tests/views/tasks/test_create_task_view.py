@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from datetime import datetime, timedelta
-from tasks.models import User, Task, Team
+from tasks.models import User, Task, Team, AuditLog
 from tasks.forms import TaskForm
 
 class CreateTaskViewTestCase(TestCase):
@@ -20,8 +20,7 @@ class CreateTaskViewTestCase(TestCase):
             'description' : 'This is a test task',
             'assigned_to' : [self.user.id],
             'due_date' : (datetime.now().date() + timedelta(days=1)),
-            'priority' : 'low',
-            'status' : 'to do',
+            'priority' : 'low'
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -81,6 +80,7 @@ class CreateTaskViewTestCase(TestCase):
         self.assertEqual(task.priority, 'low')
         self.assertEqual(task.status, 'to do')
         self.assertEqual(task.related_to_team, self.team)
+        self.assertEqual(task.priority, 'low')
 
     def test_post_create_task_redirects_when_not_logged_in(self):
         before_count = Task.objects.count()
@@ -97,3 +97,17 @@ class CreateTaskViewTestCase(TestCase):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+
+    def test_audit_log_created(self):
+        self.client.login(username=self.user.username, password='Password123')
+        before_count = AuditLog.objects.count()
+        response = self.client.post(self.url, self.form_input, follow=True)
+        after_count = AuditLog.objects.count()
+        self.assertEqual(after_count, before_count+1)
+        log = AuditLog.objects.last()
+        self.assertEqual(log.task_title, 'Test task')
+        self.assertEqual(log.username, self.user)
+        self.assertEqual(log.team, self.team)
+        self.assertEqual(log.action, 'created')
+        self.assertEqual(log.changes, None)
+        self.assertEqual(log.timestamp.date(), datetime.now().date())

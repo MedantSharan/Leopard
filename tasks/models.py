@@ -15,8 +15,27 @@ class User(AbstractUser):
             message='Username must consist of @ followed by at least three alphanumericals'
         )]
     )
-    first_name = models.CharField(max_length=50, blank=False)
-    last_name = models.CharField(max_length=50, blank=False)
+    first_name = models.CharField(
+        max_length=50,
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Za-z]+$',
+                message='First name must contain only letters.',
+            ),
+        ],
+    )
+
+    last_name = models.CharField(
+        max_length=50,
+        blank=False,
+        validators=[
+            RegexValidator(
+                regex=r'^[A-Za-z]+$',
+                message='Last name must contain only letters.',
+            ),
+        ],
+    )
     email = models.EmailField(unique=True, blank=False)
 
 
@@ -85,13 +104,13 @@ class Task(models.Model):
     ]
 
     title = models.CharField(max_length = 100)
-    description = models.CharField(max_length = 500)
+    description = models.CharField(max_length = 1000)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
     assigned_to = models.ManyToManyField(User, related_name = 'assigned_tasks')
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=False, blank=True)
-    status = models.CharField(max_length=11, choices=STATUS_CHOICES, null=False, blank=False, default='to do')
+    completed = models.BooleanField(default=False, null=False)
 
     def days_until_due(self):
         if self.due_date:
@@ -103,4 +122,13 @@ class Task(models.Model):
         super().clean()
         if self.id and not self.assigned_to.exists():
             raise Exception({'assigned_to': 'This task must be assigned to a user'})
+
+class AuditLog(models.Model):
+    """Model used to represent audit logs"""
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    task_title = models.CharField(max_length = 100, null = True, blank = True)
+    action = models.CharField(max_length = 100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    changes = models.CharField(max_length = 2000, null = True, blank = True)
         

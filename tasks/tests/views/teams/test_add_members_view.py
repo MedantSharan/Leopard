@@ -51,9 +51,9 @@ class AddMembersViewTestCase(TestCase):
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Invites.objects.count()
         self.assertEqual(after_count, before_count+1)
-        response_url = reverse('dashboard')
+        response_url = reverse('team_page', kwargs={'team_id': self.team.team_id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'team_page.html')
         invite = Invites.objects.get(username__username='@janedoe')
         self.assertEqual(invite.team_id, self.team.team_id)
     

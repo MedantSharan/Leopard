@@ -1,4 +1,4 @@
-<form method="get">
+<form class="{% if request.resolver_match.url_name == 'task_search' %}task-search-bar{% endif %}" method="get">
     <label for="q">Search:</label>
     <input type="text" name="q" value="{{ query }}">
   
@@ -7,6 +7,7 @@
         <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
         <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
         <option value="priority" {% if order_by == 'priority' %}selected{% endif %}>Priority</option>
+        <option value="completion" {% if order_by == 'completion' %}selected{% endif %}>Completion</option>
     </select>
 
     {% if teams.count > 1 %}
@@ -28,5 +29,5 @@
             {% endfor %}
         </select>
     {% endif %}
-    <button type="submit">Search</button>
+    <button class="custom-button" type="submit">Search</button>
 </form>

@@ -1,0 +1,20 @@
+{% extends 'base_content.html' %}
+{% load static %}
+{% block content %}
+<div class="container audit-log-container ">
+    <div class="card audit-log-card" style="height:80vh;">
+    <h2>Audit Log</h2>
+    {% for log in logs %}
+        <li class = "audit-log">
+            {{ log.username }} {{ log.action }} {{ log.task_title }} on {{ log.timestamp }}
+                {% if log.changes %}
+                    <div class = "changes">
+                        {{ log.changes|linebreaksbr|safe }}  
+                    </div>
+                {% endif %} 
+        </li>
+    {% endfor %}
+    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}
