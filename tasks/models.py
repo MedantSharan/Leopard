@@ -88,6 +88,13 @@ class Invites(models.Model):
     class Meta:
         unique_together = ('team_id', 'username')
 
+# notifications model
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+
 class Task(models.Model):
     """Tasks to be set to users"""
 
@@ -122,11 +129,13 @@ class Task(models.Model):
             self.notify_approaching_deadline()
 
     def notify_new_task(self):
+    # Iterate over each user in the assigned_to queryset
+      for user in self.assigned_to.all():
         message = f"A new task '{self.title}' has been assigned to you in the team '{self.related_to_team.team_name}' by {self.created_by}."
-        Notification.objects.create(user=self.assigned_to, message=message)
+        print("Notification message:", message)
+        Notification.objects.create(user=user, message=message)
 
     def notify_approaching_deadline(self):
-        # Adjust the threshold as needed, e.g., 3 days before the deadline
         threshold_days = 3
         today = timezone.now().date()
         if self.due_date - today == timezone.timedelta(days=threshold_days):
@@ -141,10 +150,3 @@ class AuditLog(models.Model):
     action = models.CharField(max_length = 100)
     timestamp = models.DateTimeField(auto_now_add=True)
     changes = models.CharField(max_length = 2000, null = True, blank = True)
-        
-# notifications model
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.TextField()
-    timestamp = models.DateTimeField(default=timezone.now)
-    is_read = models.BooleanField(default=False)

@@ -48,6 +48,15 @@
         <div class="card-body">
           <h4 class="card-title">Notifications</h4>
           <a href="{% url 'notification_view' %}">Notifications ({% if notifications %}{{ notifications.count }}{% else %}0{% endif %})</a>
+          {% if notifications %}
+            <ul>
+              {% for notification in notifications %}
+               <li>{{ notification.message }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No notifications</p>
+          {% endif %}
         </div>
       </div>
 
