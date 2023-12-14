@@ -121,6 +121,7 @@ class Task(models.Model):
         
     def save(self, *args, **kwargs):
         is_new_task = not self.pk
+        print("Save method called for Task:", self.title)
         super(Task, self).save(*args, **kwargs)
 
         if is_new_task:
@@ -130,12 +131,21 @@ class Task(models.Model):
 
 
     def notify_new_task(self):
-    # Iterate over each user in the assigned_to queryset
-      print("notify_new_task called")
-      for user in self.assigned_to.all():
-        message = f"A new task '{self.title}' has been assigned to you in the team '{self.related_to_team.team_name}' by {self.created_by}."
-        print("Notification message:", message)
-        Notification.objects.create(user=user, message=message, is_read=False)
+        print("notify_new_task called")
+        assigned_users = self.assigned_to.all() if hasattr(self.assigned_to, 'all') else [self.assigned_to]
+        print("assign single tasks")
+
+        for user in assigned_users:
+            message = f"A new task '{self.title}' has been assigned to you in the team '{self.related_to_team.team_name}' by {self.created_by}."
+            print("Notification message:", message)
+            notification = Notification.objects.create(user=user, message=message, is_read=False)
+            print("Notification created:", notification)
+
+
+    #   for user in self.assigned_to.all():
+    #     message = f"A new task '{self.title}' has been assigned to you in the team '{self.related_to_team.team_name}' by {self.created_by}."
+    #     print("Notification message:", message)
+    #     Notification.objects.create(user=user, message=message, is_read=False)
 
     def notify_approaching_deadline(self):
         print("notify_approaching_deadline called")
