@@ -235,6 +235,10 @@ h3.profile-title {
   flex-grow: 1;
 }
 
+.completed-task {
+  background-color: rgb(152, 212, 152);
+}
+
 /* .login-box form {
   margin-top: 40px;
 } */
