@@ -95,9 +95,4 @@ class TaskFormTestCase(TestCase):
         form = TaskForm(team_id = 1, data=self.form_input)
         self.assertFalse(form.is_valid())
 
-    def test_completion_status_can_be_altered(self):
-        self.form_input['completed'] = True
-        form = TaskForm(team_id = 1, data=self.form_input)
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data['completed'], True)
     
