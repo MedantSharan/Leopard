@@ -480,3 +480,20 @@ def compare_task_details(before_edit, after_edit, assigned):
             changes.append(change_string)
 
     return '\n'.join(changes)
+
+@login_required
+def update_task_completion(request, task_id):
+    """Update task completion status."""
+
+    if not Task.objects.filter(pk = task_id).exists() or not request.user in Task.objects.get(pk = task_id).related_to_team.team_members.all():
+        return redirect('dashboard')
+
+    task = Task.objects.get(id=task_id)
+    if request.user == task.created_by or request.user in task.assigned_to.all():
+        if request.method == 'POST':
+            completed = request.POST.get('completed') == 'on' 
+            task.completed = completed
+            task.save()
+            return redirect('team_page', team_id=task.related_to_team.team_id)
+    else:
+        return redirect('team_page', team_id=task.related_to_team.team_id)

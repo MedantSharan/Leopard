@@ -84,6 +84,7 @@ class Task(models.Model):
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=False, blank=True)
+    completed = models.BooleanField(default=False)
 
     def clean(self):
         super().clean()
