@@ -43,6 +43,14 @@
         </div>
       </div>
 
+      <!--NOTIFICATIONS COMPONENT-->
+      <div class="card teams-card2" style="width:600px">
+        <div class="card-body">
+          <h4 class="card-title">Notifications</h4>
+          <a href="{% url 'notification_view' %}">Notifications ({% if notifications %}{{ notifications.count }}{% else %}0{% endif %})</a>
+        </div>
+      </div>
+
       <!--TEAMS COMPONENT-->
       <div class="card teams-card2" style="width:500px">
         <div class="card-body">

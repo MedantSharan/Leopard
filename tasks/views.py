@@ -11,7 +11,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from tasks.forms import LogInForm, PasswordForm, UserForm, SignUpForm,TeamCreationForm, InviteForm, TaskForm
 from tasks.helpers import login_prohibited
-from .models import Invites,Team, Task, User, AuditLog
+from .models import Invites,Team, Task, User, AuditLog, Notification
 from django.db.models import Q
 from django.template.defaulttags import register
 import copy
@@ -480,3 +480,7 @@ def compare_task_details(before_edit, after_edit, assigned):
             changes.append(change_string)
 
     return '\n'.join(changes)
+
+def notification_view(request):
+    notifications = Notification.objects.filter(user=request.user, is_read=False)
+    return render(request, 'notifications.html', {'notifications': notifications})

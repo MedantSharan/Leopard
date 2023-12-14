@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tasks import views
+from tasks.views import notification_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,4 +42,5 @@ urlpatterns = [
     path('leave_team/<int:team_id>/', views.leave_team, name = 'leave_team'),
     path('remove_member/<int:team_id>/<str:username>/', views.remove_member, name = 'remove_member'),
     path('audit_log/<int:team_id>/', views.audit_log, name = 'audit_log'),
+    path('notifications/', notification_view, name='notification_view'),
 ]

@@ -2,6 +2,9 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -108,6 +111,27 @@ class Task(models.Model):
         super().clean()
         if self.id and not self.assigned_to.exists():
             raise Exception({'assigned_to': 'This task must be assigned to a user'})
+        
+    def save(self, *args, **kwargs):
+        is_new_task = not self.pk
+        super(Task, self).save(*args, **kwargs)
+
+        if is_new_task:
+            self.notify_new_task()
+        else:
+            self.notify_approaching_deadline()
+
+    def notify_new_task(self):
+        message = f"A new task '{self.title}' has been assigned to you in the team '{self.related_to_team.team_name}' by {self.created_by}."
+        Notification.objects.create(user=self.assigned_to, message=message)
+
+    def notify_approaching_deadline(self):
+        # Adjust the threshold as needed, e.g., 3 days before the deadline
+        threshold_days = 3
+        today = timezone.now().date()
+        if self.due_date - today == timezone.timedelta(days=threshold_days):
+            message = f"The task '{self.title}' in the team '{self.related_to_team.team_name}' is approaching its deadline."
+            Notification.objects.create(user=self.assigned_to, message=message)
 
 class AuditLog(models.Model):
     """Model used to represent audit logs"""
@@ -118,3 +142,9 @@ class AuditLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     changes = models.CharField(max_length = 2000, null = True, blank = True)
         
+# notifications model
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
