@@ -33,7 +33,11 @@
                   <div class="card-title-container">
                       <h5 class="card-title"><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></h5>
                   </div>
-                  <div class="card-body task-card-body">
+                  {% if task.priority == 'high' and task.days_until_due <= 3 and task.status != 'done' %}
+                    <div class="card-header high-priority-nearing-due">
+                  {% else %}
+                    <div class="card-body task-card-body">
+                  {% endif %}
                     <h6 class="card-subtitle mb-2 text-muted">
                       {% if task.due_date %}
                       Due Date: {{ task.due_date }}

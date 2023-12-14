@@ -170,7 +170,15 @@ h3.profile-title {
 }
 
 .tasks-table-row :hover {
-  background-color: #fdfbfb;
+  background-color: #ffffff;
+}
+
+.teams-table-row :hover {
+  background-color: #ffffff;
+}
+
+.high-priority-nearing-due {
+  background-color: #f59797;
 }
 #teams-table, #invites-table, #tasks-table{
   width: 100%;
@@ -361,7 +369,6 @@ h3.profile-title {
     font-size: 24px;
     margin: 0;
   }
-}
 
 /*
 * Audit Log
