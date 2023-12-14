@@ -47,6 +47,12 @@ class UpdateTaskCompletionViewTestCase(TestCase):
         redirect_url = reverse('log_in') + f'?next={self.url}'
         self.assertRedirects(response, redirect_url)
 
+    def test_get_update_task_completion(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'team_page.html')
+
     def test_post_update_task_completion(self):
         self.client.login(username=self.user.username, password='Password123')
         response = self.client.post(self.url, self.form_input, follow=True)

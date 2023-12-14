@@ -495,5 +495,7 @@ def update_task_completion(request, task_id):
             task.completed = completed
             task.save()
             return redirect('team_page', team_id=task.related_to_team.team_id)
+        else:
+            return redirect('team_page', team_id=task.related_to_team.team_id)
     else:
         return redirect('team_page', team_id=task.related_to_team.team_id)
