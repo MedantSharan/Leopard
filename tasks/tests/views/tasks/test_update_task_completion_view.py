@@ -37,10 +37,10 @@ class UpdateTaskCompletionViewTestCase(TestCase):
         )
         self.task.assigned_to.set([self.user])
 
-        self.url = reverse('task_completion', kwargs={'task_id': self.task.id})
+        self.url = reverse('update_task_completion', kwargs={'task_id': self.task.id})
 
     def test_update_task_completion_url(self):
-        self.assertEqual(self.url, f'/task_completion/{self.task.id}/')
+        self.assertEqual(self.url, f'/update_task_completion/{self.task.id}/')
 
     def test_update_task_completion_redirects_when_not_logged_in(self):
         response = self.client.get(self.url, follow=True)
@@ -63,7 +63,7 @@ class UpdateTaskCompletionViewTestCase(TestCase):
 
     def test_update_task_completion_redirects_with_invalid_task_id(self):
         self.client.login(username=self.user.username, password='Password123')
-        response = self.client.post(reverse('task_completion', kwargs={'task_id': 2}), self.form_input, follow=True)
+        response = self.client.post(reverse('update_task_completion', kwargs={'task_id': 2}), self.form_input, follow=True)
         self.assertRedirects(response, reverse('dashboard'))
 
     def test_update_task_completion_redirects_with_user_not_in_team(self):
@@ -85,3 +85,18 @@ class UpdateTaskCompletionViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'team_page.html')
         self.task.refresh_from_db()
         self.assertTrue(self.task.completed)
+
+    def test_audit_log_created(self):
+        self.client.login(username=self.user.username, password='Password123')
+        before_count = AuditLog.objects.count()
+        response = self.client.post(self.url, self.form_input, follow=True)
+        after_count = AuditLog.objects.count()
+        self.assertEqual(after_count, before_count+1)
+        log = AuditLog.objects.last()
+        self.assertEqual(log.task_title, 'Test task')
+        self.assertEqual(log.username, self.user)
+        self.assertEqual(log.team, self.team)
+        self.assertEqual(log.action, 'set completed')
+        self.assertEqual(log.changes, None)
+        self.assertEqual(log.timestamp.date(), datetime.now().date())
+        
