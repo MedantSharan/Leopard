@@ -9,7 +9,7 @@
     </select>
 
     {% if teams.count > 1 %}
-        <label for="team">Team:</label>
+        <label>Team:</label>
         <select name="team">
             <option value="" {% if not teams_search %}selected{% endif %}>All</option>
             {% for team in teams %}
@@ -19,7 +19,7 @@
     {% endif %}
     
     {% if request.resolver_match.url_name == 'team_page' %}
-    <label for="assigned_to">Assigned To:</label>
+    <label>Assigned To:</label>
     <select name="assigned_to">
         <option value="" {% if not tasks_assigned %}selected{% endif %}>Any</option>
         {% for member in teams_members %}
