@@ -30,24 +30,26 @@
             <tbody class="tasks-table-row">
               {% if tasks %}
               {% for task in tasks %}
-              <!-- Make the row red if task is high priority and due in 7 days or less -->
-              {% if task.priority == 'High' and task.days_until_due <= 7 %}
+              <!-- Make the row red if task is high priority and due in §7 days or less -->
+              {% if task.priority == 'high' and task.days_until_due <= 3 and task.status != 'done' %}
               <tr class="high-priority-nearing-due">
               {% else %}
               <tr>
               {% endif %}
-                <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
+                <td><a href="{% url 'view_task' task.id %}">
+                  <button>{{ task.title }}</button>
+                </a></td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
                 <!-- If the task priority is low, make the text a green badge -->
-                {% if task.priority == 'Low' %}
-                  <td><span class="badge badge-success">{{ task.priority }}</span></td>
+                {% if task.priority == 'low' %}
+                  <td><span class="bg-success text-light rounded px-2 py-2">{{ task.priority }}</span></td>
                 <!-- If the task priority is medium, make the text a yellow badge -->
-                {% elif task.priority == 'Medium' %}
-                  <td><span class="badge badge-warning">{{ task.priority }}</span></td>
+                {% elif task.priority == 'medium' %}
+                  <td><span class="bg-warning text-dark rounded px-2 py-2">{{ task.priority }}</span></td>
                 <!-- If the task priority is high, make the text a red badge -->
-                {% elif task.priority == 'High' %}
-                  <td><span class="badge badge-danger">{{ task.priority }}</span></td>
+                {% elif task.priority == 'high' %}
+                  <td><span class="bg-danger text-light rounded px-2 py-2">{{ task.priority }}</span></td>
                 {% else %}
                   <td>{{ task.priority }}</td>
                 {% endif %}
