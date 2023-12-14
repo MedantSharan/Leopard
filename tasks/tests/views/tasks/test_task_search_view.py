@@ -75,3 +75,25 @@ class TaskSearchViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'task_search.html')
         self.assertNotContains(response, 'Test task')
+
+    def test_team_filter(self):
+        self.client.login(username=self.user.username, password='Password123')
+        new_team = Team.objects.create(
+            team_leader = self.user, 
+            team_name ='New team', 
+            team_description = 'This is a new test team'
+        )
+        new_team.team_members.set([self.user])
+        new_task = Task.objects.create(
+            title = 'New task',
+            description = 'This is a new test task',
+            created_by = self.user,
+            related_to_team = new_team,
+        )
+        new_task.assigned_to.set([self.user])
+
+        response = self.client.get(self.url, {'team': self.team.team_id}, follow = True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'task_search.html')
+        self.assertContains(response, 'Test task')
+        self.assertNotContains(response, 'New task')
