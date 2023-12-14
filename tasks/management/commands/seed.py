@@ -108,7 +108,7 @@ class Command(BaseCommand):
                         description=self.faker.sentence(),
                         created_by=user,
                         related_to_team=team,
-                        due_date=self.faker.date_time_between(start_date='+10y', end_date='+100y', tzinfo=pytz.UTC),
+                        due_date=self.faker.date_time_between(start_date='+0y', end_date='+1y', tzinfo=pytz.UTC),
                         priority=Task.PRIORITY_CHOICES[randint(0, 3)][0],
                         completed = randint(0,1)
                     )
