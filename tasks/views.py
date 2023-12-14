@@ -406,6 +406,9 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
         tasks = tasks.order_by('due_date')
     elif order_by == 'title':
         tasks = tasks.order_by('title')
+    elif order_by == 'completion':
+        tasks = tasks.order_by('completed')
+
 
     return tasks
 
