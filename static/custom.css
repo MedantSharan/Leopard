@@ -157,6 +157,10 @@ h3.profile-title {
   background-color: #ffffff;
 }
 
+.teams-table-row :hover {
+  background-color: #ffffff;
+}
+
 .high-priority-nearing-due {
   background-color: #f59797;
 }
