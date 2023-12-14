@@ -268,13 +268,13 @@ h3.profile-title {
  .task-container{
   text-align: center;
   border-radius: 40px;
-  height:35rem;
+  height:36rem;
   overflow:hidden;
 } 
 .assign-list{
   list-style: none;
   padding-right: 40px;
-  overflow:scroll;
+  overflow:auto;
   height:200px;
 }
 .page-title, .title-container{
@@ -317,8 +317,9 @@ h3.profile-title {
 }
 
 .task-card-description{
-  overflow-y:scroll;
-  max-height: 100px;
+  overflow-y:auto;
+  max-height: 200px;
+  padding: 1px;
 }
 .task-search-bar{
   background-color: white ;
