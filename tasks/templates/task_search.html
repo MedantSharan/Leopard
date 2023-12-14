@@ -11,7 +11,7 @@
                     {% if tasks %}
                         {% for task in tasks %}
                             <li>
-                                <div class="card task-card" style="width: 18rem;">
+                                <div class="card task-card {% if task.completed %}completed-task{% endif %}" style="width: 18rem;">
                                     <div class="card-title-container">
                                         <h5 class="card-title">{{ task.title }}</h5>
                                     </div>
