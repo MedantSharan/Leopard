@@ -5,26 +5,7 @@
     <div class="row">
         <div class="col-12">
             <h1 class="page-title">Task List</h1>
-            <form class="task-search-bar" method="get">
-                <label for="q">Search:</label>
-                <input type="text" name="q" value="{{ query }}">
-                
-                <label for="order_by">Order by:</label>
-                <select name="order_by">
-                    <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
-                    <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
-                </select>
-
-                <label for="team">Team:</label>
-                <select name="team">
-                    <option value="" {% if not teams_search %}selected{% endif %}>All</option>
-                    {% for team in teams %}
-                        <option value="{{ team.team_id }}" {% if teams_search == team.team_id %}selected{% endif %}>{{ team.team_name }}</option>
-                    {% endfor %}
-                </select>
-
-                <button class="custom-button" type="submit">Search</button>
-            </form>
+            {% include 'partials/search_form.html' %}
             <div class="task-list">
                 <ul>
                     {% if tasks %}

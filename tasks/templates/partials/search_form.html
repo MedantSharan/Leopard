@@ -1,4 +1,4 @@
-<form method="get">
+<form class="{% if request.resolver_match.url_name == 'task_search' %}task-search-bar{% endif %}" method="get">
     <label for="q">Search:</label>
     <input type="text" name="q" value="{{ query }}">
   
@@ -29,5 +29,5 @@
             {% endfor %}
         </select>
     {% endif %}
-    <button type="submit">Search</button>
+    <button class="custom-button" type="submit">Search</button>
 </form>
