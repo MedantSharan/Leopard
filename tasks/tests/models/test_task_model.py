@@ -82,5 +82,16 @@ class TaskTest(TestCase):
         with self.assertRaises(ValidationError):
             self.task.full_clean()
 
+    def test_task_is_not_completed_by_default(self):
+        self.assertFalse(self.task.completed)
+
+    def test_task_can_be_completed(self):
+        self.task.completed = True
+        try:
+            self.task.full_clean()
+        except ValidationError:
+            self.fail("Task can be completed")
+    
+
 
     
