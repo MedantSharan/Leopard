@@ -15,7 +15,7 @@
         {% include 'partials/search_form.html' %}
       </div>
         {% if user == teams.team_leader %}
-        <a href="{% url 'audit_log' teams.team_id %}">Audit Log</a> 
+        <a href="{% url 'audit_log' teams.team_id %}" class = "btn btn-secondary mt-3">Audit Log</a> 
         <br>
         {% endif %}
       {% endif %}
