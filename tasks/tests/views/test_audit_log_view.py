@@ -84,6 +84,28 @@ class AuditLogViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('dashboard'))
 
+    def test_first_log_deleted_if_more_than_20_logs(self):
+        self.client.login(username=self.user.username, password='Password123')
+        for i in range(19):
+            AuditLog.objects.create(
+                username = self.user,
+                team = self.team,
+                task_title = 'Repeated log',
+                action = 'create',
+                changes = 'Repeated '
+            )
+        self.client.post(reverse('create_task', kwargs={'team_id': self.team.team_id}), {
+            'title' : 'Test task',
+            'description' : 'This is a test task',
+            'assigned_to' : [self.user.id],
+            'priority' : 'low'
+        })
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('logs', response.context)
+        self.assertEqual(len(response.context['logs']), 20)
+        self.assertNotIn(self.log, response.context['logs'])
+
     
 
 

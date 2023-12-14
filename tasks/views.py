@@ -428,7 +428,7 @@ def audit_log_add(request, team_id, task, username, action, changes = None):
 
     team = Team.objects.get(team_id = team_id)
 
-    if(AuditLog.objects.filter(team_id = team_id).count() > 20 and changes):
+    if(AuditLog.objects.filter(team_id = team_id).count() > 19 and (changes or action != 'edited')):
         # If there are more than 20 logs, delete the oldest one
         AuditLog.objects.filter(team_id = team_id).order_by('timestamp').first().delete()
 
