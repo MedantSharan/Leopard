@@ -30,7 +30,7 @@
             <tbody class="tasks-table-row">
               {% if tasks %}
               {% for task in tasks %}
-              <!-- Make the row red if task is high priority and due in §7 days or less -->
+              <!-- Make the row red if task is high priority and due in 3 days or less -->
               {% if task.priority == 'high' and task.days_until_due <= 3 and task.status != 'done' %}
               <tr class="high-priority-nearing-due">
               {% else %}
