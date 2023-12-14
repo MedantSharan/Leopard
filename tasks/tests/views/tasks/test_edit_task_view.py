@@ -22,7 +22,8 @@ class EditTaskViewTestCase(TestCase):
             'description' : 'This is a new task',
             'assigned_to' : [self.second_user.id],
             'due_date' : (datetime.now().date() + timedelta(days=2)),
-            'priority' : 'high'
+            'priority' : 'high',
+            'completed' : True
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -126,5 +127,6 @@ class EditTaskViewTestCase(TestCase):
            f"Title: {self.task.title} to {self.form_input['title']}\nDescription: {self.task.description} to {self.form_input['description']}"
            f"\nDue date: {self.task.due_date} to {self.form_input['due_date']}"
            f"\nPriority: low to high"     
-           f"\nAssigned to: Added {self.second_user.username} Removed {self.user.username} "         
+           f"\nAssigned to: Added {self.second_user.username} Removed {self.user.username} "
+           f"\nCompleted: False to True"         
         )
