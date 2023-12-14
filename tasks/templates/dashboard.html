@@ -24,7 +24,6 @@
                 <th>Task Decription</th>
                 <th>Due Date</th>
                 <th>Priority</th>
-                <th>Status</th>
               </tr>
             </thead>
             <tbody class="tasks-table-row">
@@ -54,7 +53,6 @@
                 {% else %}
                   <td>{{ task.priority }}</td>
                 {% endif %}
-                <td>{{ task.status }}</td>
               </tr>
               {% endfor %}
               {% endif %}
