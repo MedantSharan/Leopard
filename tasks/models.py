@@ -124,18 +124,21 @@ class Task(models.Model):
         super(Task, self).save(*args, **kwargs)
 
         if is_new_task:
-            self.notify_new_task()
+           self.notify_new_task()
         else:
-            self.notify_approaching_deadline()
+           self.notify_approaching_deadline()
+
 
     def notify_new_task(self):
     # Iterate over each user in the assigned_to queryset
+      print("notify_new_task called")
       for user in self.assigned_to.all():
         message = f"A new task '{self.title}' has been assigned to you in the team '{self.related_to_team.team_name}' by {self.created_by}."
         print("Notification message:", message)
-        Notification.objects.create(user=user, message=message)
+        Notification.objects.create(user=user, message=message, is_read=False)
 
     def notify_approaching_deadline(self):
+        print("notify_approaching_deadline called")
         threshold_days = 3
         today = timezone.now().date()
         if self.due_date - today == timezone.timedelta(days=threshold_days):

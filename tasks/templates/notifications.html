@@ -6,7 +6,10 @@
   <h2>Notifications</h2>
   <ul>
     {% for notification in notifications %}
-      <li>{{ notification }}</li>
+      <li>
+        <strong>{{ notification.timestamp|date:"F j, Y H:i" }}</strong>:
+        {{ notification.message }}
+      </li>
     {% endfor %}
   </ul>
 {% endblock %}
