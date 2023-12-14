@@ -91,7 +91,4 @@ class TaskTest(TestCase):
             self.task.full_clean()
         except ValidationError:
             self.fail("Task can be completed")
-    
-
-
-    
+            

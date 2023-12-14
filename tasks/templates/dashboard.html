@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-
 <div class="container">
   <div class="row">
     <div class="col-12">
@@ -25,16 +24,39 @@
                 <th>Task Decription</th>
                 <th>Due Date</th>
                 <th>Priority</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody class="tasks-table-row">
               {% if tasks %}
               {% for task in tasks %}
-              <tr class ="{% if task.completed %}completed-task{% endif %}">
-                <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
+                <!-- Make the row green if task is completed -->
+                {% if task.completed %}
+                  <tr class ="completed-task">
+                <!-- Make the row red if task is high priority and due in 3 days or less and not completed -->
+                {% elif task.priority == 'high' and task.days_until_due <= 3 and not task.completed %}
+                  <tr class="high-priority-nearing-due">
+                {% else %}
+                  <tr>
+                {% endif %}
+                <td><a href="{% url 'view_task' task.id %}">
+                  <button>{{ task.title }}</button>
+                </a></td>
                 <td>{{ task.description }}</td>
                 <td>{{ task.due_date }}</td>
-                <td>{{ task.priority }}</td>
+                <!-- If the task priority is low, make the text a green badge -->
+                {% if task.priority == 'low' %}
+                  <td><span class="bg-success text-light rounded px-2 py-2">{{ task.priority }}</span></td>
+                <!-- If the task priority is medium, make the text a yellow badge -->
+                {% elif task.priority == 'medium' %}
+                  <td><span class="bg-warning text-dark rounded px-2 py-2">{{ task.priority }}</span></td>
+                <!-- If the task priority is high, make the text a red badge -->
+                {% elif task.priority == 'high' %}
+                  <td><span class="bg-danger text-light rounded px-2 py-2">{{ task.priority }}</span></td>
+                {% else %}
+                  <td>{{ task.priority }}</td>
+                {% endif %}
+                <td>{{ task.status }}</td>
               </tr>
               {% endfor %}
               {% endif %}
@@ -56,7 +78,7 @@
                 <th>Team Decription</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="teams-table-row">
               {% if teams %}
               {% for team in teams %}
               <tr>
@@ -104,14 +126,6 @@
           </table>
         </div>
       </div>
-
-
-
-
-
-
-
-
 
     </div>
   </div>
