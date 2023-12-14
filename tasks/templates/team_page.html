@@ -33,7 +33,7 @@
                   <div class="card-title-container">
                       <h5 class="card-title"><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></h5>
                   </div>
-                  {% if task.priority == 'high' and task.days_until_due <= 3 and task.status != 'done' %}
+                  {% if task.priority == 'high' and task.days_until_due <= 3 and task.complete == False %}
                     <div class="card-header high-priority-nearing-due">
                   {% else %}
                     <div class="card-body task-card-body">
