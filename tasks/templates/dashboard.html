@@ -38,8 +38,8 @@
                 {% else %}
                   <tr>
                 {% endif %}
-                <td><a href="{% url 'view_task' task.id %}">{{ task.title }}</a></td>
-                <td>{{ task.description }}</td>
+                <td><a href="{% url 'view_task' task.id %}">{{ task.title|truncatechars:60 }}</a></td>
+                <td>{{ task.description|truncatechars:60 }}</td>
                 <td>{{ task.due_date }}</td>
                 <!-- If the task priority is low, make the text a green badge -->
                 {% if task.priority == 'low' %}
