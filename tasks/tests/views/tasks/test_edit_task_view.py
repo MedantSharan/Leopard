@@ -22,6 +22,8 @@ class EditTaskViewTestCase(TestCase):
             'description' : 'This is a new task',
             'assigned_to' : [self.user.id],
             'due_date' : (datetime.now().date() + timedelta(days=2)),
+            'priority' : 'high',
+            'status' : 'in progress'
         }
 
         self.team = Team.objects.create(team_id = 1, 
@@ -35,6 +37,8 @@ class EditTaskViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
+            priority = '',
+            status = 'to do',
             related_to_team = self.team
         )
         self.task.assigned_to.set([self.user])
@@ -68,6 +72,8 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.title, self.form_input['title'])
         self.assertEqual(task.description, self.form_input['description'])
         self.assertEqual(task.due_date, self.form_input['due_date'])
+        self.assertEqual(task.priority, self.form_input['priority'])
+        self.assertEqual(task.status, self.form_input['status'])
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)
@@ -85,6 +91,8 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.title, self.task.title)
         self.assertEqual(task.description, self.task.description)
         self.assertEqual(task.due_date, self.task.due_date)
+        self.assertEqual(task.priority, self.task.priority)
+        self.assertEqual(task.status, self.task.status)
         self.assertEqual(task.assigned_to.count(), 1)
         self.assertEqual(task.assigned_to.first().username, self.user.username)
         self.assertEqual(task.related_to_team, self.team)

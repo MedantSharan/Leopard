@@ -154,11 +154,11 @@ h3.profile-title {
 }
 
 .tasks-table-row :hover {
-  background-color: #fdfbfb;
+  background-color: #ffffff;
 }
 
 .high-priority-nearing-due {
-  background-color: #e88181;
+  background-color: #e36d6d;
 }
 
 .teams-card2 {

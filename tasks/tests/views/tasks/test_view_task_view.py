@@ -27,6 +27,8 @@ class ViewTaskViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
+            priority = '',
+            status = 'to do',
             related_to_team = self.team,
         )
         self.task.assigned_to.set([self.user])

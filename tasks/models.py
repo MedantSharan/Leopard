@@ -2,7 +2,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from libgravatar import Gravatar
-import datetime
+from django.utils import timezone
 
 class User(AbstractUser):
     """Model used for user authentication, and team member related information."""
@@ -78,6 +78,12 @@ class Task(models.Model):
         ('high', 'High'),
     ]
 
+    STATUS_CHOICES = [
+        ('to do', 'To Do'),
+        ('in progress', 'In Progress'),
+        ('done', 'Done'),
+    ]
+
     title = models.CharField(max_length = 100)
     description = models.CharField(max_length = 500)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')
@@ -85,10 +91,13 @@ class Task(models.Model):
     related_to_team = models.ForeignKey(Team, on_delete=models.CASCADE, null = True, related_name = 'team_tasks')
     due_date = models.DateField(null = True, blank = True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, null=False, blank=True)
+    status = models.CharField(max_length=11, choices=STATUS_CHOICES, null=False, blank=False, default='to do')
 
     def days_until_due(self):
-        """Return the number of days until the task is due."""
-        return self.due_date - datetime.date.today()
+        if self.due_date:
+            return (self.due_date - timezone.now().date()).days
+        else:
+            return None
 
     def clean(self):
         super().clean()

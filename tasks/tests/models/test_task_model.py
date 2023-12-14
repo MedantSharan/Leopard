@@ -76,5 +76,18 @@ class TaskTest(TestCase):
             self.task.full_clean()
         except ValidationError:
             self.fail("Due date should be valid")
-
     
+    def test_status_must_not_be_blank(self):
+        self.task.status = ''
+        with self.assertRaises(ValidationError):
+            self.task.full_clean()
+    
+    def test_status_must_be_one_of_the_choices(self):
+        self.task.status = 'invalid'
+        with self.assertRaises(ValidationError):
+            self.task.full_clean()
+    
+    def test_priority_must_be_one_of_the_choices(self):
+        self.task.priority = 'invalid'
+        with self.assertRaises(ValidationError):
+            self.task.full_clean()
