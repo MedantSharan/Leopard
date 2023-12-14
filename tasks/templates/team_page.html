@@ -44,7 +44,7 @@
                       Priority: {{ task.priority }}</h6>
                       {% endif %}</h6>
                       {% if request.user in task.assigned_to.all or request.user == task.created_by %}
-                        <form method="post" action="{% url 'task_completion' task.id %}">
+                        <form method="post" action="{% url 'update_task_completion' task.id %}">
                           {% csrf_token %}
                           <input type="hidden" name="task_id" value="{{ task.id }}">
                           <input type="checkbox" id="task-completed-{{ task.id }}" name="completed" {% if task.completed %}checked{% endif %} onchange="this.form.submit()">

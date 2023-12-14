@@ -447,7 +447,7 @@ def compare_task_details(before_edit, after_edit, assigned):
     """Find changes made during task edits."""
 
     changes = []
-    for field, display_name in [('title', 'Title'), ('description', 'Description'), ('due_date', 'Due date'), ('priority', 'Priority'), ('assigned_to', 'Assigned to')]:
+    for field, display_name in [('title', 'Title'), ('description', 'Description'), ('due_date', 'Due date'), ('priority', 'Priority'), ('assigned_to', 'Assigned to'), ('completed', 'Completed')]:
         value_before = getattr(before_edit, field)
         value_after = getattr(after_edit, field)
 
@@ -494,6 +494,7 @@ def update_task_completion(request, task_id):
             completed = request.POST.get('completed') == 'on' 
             task.completed = completed
             task.save()
+            audit_log_add(request, task.related_to_team.team_id, task.title, request.user, 'set completed' if completed else 'set uncompleted')
             return redirect('team_page', team_id=task.related_to_team.team_id)
         else:
             return redirect('team_page', team_id=task.related_to_team.team_id)
