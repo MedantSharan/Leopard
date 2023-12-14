@@ -140,7 +140,7 @@ class TaskSearchViewTestCase(TestCase):
         index_new_task = content.find('New task')
         self.assertLess(index_new_task, index_test_task)
 
-    def test_order_by_completion(self):
+    def test_hide_completion(self):
         self.client.login(username=self.user.username, password='Password123')
         new_task = Task.objects.create(
             title = 'New task',
@@ -152,13 +152,9 @@ class TaskSearchViewTestCase(TestCase):
         )
         new_task.assigned_to.set([self.user])
 
-        response = self.client.get(self.url, {'order_by': 'completion'}, follow = True)
+        response = self.client.get(self.url, {'completed': 'False'}, follow = True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'task_search.html')
-        self.assertContains(response, 'New task')
+        self.assertNotContains(response, 'New task')
         self.assertContains(response, 'Test task')
-        content = response.content.decode('utf-8')
-        index_test_task = content.find('Test task')
-        index_new_task = content.find('New task')
-        self.assertLess(index_test_task, index_new_task)
 

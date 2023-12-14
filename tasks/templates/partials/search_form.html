@@ -1,13 +1,11 @@
 <form class="{% if request.resolver_match.url_name == 'task_search' %}task-search-bar{% endif %}" method="get">
     <label for="q">Search:</label>
     <input type="text" name="q" value="{{ query }}">
-  
     <label for="order_by">Order by:</label>
     <select name="order_by">
         <option value="due_date" {% if order_by == 'due_date' %}selected{% endif %}>Due Date</option>
         <option value="title" {% if order_by == 'title' %}selected{% endif %}>Title</option>
         <option value="priority" {% if order_by == 'priority' %}selected{% endif %}>Priority</option>
-        <option value="completion" {% if order_by == 'completion' %}selected{% endif %}>Completion</option>
     </select>
 
     {% if teams.count > 1 %}
@@ -21,13 +19,19 @@
     {% endif %}
     
     {% if request.resolver_match.url_name == 'team_page' %}
-        <label for="assigned_to">Assigned To:</label>
-        <select name="assigned_to">
-            <option value="" {% if not tasks_assigned %}selected{% endif %}>Any</option>
-            {% for member in teams_members %}
-                <option value="{{ member.username }}" {% if tasks_assigned == member.username %}selected{% endif %}>{{ member.username }}</option>
-            {% endfor %}
-        </select>
+    <label for="assigned_to">Assigned To:</label>
+    <select name="assigned_to">
+        <option value="" {% if not tasks_assigned %}selected{% endif %}>Any</option>
+        {% for member in teams_members %}
+            <option value="{{ member.username }}" {% if tasks_assigned == member.username %}selected{% endif %}>{{ member.username }}</option>
+        {% endfor %}
+    </select>
     {% endif %}
+
     <button class="custom-button" type="submit">Search</button>
+    <div>
+        <label> Hide completed</label>
+        <input type="checkbox" name="completed" {% if request.GET.completed %}checked{% endif %}>
+    </div>
+
 </form>
