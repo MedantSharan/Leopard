@@ -33,7 +33,7 @@ class TaskTest(TestCase):
         try:
             self.task.full_clean()
         except ValidationError:
-            self.fail("Test message should be valid")
+            self.fail("Task is not valid")
 
     def test_must_be_created_by_a_user(self):
         self.task.created_by = None

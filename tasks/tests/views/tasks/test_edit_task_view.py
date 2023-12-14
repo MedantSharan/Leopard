@@ -77,6 +77,7 @@ class EditTaskViewTestCase(TestCase):
         self.assertIn(self.second_user, task.assigned_to.all())
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.priority, self.form_input['priority'])
+        self.assertEqual(task.completed, self.form_input['completed'])
 
     def test_unsuccesful_task_edit(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -92,9 +93,10 @@ class EditTaskViewTestCase(TestCase):
         self.assertEqual(task.description, self.task.description)
         self.assertEqual(task.due_date, self.task.due_date)
         self.assertEqual(task.priority, self.task.priority)
+        self.assertEqual(task.completed, self.task.completed)
 
         self.assertEqual(task.assigned_to.count(), 1)
-        self.assertEqual(task.assigned_to.first().username, self.user.username)
+        self.assertIn(self.user, task.assigned_to.all())
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.priority, self.task.priority)
 

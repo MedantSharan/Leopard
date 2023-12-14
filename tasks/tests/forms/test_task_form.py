@@ -45,6 +45,8 @@ class TaskFormTestCase(TestCase):
         self.assertIn('priority', form.fields)
         priority_field = form.fields['priority']
         self.assertTrue(isinstance(priority_field, forms.ChoiceField))
+        completed = form.fields['completed']
+        self.assertTrue(isinstance(completed, forms.BooleanField))
 
     def test_valid_task_form(self):
         form = TaskForm(team_id = 1, data=self.form_input)
