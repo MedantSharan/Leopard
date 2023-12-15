@@ -18,9 +18,9 @@ class Command(BaseCommand):
 
     USER_COUNT = 300
     DEFAULT_PASSWORD = 'Password123'
-    TASKS_PER_USER = 5
-    TEAMS_PER_USER = 10
-    INVITES_PER_USER = 10
+    TASKS_PER_USER = 4
+    TEAMS_PER_USER = 4
+    INVITES_PER_USER = 5
     help = 'Seeds the database with sample data'
 
     def __init__(self):

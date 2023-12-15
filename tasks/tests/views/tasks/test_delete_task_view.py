@@ -17,7 +17,7 @@ class DeleteTaskViewTestCase(TestCase):
         self.user = User.objects.get(username='@johndoe')
         self.second_user = User.objects.get(username='@janedoe')
 
-        self.team = Team.objects.create(team_id = 1, 
+        self.team = Team.objects.create(
             team_leader = self.user, 
             team_name ='Test team', 
             team_description = 'This is a test team'
@@ -29,7 +29,6 @@ class DeleteTaskViewTestCase(TestCase):
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
             priority = '',
-            status = 'to do',
             related_to_team = self.team,
         )
         self.task.assigned_to.set([self.user])
@@ -45,6 +44,7 @@ class DeleteTaskViewTestCase(TestCase):
         response = self.client.post(self.url, follow = True)
         after_count = Task.objects.count()
         self.assertEqual(after_count, before_count - 1)
+        self.assertNotIn(self.task, Task.objects.all())
         self.assertRedirects(response, reverse('team_page', kwargs={'team_id': self.team.team_id}), status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'team_page.html')
 

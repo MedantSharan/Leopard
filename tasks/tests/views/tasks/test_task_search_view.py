@@ -27,8 +27,6 @@ class TaskSearchViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
-            priority = '',
-            status = 'to do',
             related_to_team = self.team,
             priority = 'low',
         )
@@ -142,7 +140,28 @@ class TaskSearchViewTestCase(TestCase):
         index_new_task = content.find('New task')
         self.assertLess(index_new_task, index_test_task)
 
-    def test_order_by_completion(self):
+    def test_order_by_due_date(self):
+        self.client.login(username=self.user.username, password='Password123')
+        new_task = Task.objects.create(
+            title = 'New task',
+            description = 'This is a new test task',
+            created_by = self.user,
+            related_to_team = self.team,
+            due_date = (datetime.now().date() + timedelta(days=2)),
+        )
+        new_task.assigned_to.set([self.user])
+
+        response = self.client.get(self.url, {'order_by': 'due_date'}, follow = True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'task_search.html')
+        self.assertContains(response, 'New task')
+        self.assertContains(response, 'Test task')
+        content = response.content.decode('utf-8')
+        index_test_task = content.find('Test task')
+        index_new_task = content.find('New task')
+        self.assertLess(index_test_task, index_new_task)
+
+    def test_hide_completion(self):
         self.client.login(username=self.user.username, password='Password123')
         new_task = Task.objects.create(
             title = 'New task',
@@ -154,13 +173,9 @@ class TaskSearchViewTestCase(TestCase):
         )
         new_task.assigned_to.set([self.user])
 
-        response = self.client.get(self.url, {'order_by': 'completion'}, follow = True)
+        response = self.client.get(self.url, {'completed': 'False'}, follow = True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'task_search.html')
-        self.assertContains(response, 'New task')
+        self.assertNotContains(response, 'New task')
         self.assertContains(response, 'Test task')
-        content = response.content.decode('utf-8')
-        index_test_task = content.find('Test task')
-        index_new_task = content.find('New task')
-        self.assertLess(index_test_task, index_new_task)
 

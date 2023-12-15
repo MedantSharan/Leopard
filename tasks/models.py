@@ -97,12 +97,6 @@ class Task(models.Model):
         ('high', 'High'),
     ]
 
-    STATUS_CHOICES = [
-        ('to do', 'To Do'),
-        ('in progress', 'In Progress'),
-        ('done', 'Done'),
-    ]
-
     title = models.CharField(max_length = 100)
     description = models.CharField(max_length = 1000)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'set_by')

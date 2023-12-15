@@ -377,6 +377,7 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
     query = request.GET.get('q', '')
     order_by = request.GET.get('order_by', 'due_date')
     teams_search = request.GET.get('team', '')
+    completed_filter = request.GET.get('completed', '')
 
     if team_id:
         # Allow for filtering by team if team_id is provided
@@ -395,6 +396,9 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
 
     if assigned_to:
         tasks = tasks.filter(assigned_to__username=assigned_to)
+
+    if completed_filter:
+        tasks = tasks.filter(completed=False)
     
     # Custom priority order
     custom_priority_order = {'': 3, 'low': 2, 'medium': 1, 'high': 0}
@@ -406,9 +410,6 @@ def get_filtered_tasks(request, assigned_to = None, team_id = None):
         tasks = tasks.order_by('due_date')
     elif order_by == 'title':
         tasks = tasks.order_by('title')
-    elif order_by == 'completion':
-        tasks = tasks.order_by('completed')
-
 
     return tasks
 

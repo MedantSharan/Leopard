@@ -45,6 +45,8 @@ class TaskFormTestCase(TestCase):
         self.assertIn('priority', form.fields)
         priority_field = form.fields['priority']
         self.assertTrue(isinstance(priority_field, forms.ChoiceField))
+        completed = form.fields['completed']
+        self.assertTrue(isinstance(completed, forms.BooleanField))
 
     def test_valid_task_form(self):
         form = TaskForm(team_id = 1, data=self.form_input)
@@ -95,9 +97,4 @@ class TaskFormTestCase(TestCase):
         form = TaskForm(team_id = 1, data=self.form_input)
         self.assertFalse(form.is_valid())
 
-    def test_completion_status_can_be_altered(self):
-        self.form_input['completed'] = True
-        form = TaskForm(team_id = 1, data=self.form_input)
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data['completed'], True)
     

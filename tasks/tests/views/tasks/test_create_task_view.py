@@ -78,7 +78,6 @@ class CreateTaskViewTestCase(TestCase):
         self.assertEqual(task.assigned_to.first(), self.user)
         self.assertEqual(task.due_date, (datetime.now() + timedelta(days = 1)).date())
         self.assertEqual(task.priority, 'low')
-        self.assertEqual(task.status, 'to do')
         self.assertEqual(task.related_to_team, self.team)
         self.assertEqual(task.priority, 'low')
 

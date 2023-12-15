@@ -15,6 +15,7 @@ class ViewTaskViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+        self.second_user = User.objects.get(username='@janedoe')
 
         self.team = Team.objects.create(team_id = 1, 
             team_leader = self.user, 
@@ -27,8 +28,6 @@ class ViewTaskViewTestCase(TestCase):
             description = 'This is a test task',
             created_by = self.user,
             due_date = (datetime.now().date() + timedelta(days=1)),
-            priority = '',
-            status = 'to do',
             related_to_team = self.team,
             priority = 'low'
         )
@@ -57,6 +56,13 @@ class ViewTaskViewTestCase(TestCase):
     def test_view_task_with_invalid_task_id(self):
         self.client.login(username=self.user.username, password='Password123')
         response = self.client.post(reverse('view_task', kwargs={'task_id': 2}), follow = True)
+        redirect_url = reverse('dashboard')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'dashboard.html')
+
+    def test_cannot_view_task_if_not_in_team(self):
+        self.client.login(username=self.second_user.username, password='Password123')
+        response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
